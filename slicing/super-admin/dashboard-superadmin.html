@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Super Admin - SikolaPay</title>
+
+    <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/styleguide.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/dashboard-superadmin.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="../resource/img/logo-sikolapay.svg" alt="Logo">
+
+            <div>
+                <h2 class="logo-title">
+                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
+                </h2>
+
+                <p class="logo-subtitle">
+                    Super Admin
+                </p>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+            <a href="dashboard-superadmin.html" class="menu-item active">
+                <img src="../resource/img/Home.svg" alt="">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="kelola-admin-superadmin.html" class="menu-item">
+                <img src="../resource/img/User_alt_light.svg" alt="">
+                <span>Kelola Admin</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-profile">
+
+            <div class="profile-info">
+
+                <div class="avatar">
+                    SR
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        Sri Rahayu
+                    </div>
+
+                    <div class="profile-id">
+                        123456789
+                    </div>
+                </div>
+
+            </div>
+
+            <img src="../resource/img/Sign_out_squre.svg" alt="Logout">
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Dashboard Super Admin
+                </h1>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <img src="../resource/img/Bell_pin.svg" alt="Notifikasi">
+
+                    <div class="avatar small">
+                        SR
+                    </div>
+
+                </div>
+        </header>
+
+        <!-- =========================================================
+     SUPER ADMIN DASHBOARD CONTENT
+========================================================= -->
+
+<section class="superadmin-dashboard">
+
+    <!-- PAGE HEADER -->
+    <div class="superadmin-page-header">
+
+        <h2>
+            Dashboard Super Admin
+        </h2>
+
+        <p>
+            Ringkasan keseluruhan sistem SikolaPay
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="superadmin-stat-grid">
+
+        <!-- TOTAL ADMIN -->
+        <div class="superadmin-stat-card">
+
+            <div class="superadmin-stat-icon">
+                <img
+                    src="../resource/img/Lock_alt-superadmin.svg"
+                    alt=""
+                >
+            </div>
+
+            <div class="superadmin-stat-content">
+
+                <span>
+                    Total Admin
+                </span>
+
+                <strong>
+                    3
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL SISWA -->
+        <div class="superadmin-stat-card">
+
+            <div class="superadmin-stat-icon">
+                <img
+                    src="../resource/img/Group_light-superadmin.svg"
+                    alt=""
+                >
+            </div>
+
+            <div class="superadmin-stat-content">
+
+                <span>
+                    Total Siswa
+                </span>
+
+                <strong>
+                    248
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL TAGIHAN -->
+        <div class="superadmin-stat-card">
+
+            <div class="superadmin-stat-icon">
+                <img
+                    src="../resource/img/Clock_light-superadmin.svg"
+                    alt=""
+                >
+            </div>
+
+            <div class="superadmin-stat-content">
+
+                <span>
+                    Total Tagihan
+                </span>
+
+                <strong>
+                    312
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL PEMBAYARAN -->
+        <div class="superadmin-stat-card">
+
+            <div class="superadmin-stat-icon">
+                <img
+                    src="../resource/img/money-superadmin.svg"
+                    alt=""
+                >
+            </div>
+
+            <div class="superadmin-stat-content">
+
+                <span>
+                    Total Pembayaran
+                </span>
+
+                <strong>
+                    189
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         DAFTAR ADMIN
+    ====================================================== -->
+
+    <section class="superadmin-card admin-list-card">
+
+        <!-- CARD HEADER -->
+        <div class="superadmin-card-header">
+
+            <div>
+
+                <h3>
+                    Daftar Admin
+                </h3>
+
+                <p>
+                    Kelola akun administrator sistem SikolaPay
+                </p>
+
+            </div>
+
+
+            <a
+                href="kelola-admin-superadmin.html"
+                class="superadmin-button-primary"
+            >
+                Kelola Admin
+            </a>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ADMIN TABLE
+        ================================================== -->
+
+        <div class="superadmin-table-wrapper">
+
+            <table class="superadmin-admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Nama Admin
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Dibuat
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <!-- ADMIN 1 -->
+                    <tr>
+
+                        <td>
+                            <strong>
+                                Siti Rahayu
+                            </strong>
+                        </td>
+
+                        <td>
+                            siti@sekolah.sch.id
+                        </td>
+
+                        <td>
+
+                            <span class="admin-role">
+                                Admin
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="admin-status active">
+                                Aktif
+                            </span>
+
+                        </td>
+
+                        <td>
+                            01 Januari 2023
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ADMIN 2 -->
+                    <tr>
+
+                        <td>
+                            <strong>
+                                Hendra Wijaya
+                            </strong>
+                        </td>
+
+                        <td>
+                            hendra@sekolah.sch.id
+                        </td>
+
+                        <td>
+
+                            <span class="admin-role">
+                                Admin
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="admin-status active">
+                                Aktif
+                            </span>
+
+                        </td>
+
+                        <td>
+                            15 Maret 2023
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ADMIN 3 -->
+                    <tr>
+
+                        <td>
+                            <strong>
+                                Rina Melati
+                            </strong>
+                        </td>
+
+                        <td>
+                            rina@sekolah.sch.id
+                        </td>
+
+                        <td>
+
+                            <span class="admin-role">
+                                Admin
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="admin-status inactive">
+                                Non-Aktif
+                            </span>
+
+                        </td>
+
+                        <td>
+                            10 Februari 2022
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</section>
+
+    </main>
+</div>
+<script src="../js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, sans-serif;
+}
+
+.login-page {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+
+    background: linear-gradient(
+        117deg,
+        var(--optionalop-40) 0%,
+        var(--tertiarytr-40) 100%
+    );
+}
+
+.login-card {
+    width: 100%;
+    max-width: 350px;
+
+    background-color: var(--primarypr-40);
+
+    border-radius: 8px;
+
+    padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.login-brand {
+    text-align: center;
+}
+
+.login-brand__logo {
+    width: 32px;
+    height: 32px;
+}
+
+.login-brand__title {
+    margin-top: 4px;
+
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.text-secondary {
+    color: var(--secondarysc-40);
+}
+
+.text-tertiary {
+    color: var(--tertiarytr-40);
+}
+
+.text-optional {
+    color: var(--optionalop-40);
+}
+
+.login-brand__subtitle {
+    margin-top: 4px;
+
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.login-header h2 {
+    font-size: 16px;
+    font-weight: 500;
+
+    color: #ffffff;
+
+    margin-bottom: 4px;
+}
+
+.login-header p {
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 500;
+
+    color: #ffffff;
+}
+
+.form-group input {
+    width: 100%;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--tertiarytr-40);
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 12px;
+}
+
+.form-group input:focus {
+    border-color: var(--secondarysc-40);
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 10px;
+
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+}
+
+.password-toggle img {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-login {
+    height: 36px;
+
+    border: 1px solid var(--secondarysc-40);
+    border-radius: 8px;
+
+    background-color: var(--tertiarytr-40);
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.btn-login:hover {
+    opacity: 0.9;
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}

@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Siswa - SikolaPay</title>
+
+    <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/styleguide.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../admin/css/data-tagihan-admin.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="../resource/img/logo-sikolapay.svg" alt="Logo">
+
+            <div>
+                <h2 class="logo-title">
+                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
+                </h2>
+
+                <p class="logo-subtitle">
+                    Siswa / Orang Tua
+                </p>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+            <a href="dashboard-admin.html" class="menu-item">
+                <img src="../resource/img/Home.svg" alt="">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="data-siswa-admin.html" class="menu-item">
+                <img src="../resource/img/Date_range_light.svg" alt="">
+                <span>Data Siswa</span>
+            </a>
+
+            <a href="data-tagihan-admin.html" class="menu-item active">
+                <img src="../resource/img/Ticket_alt_light-admin.svg" alt="">
+                <span>Data Tagihan</span>
+            </a>
+
+            <a href="verifikasi-pembayaran-admin.html" class="menu-item">
+                <img src="../resource/img/Done_all_alt_round-admin.svg" alt="">
+                <span>Verifikasi Pembayaran</span>
+            </a>
+
+            <a href="laporan-pembayaran-admin.html" class="menu-item">
+                <img src="../resource/img/File_dock-admin.svg" alt="">
+                <span>Laporan Pembayaran</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-profile">
+
+            <div class="profile-info">
+
+                <div class="avatar">
+                    AF
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        Ahmad Fauzi
+                    </div>
+
+                    <div class="profile-id">
+                        123456789
+                    </div>
+                </div>
+
+            </div>
+
+            <img src="../resource/img/Sign_out_squre.svg" alt="Logout">
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Data Tagihan
+                </h1>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <img src="../resource/img/Bell_pin.svg" alt="Notifikasi">
+
+                    <div class="avatar small">
+                        AF
+                    </div>
+
+                </div>
+        </header>
+
+        <!-- CONTENT DATA TAGIHAN -->
+<section class="billing-page">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+
+        <div class="page-header-info">
+            <h2>Data Tagihan</h2>
+            <p>Kelola tagihan pembayaran seluruh siswa</p>
+        </div>
+
+        <button class="btn-primary">
+            <img src="../resource/img/Add_round-admin.svg" alt="">
+            <span>Tambah Tagihan</span>
+        </button>
+
+    </div>
+
+
+    <!-- CARD DATA TAGIHAN -->
+    <div class="billing-card">
+
+        <!-- FILTER & SEARCH -->
+        <div class="billing-toolbar">
+
+            <div class="billing-filters">
+
+                <!-- FILTER KELAS -->
+                <button class="btn-filter">
+                    <span>Semua Kelas</span>
+                    <img
+                        src="../resource/img/Expand_down_light-black-admin.svg"
+                        alt=""
+                    >
+                </button>
+
+
+                <!-- FILTER SEMESTER -->
+                <button class="btn-filter">
+                    <span>Semua Semester</span>
+                    <img
+                        src="../resource/img/Expand_down_light-black-admin.svg"
+                        alt=""
+                    >
+                </button>
+
+
+                <!-- SEARCH -->
+                <div class="search-box">
+
+                    <input
+                        type="text"
+                        placeholder="Cari nama siswa..."
+                    >
+
+                    <img
+                        src="../resource/img/search-admin.svg"
+                        alt="Cari"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="billing-table-wrapper">
+
+            <table class="billing-table">
+
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
+                        <th>Jenis Tagihan</th>
+                        <th>Semester</th>
+                        <th>Nominal</th>
+                        <th>Jatuh Tempo</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    <!-- ROW 1 -->
+                    <tr>
+
+                        <td>1</td>
+
+                        <td>Ahmad Fauzi</td>
+
+                        <td>XI IPA 2</td>
+
+                        <td>SPP Bulanan</td>
+
+                        <td>Ganjil 2026/2027</td>
+
+                        <td>
+                            <strong>Rp 350.000</strong>
+                        </td>
+
+                        <td>10 Jul 2026</td>
+
+                        <td>
+                            <span class="status status-unpaid">
+                                Belum Lunas
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">
+                                    Detail
+                                </button>
+
+                                <button class="action-edit">
+                                    Edit
+                                </button>
+
+                                <button class="action-delete">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ROW 2 -->
+                    <tr>
+
+                        <td>2</td>
+
+                        <td>Sari Dwi Putri</td>
+
+                        <td>XII IPS 1</td>
+
+                        <td>SPP Bulanan</td>
+
+                        <td>Ganjil 2026/2027</td>
+
+                        <td>
+                            <strong>Rp 350.000</strong>
+                        </td>
+
+                        <td>10 Jul 2026</td>
+
+                        <td>
+                            <span class="status status-paid">
+                                Lunas
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">
+                                    Detail
+                                </button>
+
+                                <button class="action-edit">
+                                    Edit
+                                </button>
+
+                                <button class="action-delete">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ROW 3 -->
+                    <tr>
+
+                        <td>3</td>
+
+                        <td>Budi Santoso</td>
+
+                        <td>X IPA 3</td>
+
+                        <td>SPP Bulanan</td>
+
+                        <td>Ganjil 2026/2027</td>
+
+                        <td>
+                            <strong>Rp 350.000</strong>
+                        </td>
+
+                        <td>10 Jul 2026</td>
+
+                        <td>
+                            <span class="status status-pending">
+                                Menunggu
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">
+                                    Detail
+                                </button>
+
+                                <button class="action-edit">
+                                    Edit
+                                </button>
+
+                                <button class="action-delete">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ROW 4 -->
+                    <tr>
+
+                        <td>4</td>
+
+                        <td>Dewi Lestari</td>
+
+                        <td>XII IPS 2</td>
+
+                        <td>SPP Bulanan</td>
+
+                        <td>Ganjil 2026/2027</td>
+
+                        <td>
+                            <strong>Rp 350.000</strong>
+                        </td>
+
+                        <td>10 Jul 2026</td>
+
+                        <td>
+                            <span class="status status-paid">
+                                Lunas
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">
+                                    Detail
+                                </button>
+
+                                <button class="action-edit">
+                                    Edit
+                                </button>
+
+                                <button class="action-delete">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ROW 5 -->
+                    <tr>
+
+                        <td>5</td>
+
+                        <td>Rendi Pratama</td>
+
+                        <td>XI IPA 1</td>
+
+                        <td>SPP Bulanan</td>
+
+                        <td>Ganjil 2026/2027</td>
+
+                        <td>
+                            <strong>Rp 350.000</strong>
+                        </td>
+
+                        <td>10 Jul 2026</td>
+
+                        <td>
+                            <span class="status status-unpaid">
+                                Belum Lunas
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">
+                                    Detail
+                                </button>
+
+                                <button class="action-edit">
+                                    Edit
+                                </button>
+
+                                <button class="action-delete">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ROW 6 -->
+                    <tr>
+
+                        <td>6</td>
+
+                        <td>Pratama Agung</td>
+
+                        <td>XI IPA 3</td>
+
+                        <td>SPP Bulanan</td>
+
+                        <td>Ganjil 2026/2027</td>
+
+                        <td>
+                            <strong>Rp 350.000</strong>
+                        </td>
+
+                        <td>10 Jul 2026</td>
+
+                        <td>
+                            <span class="status status-unpaid">
+                                Belum Lunas
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">
+                                    Detail
+                                </button>
+
+                                <button class="action-edit">
+                                    Edit
+                                </button>
+
+                                <button class="action-delete">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+
+            <button class="pagination-arrow">
+                <img
+                    src="../resource/img/left-admin.svg"
+                    alt="Sebelumnya"
+                >
+            </button>
+
+            <button class="page-number active">
+                1
+            </button>
+
+            <button class="page-number">
+                2
+            </button>
+
+            <button class="pagination-arrow">
+                <img
+                    src="../resource/img/right-admin.svg"
+                    alt="Berikutnya"
+                >
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+    </main>
+
+    <!-- =========================================================
+     OVERLAY DETAIL / EDIT TAGIHAN
+     ========================================================= -->
+
+<div class="billing-modal-overlay" id="billingModal">
+
+    <div class="billing-modal">
+
+        <!-- HEADER MODAL -->
+        <div class="billing-modal-header">
+
+            <h2>Detail Tagihan</h2>
+
+            <button
+                type="button"
+                class="billing-modal-close"
+                id="billingModalClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT MODAL -->
+        <div class="billing-modal-content">
+
+            <div class="billing-detail-list">
+
+                <!-- NAMA LENGKAP -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Nama Lengkap
+                    </div>
+
+                    <div class="billing-detail-value">
+                        Ahmad Fauzi
+                    </div>
+
+                </div>
+
+
+                <!-- KELAS -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Kelas
+                    </div>
+
+                    <div class="billing-detail-value">
+                        XII IPA 2
+                    </div>
+
+                </div>
+
+
+                <!-- JENIS TAGIHAN -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Jenis Tagihan
+                    </div>
+
+                    <div class="billing-detail-value">
+                        SPP Bulanan
+                    </div>
+
+                </div>
+
+
+                <!-- SEMESTER -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Semester
+                    </div>
+
+                    <div class="billing-detail-value">
+                        Ganjil 2026/2027
+                    </div>
+
+                </div>
+
+
+                <!-- NOMINAL -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Nominal
+                    </div>
+
+                    <div class="billing-detail-value">
+                        Rp 350.000
+                    </div>
+
+                </div>
+
+
+                <!-- JATUH TEMPO -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Jatuh Tempo
+                    </div>
+
+                    <div class="billing-detail-value">
+                        10 Juli 2026
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="billing-detail-item">
+
+                    <div class="billing-detail-label">
+                        Status
+                    </div>
+
+                    <div class="billing-detail-value">
+                        <span class="billing-status status-unpaid">
+                            Belum Lunas
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER MODAL -->
+        <div class="billing-modal-footer">
+
+            <button
+                type="button"
+                class="billing-btn billing-btn-close"
+                id="billingBtnClose"
+            >
+                Tutup
+            </button>
+
+            <button
+                type="button"
+                class="billing-btn billing-btn-edit"
+                id="billingBtnEdit"
+            >
+                Edit Tagihan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================================
+     EDIT TAGIHAN MODAL
+     ========================================================= -->
+
+<div class="billing-edit-overlay" id="editBillingModal">
+
+    <div class="billing-edit-modal">
+
+        <!-- HEADER -->
+        <div class="billing-edit-header">
+
+            <h2>Edit Tagihan</h2>
+
+            <button
+                type="button"
+                class="billing-edit-close"
+                id="editBillingClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="billing-edit-content">
+
+            <!-- BARIS 1 -->
+            <div class="billing-edit-row">
+
+                <!-- PILIH SISWA -->
+                <div class="billing-edit-field">
+
+                    <label>
+                        Pilih Siswa
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-edit-input">
+
+                        <span>
+                            Ahmad Fauzi
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- JENIS TAGIHAN -->
+                <div class="billing-edit-field">
+
+                    <label>
+                        Jenis Tagihan
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-edit-input">
+
+                        <span>
+                            SPP Bulanan
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 2 -->
+            <div class="billing-edit-row">
+
+                <!-- SEMESTER -->
+                <div class="billing-edit-field">
+
+                    <label>
+                        Semester
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-edit-input">
+
+                        <span>
+                            Ganjil 2026/2027
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- NOMINAL -->
+                <div class="billing-edit-field">
+
+                    <label>
+                        Nominal
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-edit-input">
+
+                        <input
+                            type="text"
+                            value="350.000"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 3 -->
+            <div class="billing-edit-row">
+
+                <!-- JATUH TEMPO -->
+                <div class="billing-edit-field">
+
+                    <label>
+                        Jatuh Tempo
+                    </label>
+
+                    <div class="billing-edit-input">
+
+                        <input
+                            type="date"
+                            value="2026-07-10"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="billing-edit-field">
+
+                    <label>
+                        Status
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-edit-input">
+
+                        <span>
+                            Belum Lunas
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="billing-edit-footer">
+
+            <button
+                type="button"
+                class="billing-edit-btn billing-edit-btn-cancel"
+                id="editBillingCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="billing-edit-btn billing-edit-btn-save"
+                id="editBillingSave"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =========================================================
+     TAMBAH TAGIHAN MODAL
+     ========================================================= -->
+
+<div class="billing-add-overlay" id="addBillingModal">
+
+    <div class="billing-add-modal">
+
+        <!-- HEADER -->
+        <div class="billing-add-header">
+
+            <h2>Tambah Tagihan</h2>
+
+            <button
+                type="button"
+                class="billing-add-close"
+                id="addBillingClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="billing-add-content">
+
+            <!-- BARIS 1 -->
+            <div class="billing-add-row">
+
+                <!-- PILIH SISWA -->
+                <div class="billing-add-field">
+
+                    <label>
+                        Pilih Siswa
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-add-input">
+
+                        <span class="placeholder">
+                            -- Pilih Siswa ---
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- JENIS TAGIHAN -->
+                <div class="billing-add-field">
+
+                    <label>
+                        Jenis Tagihan
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-add-input">
+
+                        <span class="placeholder">
+                            -- Pilih Jenis Tagihan ---
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 2 -->
+            <div class="billing-add-row">
+
+                <!-- SEMESTER -->
+                <div class="billing-add-field">
+
+                    <label>
+                        Semester
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-add-input">
+
+                        <span class="placeholder">
+                            -- Pilih Semester ---
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- NOMINAL -->
+                <div class="billing-add-field">
+
+                    <label>
+                        Nominal
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-add-input">
+
+                        <input
+                            type="text"
+                            placeholder="Masukkan nominal"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 3 -->
+            <div class="billing-add-row">
+
+                <!-- JATUH TEMPO -->
+                <div class="billing-add-field">
+
+                    <label>
+                        Jatuh Tempo
+                    </label>
+
+                    <div class="billing-add-input">
+
+                        <input
+                            type="date"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="billing-add-field">
+
+                    <label>
+                        Status
+                        <span>*</span>
+                    </label>
+
+                    <div class="billing-add-input">
+
+                        <span>
+                            Belum Lunas
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="billing-add-footer">
+
+            <button
+                type="button"
+                class="billing-add-btn billing-add-btn-cancel"
+                id="addBillingCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="billing-add-btn billing-add-btn-save"
+                id="addBillingSave"
+            >
+                Tambah Tagihan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+<div class="billing-delete-overlay" id="deleteBillingModal">
+
+    <div class="hapus-tagihan">
+
+        <!-- HEADER -->
+        <div class="frame">
+
+            <div class="div">
+
+                <div class="div-wrapper">
+
+                    <div class="text-wrapper">
+                        Hapus Tagihan
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="icon-set-wrapper"
+                    id="deleteBillingClose"
+                >
+
+                    <img
+                        class="icon-set"
+                        src="../resource/img/close-admin.svg"
+                        alt="Tutup"
+                    >
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="frame-2">
+
+            <div class="frame-3">
+
+                <!-- WARNING -->
+                <div class="frame-4">
+
+                    <img
+                        class="icon-set"
+                        src="../resource/img/caution-admin.svg"
+                        alt=""
+                    >
+
+                    <p class="p">
+                        Tindakan Ini tidak dapat dibatalkan!
+                    </p>
+
+                </div>
+
+
+                <!-- PESAN -->
+                <div class="hapus-tagihan-SPP-wrapper">
+
+                    <p class="hapus-tagihan-SPP">
+
+                        <span class="span">
+                            Hapus tagihan
+                        </span>
+
+                        <span
+                            class="span"
+                            id="deleteBillingType"
+                        >
+                            SPP Bulanan
+                        </span>
+
+                        <span class="span">
+                            untuk siswa
+                        </span>
+
+                        <span
+                            class="text-wrapper-2"
+                            id="deleteStudentName"
+                        >
+                            Ahmad Fauzi
+                        </span>
+
+                        <span class="span">
+                            ?
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="frame-5">
+
+                <button
+                    type="button"
+                    class="button"
+                    id="deleteBillingCancel"
+                >
+
+                    <div class="button-2">
+                        Batal
+                    </div>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="button-3"
+                    id="deleteBillingConfirm"
+                >
+
+                    <div class="button-4">
+                        Hapus Tagihan
+                    </div>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../js/script.js"></script>
+<script src="js/data-tagihan-admin.js"></script>
+</body>
+</html>

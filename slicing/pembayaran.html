@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Siswa - SikolaPay</title>
+
+    <link rel="stylesheet" href="css/globals.css">
+    <link rel="stylesheet" href="css/styleguide.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="resource/img/logo-sikolapay.svg" alt="Logo">
+
+            <div>
+                <h2 class="logo-title">
+                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
+                </h2>
+
+                <p class="logo-subtitle">
+                    Siswa / Orang Tua
+                </p>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="dahsboard-siswa.html" class="menu-item">
+                <img src="resource/img/Home.svg" alt="">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tagihan-saya.html" class="menu-item">
+                <img src="resource/img/Date_range_light.svg" alt="">
+                <span>Tagihan Saya</span>
+            </a>
+
+            <a href="riwayat-pembayaran.html" class="menu-item">
+                <img src="resource/img/Time_light.svg" alt="">
+                <span>Riwayat Pembayaran</span>
+            </a>
+
+            <a href="profile-siswa.html" class="menu-item">
+                <img src="resource/img/User_alt_light.svg" alt="">
+                <span>Profil</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-profile">
+
+            <div class="profile-info">
+
+                <div class="avatar">
+                    AF
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        Ahmad Fauzi
+                    </div>
+
+                    <div class="profile-id">
+                        123456789
+                    </div>
+                </div>
+
+            </div>
+
+            <img src="resource/img/Sign_out_squre.svg" alt="Logout">
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Dashboard
+                </h1>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <img src="resource/img/Bell_pin.svg" alt="Notifikasi">
+
+                    <div class="avatar small">
+                        AF
+                    </div>
+
+                </div>
+        </header>
+        <!-- PAYMENT CONTENT -->
+
+<section class="payment-page">
+
+    <!-- BACK -->
+    <div class="payment-back">
+
+        <button type="button" class="back-button" onclick="history.back()">
+
+            <img src="resource/img/back.svg" alt="">
+
+            <span>
+                Kembali ke Detail Tagihan
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- PAGE HEADER -->
+    <div class="payment-header">
+
+        <h2>
+            Pembayaran
+        </h2>
+
+        <p>
+            SPP Bulan Juli 2026 · Ahmad Fauzi
+        </p>
+
+    </div>
+
+
+
+    <div class="payment-main-grid">
+
+        <div class="payment-left-column">
+
+
+            <!-- PAYMENT METHOD -->
+
+            <div class="payment-card">
+
+                <div class="payment-card-header">
+
+                    <h3>
+                        Pilih Metode Pembayaran
+                    </h3>
+
+                </div>
+
+
+                <div class="payment-methods">
+
+                    <button
+                        type="button"
+                        class="payment-method active"
+                        data-method="bank">
+
+                        <img
+                            src="resource/img/tf-pr.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            Transfer Bank
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="payment-method"
+                        data-method="va">
+
+                        <img
+                            src="resource/img/va-pr.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            Virtual Account
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="payment-method"
+                        data-method="qris">
+
+                        <img
+                            src="resource/img/qris-pr.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            QRIS
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="payment-method"
+                        data-method="ewallet">
+
+                        <img
+                            src="resource/img/e-wallet pr.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            E-Wallet
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="detail-card">
+
+                <div class="detail-header">
+
+                    <h3>
+                        Detail Transfer Bank
+                    </h3>
+
+                    <p>
+                        Pilih bank tujuan:
+                    </p>
+
+                </div>
+
+
+                <!-- BANK SELECTION -->
+
+                <div class="bank-list">
+
+                    <button
+                        type="button"
+                        class="bank-item active">
+
+                        <span>
+                            BCA
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="bank-item">
+
+                        <span>
+                            BNI
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="bank-item">
+
+                        <span>
+                            BRI
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="bank-item">
+
+                        <span>
+                            MANDIRI
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="bank-item">
+
+                        <span>
+                            BSI
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <!-- ACCOUNT INFORMATION -->
+
+                <div class="account-information">
+
+                    <div class="account-box">
+
+                        <div class="account-label">
+                            Nomor Rekening BCA
+                        </div>
+
+                        <div class="account-number">
+                            1234-5678-9101
+                        </div>
+
+                        <div class="account-owner">
+                            a.n. Yayasan Sekolah Nusantara
+                        </div>
+
+                    </div>
+
+
+                    <div class="transfer-note">
+
+                        <p>
+
+                            <strong>
+                                Nominal transfer harus sama persis
+                            </strong>
+
+                            <span>
+                                Rp 350.000
+                            </span>.
+
+                            Tambahkan kode unik jika diperlukan.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="upload-card">
+
+                <div class="upload-header">
+
+                    <h3>
+                        Upload Bukti Pembayaran
+                    </h3>
+
+                </div>
+
+
+                <div class="upload-area">
+
+                    <img
+                        src="resource/img/import-pr.svg"
+                        alt="Upload"
+                    >
+
+
+                    <div class="upload-content">
+
+                        <p class="upload-title">
+                            Drag &amp; Drop atau klik untuk upload
+                        </p>
+
+                        <p class="upload-description">
+                            PNG, JPG, PDF, hingga 5MB
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="upload-button">
+
+                        Pilih File
+
+                    </button>
+
+                </div>
+
+
+                <p class="upload-note">
+                    Upload screenshot atau foto bukti transfer.
+                    Pembayaran akun diverifikasi oleh admin dalam 1x24 jam.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="payment-right-column">
+
+
+            <!-- PAYMENT SUMMARY -->
+
+            <div class="summary-card">
+
+                <div class="summary-header">
+
+                    <h3>
+                        Ringkasan Pembayaran
+                    </h3>
+
+                </div>
+
+
+                <div class="summary-content">
+
+                    <div class="summary-list">
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Nama Siswa
+                            </span>
+
+                            <span>
+                                Ahmad Fauzi
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Jenis Tagihan
+                            </span>
+
+                            <span>
+                                SPP Bulanan
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Periode
+                            </span>
+
+                            <span>
+                                Juli 2026
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Metode
+                            </span>
+
+                            <span>
+                                Transfer Bank
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="summary-total">
+
+                        <div>
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong>
+                                Rp 350.000
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRMATION -->
+
+                    <div class="confirmation">
+
+                        <button
+                            type="button"
+                            class="payment-confirm-button"
+                            id="openConfirmModal">
+
+                            Konfirmasi Pembayaran
+
+                        </button>
+
+
+                        <p>
+                            Dengan mengklik tombol di atas,
+                            Anda menyatakan telah melakukan pembayaran.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+    </main>
+
+
+<!-- MODAL KONFIRMASI -->
+<div class="modal-overlay" id="confirmModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>Konfirmasi Pembayaran</h3>
+
+            <button class="modal-close" id="closeConfirmModal">
+                ✕
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-icon warning">
+                <img src="resource/img/konfirmasi pembayaran.svg"
+                    alt="Warning">
+            </div>
+
+            <h2>
+                Konfirmasi Pembayaran SPP Juli 2026?
+            </h2>
+
+            <p>
+                Pastikan Anda telah mentransfer
+                <strong>Rp 350.000</strong>
+                via Transfer Bank.
+            </p>
+
+            <div class="modal-actions">
+
+                <button class="btn-secondary" id="cancelConfirm">
+                    Batal
+                </button>
+
+                <button class="btn-primary" id="submitConfirm">
+                    Ya, Konfirmasi
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL SUCCESS -->
+<div class="modal-overlay" id="successModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>Konfirmasi Pembayaran</h3>
+
+            <button class="modal-close" id="closeSuccessModal">
+                ✕
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-icon success">
+                <img src="resource/img/success.svg"
+                    alt="success">
+            </div>
+
+            <h2>
+                Pembayaran Dikonfirmasi!
+            </h2>
+
+            <p>
+                Konfirmasi pembayaran Anda telah diterima.
+                Admin akan memverifikasi dalam 1×24 jam kerja.
+            </p>
+
+            <div class="payment-reference">
+
+                <div class="reference-row">
+                    <span>No. Referensi</span>
+                    <strong>#PAY-2026-0089</strong>
+                </div>
+
+                <div class="reference-row">
+                    <span>Tanggal</span>
+                    <strong>3 Agustus 2026</strong>
+                </div>
+
+            </div>
+
+            <div class="modal-actions right">
+
+                <button  
+                type="button"
+                class="btn-secondary"
+                id="printNotaBtn">
+                    Cetak Nota
+                </button>
+
+                <button
+                class="btn-primary"
+                id="viewHistoryBtn">
+                    Lihat Riwayat
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>

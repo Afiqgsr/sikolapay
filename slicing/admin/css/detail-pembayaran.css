@@ -1,0 +1,570 @@
+/* =========================================================
+   DETAIL PEMBAYARAN ADMIN
+   ========================================================= */
+
+.payment-detail-page {
+    width: 100%;
+    max-width: 1032px;
+    margin: 0 auto;
+    padding-top: 117px;
+    padding-bottom: 48px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.payment-detail-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.payment-detail-header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.payment-back {
+    display: inline-flex;
+    align-items: center;
+
+    margin-bottom: 12px;
+
+    color: var(--primarypr-40);
+
+    font-family: var(--label-l14-medium-font-family);
+    font-weight: var(--label-l14-medium-font-weight);
+    font-size: var(--label-l14-medium-font-size);
+    line-height: var(--label-l14-medium-line-height);
+
+    text-decoration: none;
+}
+
+.payment-back:hover {
+    text-decoration: underline;
+}
+
+.payment-detail-header h2 {
+    margin: 0 0 4px;
+
+    color: var(--neutralnr-80);
+
+    font-family: var(--label-l18-semi-bold-font-family);
+    font-weight: var(--label-l18-semi-bold-font-weight);
+    font-size: var(--label-l18-semi-bold-font-size);
+    line-height: var(--label-l18-semi-bold-line-height);
+}
+
+.payment-detail-header p {
+    margin: 0;
+
+    color: var(--neutralnr-70);
+
+    font-family: var(--label-l14-regular-font-family);
+    font-weight: var(--label-l14-regular-font-weight);
+    font-size: var(--label-l14-regular-font-size);
+    line-height: var(--label-l14-regular-line-height);
+}
+
+
+/* =========================================================
+   HEADER STATUS
+   ========================================================= */
+
+.payment-header-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+
+    flex-shrink: 0;
+}
+
+.payment-header-status .status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 72px;
+    padding: 5px 12px;
+
+    border-radius: 4px;
+
+    font-family: var(--label-l12-medium-font-family);
+    font-weight: var(--label-l12-medium-font-weight);
+    font-size: var(--label-l12-medium-font-size);
+    line-height: var(--label-l12-medium-line-height);
+
+    box-sizing: border-box;
+}
+
+.payment-header-status .status.success {
+    color: #00b724;
+    background-color: #d6ffde;
+}
+
+.payment-header-status .status.rejected {
+    color: var(--secondarysc-40);
+    background-color: #f9e0db;
+}
+
+.payment-header-status .status.pending {
+    color: #a56a00;
+    background-color: #fff3cd;
+}
+
+.payment-number {
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+}
+
+
+/* =========================================================
+   DETAIL GRID
+   ========================================================= */
+
+.payment-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   DETAIL CARD
+   ========================================================= */
+
+.detail-card {
+    width: 100%;
+
+    background-color: var(--neutralnr-00);
+
+    border: 1px solid var(--neutralnr-20);
+    border-radius: 8px;
+
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   DETAIL CARD HEADER
+   ========================================================= */
+
+.detail-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 56px;
+    padding: 14px 20px;
+
+    border-bottom: 1px solid var(--neutralnr-20);
+
+    box-sizing: border-box;
+}
+
+.detail-card-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.detail-card-header h3 {
+    margin: 0;
+
+    color: var(--neutralnr-90);
+
+    font-family: var(--label-l16-medium-font-family);
+    font-weight: var(--label-l16-medium-font-weight);
+    font-size: var(--label-l16-medium-font-size);
+    line-height: var(--label-l16-medium-line-height);
+}
+
+.detail-card-header p {
+    margin: 0;
+
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+}
+
+
+/* =========================================================
+   DETAIL INFORMATION
+   ========================================================= */
+
+.detail-info-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 32px;
+    row-gap: 20px;
+
+    padding: 20px;
+}
+
+.detail-info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+
+    min-width: 0;
+}
+
+.detail-info-item > span {
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+}
+
+.detail-info-item > strong {
+    color: var(--neutralnr-90);
+
+    font-family: var(--label-l14-medium-font-family);
+    font-weight: var(--label-l14-medium-font-weight);
+    font-size: var(--label-l14-medium-font-size);
+    line-height: var(--label-l14-medium-line-height);
+
+    word-break: break-word;
+}
+
+.payment-detail-amount {
+    color: var(--neutralnr-90) !important;
+
+    font-family: var(--label-l16-bold-font-family) !important;
+    font-weight: var(--label-l16-bold-font-weight) !important;
+    font-size: var(--label-l16-bold-font-size) !important;
+    line-height: var(--label-l16-bold-line-height) !important;
+}
+
+.text-success {
+    color: #00b724 !important;
+}
+
+
+/* =========================================================
+   RIWAYAT PEMBAYARAN
+   ========================================================= */
+
+.payment-history-card {
+    margin-bottom: 16px;
+}
+
+.payment-history {
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+
+    position: relative;
+
+    min-height: 64px;
+}
+
+.history-item:not(:last-child)::after {
+    content: "";
+
+    position: absolute;
+
+    top: 28px;
+    left: 11px;
+
+    width: 2px;
+    height: calc(100% - 4px);
+
+    background-color: var(--neutralnr-20);
+}
+
+.history-indicator {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    flex: 0 0 24px;
+
+    margin-right: 12px;
+
+    color: var(--primarypr-40);
+    background-color: #e0e2f4;
+
+    border-radius: 50%;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.history-indicator.success {
+    color: #00b724;
+    background-color: #d6ffde;
+}
+
+.history-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    padding-bottom: 18px;
+}
+
+.history-content strong {
+    color: var(--neutralnr-90);
+
+    font-family: var(--label-l14-medium-font-family);
+    font-weight: var(--label-l14-medium-font-weight);
+    font-size: var(--label-l14-medium-font-size);
+    line-height: var(--label-l14-medium-line-height);
+}
+
+.history-content span {
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+}
+
+.history-content small {
+    color: var(--neutralnr-70);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+}
+
+
+/* =========================================================
+   BUKTI PEMBAYARAN
+   ========================================================= */
+
+.payment-proof-card {
+    margin-bottom: 16px;
+}
+
+.payment-proof-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 360px;
+    padding: 24px;
+
+    background-color: #f7f7f7;
+
+    box-sizing: border-box;
+}
+
+.payment-proof-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    max-width: 500px;
+
+    padding: 12px;
+
+    background-color: var(--neutralnr-00);
+
+    border: 1px solid var(--neutralnr-20);
+    border-radius: 6px;
+
+    box-sizing: border-box;
+}
+
+.payment-proof-image img {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+    max-height: 480px;
+
+    object-fit: contain;
+
+    border-radius: 4px;
+}
+
+
+/* =========================================================
+   INFORMASI VERIFIKASI
+   ========================================================= */
+
+.verification-info-card {
+    margin-bottom: 16px;
+}
+
+.verification-info-card .detail-info-list {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+/* =========================================================
+   ALASAN PENOLAKAN
+   ========================================================= */
+
+.rejection-card {
+    margin-bottom: 16px;
+
+    border-color: #efc2b9;
+}
+
+.rejection-card .detail-card-header {
+    background-color: #fff7f5;
+}
+
+.rejection-reason {
+    padding: 20px;
+
+    color: var(--neutralnr-80);
+
+    font-family: var(--label-l14-regular-font-family);
+    font-weight: var(--label-l14-regular-font-weight);
+    font-size: var(--label-l14-regular-font-size);
+    line-height: 1.6;
+
+    background-color: #fffafa;
+}
+
+
+/* =========================================================
+   HIDDEN
+   ========================================================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .payment-detail-page {
+        max-width: calc(100% - 48px);
+    }
+
+    .payment-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .verification-info-card .detail-info-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .payment-detail-page {
+        max-width: calc(100% - 32px);
+        padding-top: 32px;
+    }
+
+    .payment-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .payment-header-status {
+        align-items: flex-start;
+    }
+
+    .detail-info-list {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .verification-info-card .detail-info-list {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-proof-container {
+        min-height: 280px;
+        padding: 16px;
+    }
+
+    .payment-proof-image {
+        max-width: 100%;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .payment-detail-page {
+        max-width: calc(100% - 24px);
+        padding-top: 24px;
+        padding-bottom: 32px;
+    }
+
+    .payment-detail-header {
+        margin-bottom: 16px;
+    }
+
+    .payment-detail-header h2 {
+        font-size: 17px;
+    }
+
+    .payment-detail-header p {
+        font-size: 13px;
+    }
+
+    .detail-card-header {
+        min-height: 52px;
+        padding: 12px 14px;
+    }
+
+    .detail-info-list {
+        padding: 16px 14px;
+    }
+
+    .payment-history {
+        padding: 16px 14px;
+    }
+
+    .payment-proof-container {
+        min-height: 220px;
+        padding: 12px;
+    }
+
+    .rejection-reason {
+        padding: 16px 14px;
+    }
+}

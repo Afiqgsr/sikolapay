@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Siswa Admin - SikolaPay</title>
+
+    <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/styleguide.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../admin/css/datasiswa-admin.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="../resource/img/logo-sikolapay.svg" alt="Logo">
+
+            <div>
+                <h2 class="logo-title">
+                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
+                </h2>
+
+                <p class="logo-subtitle">
+                    Siswa / Orang Tua
+                </p>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+            <a href="dashboard-admin.html" class="menu-item">
+                <img src="../resource/img/Home.svg" alt="">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="data-siswa-Admin.html" class="menu-item active">
+                <img src="../resource/img/Date_range_light.svg" alt="">
+                <span>Data Siswa</span>
+            </a>
+
+            <a href="data-tagihan-admin.html" class="menu-item">
+                <img src="../resource/img/Ticket_alt_light-admin.svg" alt="">
+                <span>Data Tagihan</span>
+            </a>
+
+            <a href="verifikasi-pembayaran-admin.html" class="menu-item">
+                <img src="../resource/img/Done_all_alt_round-admin.svg" alt="">
+                <span>Verifikasi Pembayaran</span>
+            </a>
+
+            <a href="laporan-pembayaran-admin.html" class="menu-item">
+                <img src="../resource/img/File_dock-admin.svg" alt="">
+                <span>Laporan Pembayaran</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-profile">
+
+            <div class="profile-info">
+
+                <div class="avatar">
+                    AF
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        Ahmad Fauzi
+                    </div>
+
+                    <div class="profile-id">
+                        123456789
+                    </div>
+                </div>
+
+            </div>
+
+            <img src="../resource/img/Sign_out_squre.svg" alt="Logout">
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Data Siswa
+                </h1>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <img src="../resource/img/Bell_pin.svg" alt="Notifikasi">
+
+                    <div class="avatar small">
+                        AF
+                    </div>
+
+                </div>
+        </header>
+        <!-- CONTENT DATA SISWA -->
+<section class="student-page">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+
+        <div class="page-header-info">
+            <h2>Data Siswa</h2>
+            <p>6 Siswa terdaftar</p>
+        </div>
+
+        <button class="btn-primary">
+            <img src="../resource/img/Add_round-admin.svg" alt="">
+            <span>Tambah Siswa</span>
+        </button>
+
+    </div>
+
+
+    <!-- SATU CARD DATA SISWA -->
+    <div class="student-card">
+
+        <!-- FILTER & SEARCH -->
+        <div class="student-toolbar">
+
+            <div class="search-box">
+                <img src="../resource/img/search-admin.svg" alt="">
+
+                <input
+                    type="text"
+                    placeholder="Cari nama atau NIS..."
+                >
+            </div>
+
+
+            <div class="toolbar-actions">
+
+                <button class="btn-filter">
+                    <span>Semua Kelas</span>
+                    <img src="../resource/img/Expand_down_light-admin.svg" alt="">
+                </button>
+
+                <button class="btn-export">
+                    <img src="../resource/img/export-data-siswa-admin.svg" alt="">
+                    <span>Export</span>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="student-table-wrapper">
+
+            <table class="student-table">
+
+                <thead>
+                    <tr>
+                        <th>NIS</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
+                        <th>Wali Murid</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            <div class="nis">
+                                <span>2026-001</span>
+                                <span>0061234567</span>
+                            </div>
+                        </td>
+
+                        <td>Ahmad Fauzi</td>
+                        <td>XII IPA 2</td>
+                        <td>Fauzi Rahman</td>
+
+                        <td>
+                            <span class="status status-active">
+                                Aktif
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">Detail</button>
+                                <button class="action-edit">Edit</button>
+                                <button class="action-delete">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            <div class="nis">
+                                <span>2026-002</span>
+                                <span>0061234568</span>
+                            </div>
+                        </td>
+
+                        <td>Sari Dewi Putri</td>
+                        <td>XII IPS 1</td>
+                        <td>Dewi Andriani</td>
+
+                        <td>
+                            <span class="status status-active">
+                                Aktif
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">Detail</button>
+                                <button class="action-edit">Edit</button>
+                                <button class="action-delete">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            <div class="nis">
+                                <span>2026-003</span>
+                                <span>0061234569</span>
+                            </div>
+                        </td>
+
+                        <td>Budi Santoso</td>
+                        <td>X IPA 3</td>
+                        <td>Santoso Adi</td>
+
+                        <td>
+                            <span class="status status-active">
+                                Aktif
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">Detail</button>
+                                <button class="action-edit">Edit</button>
+                                <button class="action-delete">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            <div class="nis">
+                                <span>2026-004</span>
+                                <span>0061234570</span>
+                            </div>
+                        </td>
+
+                        <td>Dewi Lestari</td>
+                        <td>XII IPS 2</td>
+                        <td>Lestari Budi</td>
+
+                        <td>
+                            <span class="status status-inactive">
+                                NonAktif
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">Detail</button>
+                                <button class="action-edit">Edit</button>
+                                <button class="action-delete">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            <div class="nis">
+                                <span>2026-005</span>
+                                <span>0061234571</span>
+                            </div>
+                        </td>
+
+                        <td>Rendi Pratama</td>
+                        <td>XI IPA 1</td>
+                        <td>Pratama Wahyu</td>
+
+                        <td>
+                            <span class="status status-active">
+                                Aktif
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-detail">Detail</button>
+                                <button class="action-edit">Edit</button>
+                                <button class="action-delete">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+
+            <button class="pagination-arrow">
+                <img src="../resource/img/left-admin.svg" alt="">
+            </button>
+
+            <button class="page-number active">
+                1
+            </button>
+
+            <button class="page-number">
+                2
+            </button>
+
+            <button class="page-number">
+                3
+            </button>
+
+            <button class="pagination-arrow">
+                <img src="../resource/img/right-admin.svg" alt="">
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =========================================================
+     MODAL TAMBAH SISWA
+     ========================================================= -->
+
+<div class="student-add-overlay" id="addStudentModal">
+
+    <div class="student-add-modal">
+
+        <!-- HEADER -->
+        <div class="student-add-header">
+
+            <h2>Tambah Siswa Baru</h2>
+
+            <button
+                type="button"
+                class="student-add-close"
+                id="addStudentClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="student-add-content">
+
+            <!-- BARIS 1 -->
+            <div class="student-add-row">
+
+                <!-- NIS -->
+                <div class="student-add-field">
+
+                    <label>
+                        NIS
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input">
+                        <input
+                            type="text"
+                            placeholder="2023-004"
+                        >
+                    </div>
+
+                </div>
+
+
+                <!-- NISN -->
+                <div class="student-add-field">
+
+                    <label>
+                        NISN
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input">
+                        <input
+                            type="text"
+                            placeholder="0012345xx"
+                        >
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 2 -->
+            <div class="student-add-row">
+
+                <!-- NAMA LENGKAP -->
+                <div class="student-add-field">
+
+                    <label>
+                        Nama Lengkap
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input">
+                        <input
+                            type="text"
+                            placeholder="Masukkan nama lengkap"
+                        >
+                    </div>
+
+                </div>
+
+
+                <!-- KELAS -->
+                <div class="student-add-field">
+
+                    <label>
+                        Kelas
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input student-add-select">
+
+                        <span class="placeholder">
+                            Pilih Kelas
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 3 -->
+            <div class="student-add-row">
+
+                <!-- TAHUN MASUK -->
+                <div class="student-add-field">
+
+                    <label>
+                        Tahun Masuk
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input student-add-select">
+
+                        <span>
+                            2023
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- NAMA WALI -->
+                <div class="student-add-field">
+
+                    <label>
+                        Nama Wali
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input">
+
+                        <input
+                            type="text"
+                            placeholder="Nama orang tua / wali"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 4 -->
+            <div class="student-add-row">
+
+                <!-- EMAIL -->
+                <div class="student-add-field">
+
+                    <label>
+                        Email
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input">
+
+                        <input
+                            type="email"
+                            placeholder="email@example.com"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- NO HP -->
+                <div class="student-add-field">
+
+                    <label>
+                        No. HP Wali
+                    </label>
+
+                    <div class="student-add-input">
+
+                        <input
+                            type="text"
+                            placeholder="0812-3456-78"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BARIS 5 -->
+            <div class="student-add-row">
+
+                <!-- STATUS -->
+                <div class="student-add-field">
+
+                    <label>
+                        Status
+                        <span>*</span>
+                    </label>
+
+                    <div class="student-add-input student-add-select">
+
+                        <span>
+                            Aktif
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+                <!-- KOSONG -->
+                <div class="student-add-field empty"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="student-add-footer">
+
+            <button
+                type="button"
+                class="student-add-btn student-add-btn-cancel"
+                id="addStudentCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="student-add-btn student-add-btn-save"
+                id="addStudentSave"
+            >
+                Tambah Siswa
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<!-- DETAIL DATA SISWA MODAL -->
+
+<div class="student-detail-overlay" id="studentDetailModal">
+
+    <div class="student-detail-modal">
+
+        <!-- HEADER -->
+        <div class="student-detail-header">
+
+            <h2>Detail Siswa</h2>
+
+            <button
+                type="button"
+                class="student-detail-close"
+                id="studentDetailClose"
+            >
+                <img
+                    src="../resource/img/Expand_down_light-black-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- PROFIL SISWA -->
+        <div class="student-detail-profile">
+
+            <div class="student-avatar">
+                AF
+            </div>
+
+            <div class="student-profile-name">
+                Ahmad Fauzi
+            </div>
+
+            <div class="student-profile-class">
+                XII IPA 2
+            </div>
+
+        </div>
+
+
+        <!-- DATA SISWA -->
+        <div class="student-detail-data">
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    NIS
+                </span>
+
+                <span class="student-detail-value">
+                    2023-004
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    NISN
+                </span>
+
+                <span class="student-detail-value">
+                    0012345678
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Nama Lengkap
+                </span>
+
+                <span class="student-detail-value">
+                    Ahmad Fauzi
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Status
+                </span>
+
+                <span class="student-detail-value">
+                    Aktif
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Kelas
+                </span>
+
+                <span class="student-detail-value">
+                    XII IPA 2
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Tahun Masuk
+                </span>
+
+                <span class="student-detail-value">
+                    2023
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Nama Wali
+                </span>
+
+                <span class="student-detail-value">
+                    Fauzi Rahman
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Email
+                </span>
+
+                <span class="student-detail-value">
+                    ahmad.fauzi@siswa.sch.id
+                </span>
+            </div>
+
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    No. HP Wali
+                </span>
+
+                <span class="student-detail-value">
+                    0812-3456-7891
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="student-detail-footer">
+
+            <button
+                type="button"
+                class="student-detail-btn student-detail-btn-close"
+                id="studentDetailBtnClose"
+            >
+                Tutup
+            </button>
+
+            <button
+                type="button"
+                class="student-detail-btn student-detail-btn-edit"
+                id="studentDetailBtnEdit"
+            >
+                Edit Data
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     EDIT DATA SISWA MODAL
+     ========================================================= -->
+
+<div class="student-edit-overlay" id="studentEditModal">
+
+    <div class="student-edit-modal">
+
+        <!-- HEADER -->
+        <div class="student-edit-header">
+
+            <h2>Edit Siswa Baru</h2>
+
+            <button
+                type="button"
+                class="student-edit-close"
+                id="studentEditClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="student-edit-content">
+
+            <!-- =================================================
+                 BARIS 1
+                 ================================================= -->
+
+            <div class="student-edit-row">
+
+                <!-- NIS -->
+                <div class="student-edit-field">
+
+                    <label>
+                        NIS
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        value="2023-004"
+                    >
+
+                </div>
+
+
+                <!-- NISN -->
+                <div class="student-edit-field">
+
+                    <label>
+                        NISN
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        value="0012345678"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NAMA LENGKAP
+                 ================================================= -->
+
+            <div class="student-edit-field full">
+
+                <label>
+                    Nama Lengkap
+                    <span>*</span>
+                </label>
+
+                <input
+                    type="text"
+                    value="Ahmad Fauzi"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 BARIS 2
+                 ================================================= -->
+
+            <div class="student-edit-row">
+
+                <!-- KELAS -->
+                <div class="student-edit-field">
+
+                    <label>
+                        Kelas
+                        <span>*</span>
+                    </label>
+
+                    <button
+                        type="button"
+                        class="student-edit-select"
+                    >
+
+                        <span>
+                            XII IPA 2
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </button>
+
+                </div>
+
+
+                <!-- TAHUN MASUK -->
+                <div class="student-edit-field">
+
+                    <label>
+                        Tahun Masuk
+                        <span>*</span>
+                    </label>
+
+                    <button
+                        type="button"
+                        class="student-edit-select"
+                    >
+
+                        <span>
+                            2023
+                        </span>
+
+                        <img
+                            src="../resource/img/Expand_down_light-black-admin.svg"
+                            alt=""
+                        >
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NAMA WALI
+                 ================================================= -->
+
+            <div class="student-edit-field full">
+
+                <label>
+                    Nama Wali
+                    <span>*</span>
+                </label>
+
+                <input
+                    type="text"
+                    value="Fauzi Rahman"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 BARIS 3
+                 ================================================= -->
+
+            <div class="student-edit-row">
+
+                <!-- EMAIL -->
+                <div class="student-edit-field">
+
+                    <label>
+                        Email
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="email"
+                        value="ahmad.fauzi@siswa.sch.id"
+                    >
+
+                </div>
+
+
+                <!-- NO HP -->
+                <div class="student-edit-field">
+
+                    <label>
+                        No. HP Wali
+                    </label>
+
+                    <input
+                        type="text"
+                        value="0812-3456-7891"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STATUS
+                 ================================================= -->
+
+            <div class="student-edit-field full">
+
+                <label>
+                    Status
+                    <span>*</span>
+                </label>
+
+                <button
+                    type="button"
+                    class="student-edit-select"
+                >
+
+                    <span>
+                        Aktif
+                    </span>
+
+                    <img
+                        src="../resource/img/Expand_down_light-black-admin.svg"
+                        alt=""
+                    >
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="student-edit-footer">
+
+            <button
+                type="button"
+                class="student-edit-btn student-edit-btn-cancel"
+                id="studentEditCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="student-edit-btn student-edit-btn-save"
+                id="studentEditSave"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================================
+     MODAL HAPUS DATA SISWA
+     ========================================================= -->
+
+<div class="student-delete-overlay" id="studentDeleteModal">
+
+    <div class="student-delete-modal">
+
+        <!-- HEADER -->
+        <div class="student-delete-header">
+
+            <h2>Hapus Siswa</h2>
+
+            <button
+                type="button"
+                class="student-delete-close"
+                id="studentDeleteClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="student-delete-content">
+
+            <div class="student-delete-warning">
+
+                <img
+                    src="../resource/img/caution-admin.svg"
+                    alt=""
+                >
+
+                <p>
+                    Tindakan Ini tidak dapat dibatalkan!
+                </p>
+
+            </div>
+
+
+            <p class="student-delete-message">
+
+                <span>
+                    Apakah Anda yakin ingin menghapus data siswa
+                </span>
+
+                <strong>
+                    Ahmad Fauzi (NIS: 2024001)
+                </strong>
+
+                <span>
+                    ? Semua data tagihan terkait juga akan dihapus.
+                </span>
+
+            </p>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="student-delete-footer">
+
+            <button
+                type="button"
+                class="student-delete-btn student-delete-btn-cancel"
+                id="studentDeleteCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="student-delete-btn student-delete-btn-confirm"
+                id="studentDeleteConfirm"
+            >
+                Hapus Siswa
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    </main>
+</div>
+<script src="../js/script.js"></script>
+<script src="js/data-siswa-admin.js"></script>
+</body>
+</html>

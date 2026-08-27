@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Pembayaran Admin - SikolaPay</title>
+
+    <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/styleguide.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/verifikasi-admin.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="../resource/img/logo-sikolapay.svg" alt="Logo">
+
+            <div>
+                <h2 class="logo-title">
+                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
+                </h2>
+
+                <p class="logo-subtitle">
+                    Admin
+                </p>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+            <a href="dashboard-admin.html" class="menu-item">
+                <img src="../resource/img/Home.svg" alt="">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="data-siswa-admin.html" class="menu-item">
+                <img src="../resource/img/Date_range_light.svg" alt="">
+                <span>Data Siswa</span>
+            </a>
+
+            <a href="data-tagihan-admin.html" class="menu-item">
+                <img src="../resource/img/Ticket_alt_light-admin.svg" alt="">
+                <span>Data Tagihan</span>
+            </a>
+
+            <a href="#" class="menu-item active">
+                <img src="../resource/img/Done_all_alt_round-admin.svg" alt="">
+                <span>Verifikasi Pembayaran</span>
+            </a>
+
+            <a href="laporan-pembayaran-admin.html" class="menu-item">
+                <img src="../resource/img/File_dock-admin.svg" alt="">
+                <span>Laporan Pembayaran</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-profile">
+
+            <div class="profile-info">
+
+                <div class="avatar">
+                    SR
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        Ahmad Fauzi
+                    </div>
+
+                    <div class="profile-id">
+                        123456789
+                    </div>
+                </div>
+
+            </div>
+
+            <img src="../resource/img/Sign_out_squre.svg" alt="Logout">
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Verifikasi Pembayaran
+                </h1>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <img src="../resource/img/Bell_pin.svg" alt="Notifikasi">
+
+                    <div class="avatar small">
+                        AF
+                    </div>
+
+                </div>
+        </header>
+        <!-- =========================================================
+     CONTENT VERIFIKASI PEMBAYARAN
+     ========================================================= -->
+
+<section class="verification-page">
+
+    <!-- PAGE HEADER -->
+    <div class="verification-header">
+
+        <div class="verification-header-info">
+
+            <h2>Verifikasi Pembayaran</h2>
+
+            <p>
+                Tinjau dan verifikasi bukti pembayaran dari siswa
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- INFO -->
+    <div class="verification-info">
+
+        <img
+            src="../resource/img/info_light-admin.svg"
+            alt=""
+        >
+
+        <span>
+            Terdapat <strong>3</strong> pembayaran yang menunggu
+            verifikasi Anda.
+        </span>
+
+    </div>
+
+
+    <!-- CARD TABLE -->
+    <div class="verification-card">
+
+        <div class="verification-table-wrapper">
+
+            <table class="verification-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="col-no">
+                            No
+                        </th>
+
+                        <th class="col-name">
+                            Nama Siswa
+                        </th>
+
+                        <th class="col-class">
+                            Kelas
+                        </th>
+
+                        <th class="col-bill">
+                            Jenis Tagihan
+                        </th>
+
+                        <th class="col-nominal">
+                            Nominal
+                        </th>
+
+                        <th class="col-date">
+                            Tanggal Bayar
+                        </th>
+
+                        <th class="col-proof">
+                            Bukti
+                        </th>
+
+                        <th class="col-action">
+                            Aksi
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <!-- DATA 1 -->
+                    <tr>
+
+                        <td class="col-no">
+                            1
+                        </td>
+
+                        <td class="col-name">
+                            Ahmad Fauzi
+                        </td>
+
+                        <td class="col-class">
+                            XI IPA 2
+                        </td>
+
+                        <td class="col-bill">
+                            SPP Juli 2026
+                        </td>
+
+                        <td class="col-nominal">
+                            Rp 350.000
+                        </td>
+
+                        <td class="col-date">
+                            15 Jul 2026
+                        </td>
+
+                        <td class="col-proof">
+
+                            <button class="btn-view-proof">
+
+                                <img
+                                    src="../resource/img/eye-admin.svg"
+                                    alt=""
+                                >
+
+                                <span>
+                                    Lihat Bukti
+                                </span>
+
+                            </button>
+
+                        </td>
+
+                        <td class="col-action">
+
+                            <div class="verification-actions">
+
+                                <button class="btn-approve">
+                                    Terima
+                                </button>
+
+                                <button class="btn-reject">
+                                    Tolak
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 2 -->
+                    <tr>
+
+                        <td class="col-no">
+                            2
+                        </td>
+
+                        <td class="col-name">
+                            Siti Aisyah
+                        </td>
+
+                        <td class="col-class">
+                            XII IPA 3
+                        </td>
+
+                        <td class="col-bill">
+                            Uang Kegiatan
+                        </td>
+
+                        <td class="col-nominal">
+                            Rp 500.000
+                        </td>
+
+                        <td class="col-date">
+                            14 Jul 2026
+                        </td>
+
+                        <td class="col-proof">
+
+                            <button class="btn-view-proof">
+
+                                <img
+                                    src="../resource/img/eye-admin.svg"
+                                    alt=""
+                                >
+
+                                <span>
+                                    Lihat Bukti
+                                </span>
+
+                            </button>
+
+                        </td>
+
+                        <td class="col-action">
+
+                            <div class="verification-actions">
+
+                                <button class="btn-approve">
+                                    Terima
+                                </button>
+
+                                <button class="btn-reject">
+                                    Tolak
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 3 -->
+                    <tr>
+
+                        <td class="col-no">
+                            3
+                        </td>
+
+                        <td class="col-name">
+                            Fajar Nugroho
+                        </td>
+
+                        <td class="col-class">
+                            X IPS 1
+                        </td>
+
+                        <td class="col-bill">
+                            SPP Juli 2026
+                        </td>
+
+                        <td class="col-nominal">
+                            Rp 350.000
+                        </td>
+
+                        <td class="col-date">
+                            15 Jul 2026
+                        </td>
+
+                        <td class="col-proof">
+
+                            <button class="btn-view-proof">
+
+                                <img
+                                    src="../resource/img/eye-admin.svg"
+                                    alt=""
+                                >
+
+                                <span>
+                                    Lihat Bukti
+                                </span>
+
+                            </button>
+
+                        </td>
+
+                        <td class="col-action">
+
+                            <div class="verification-actions">
+
+                                <button class="btn-approve">
+                                    Terima
+                                </button>
+
+                                <button class="btn-reject">
+                                    Tolak
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     MODAL BUKTI PEMBAYARAN
+     ========================================================= -->
+
+<div class="payment-proof-overlay" id="paymentProofModal">
+
+    <div class="payment-proof-modal">
+
+        <!-- HEADER -->
+        <div class="payment-proof-header">
+
+            <h2>
+                Bukti Pembayaran — Ahmad Fauzi
+            </h2>
+
+            <button
+                type="button"
+                class="payment-proof-close"
+                id="paymentProofClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="payment-proof-content">
+
+            <!-- INFORMASI PEMBAYARAN -->
+            <div class="payment-proof-info">
+
+                <!-- JENIS TAGIHAN -->
+                <div class="payment-proof-item">
+
+                    <span class="payment-proof-label">
+                        Jenis Tagihan
+                    </span>
+
+                    <span class="payment-proof-value">
+                        SPP JULI 2026
+                    </span>
+
+                </div>
+
+
+                <!-- NOMINAL -->
+                <div class="payment-proof-item">
+
+                    <span class="payment-proof-label">
+                        Nominal
+                    </span>
+
+                    <span class="payment-proof-value">
+                        Rp 350.000
+                    </span>
+
+                </div>
+
+
+                <!-- TANGGAL BAYAR -->
+                <div class="payment-proof-item">
+
+                    <span class="payment-proof-label">
+                        Tanggal Bayar
+                    </span>
+
+                    <span class="payment-proof-value">
+                        15 Juli 2026
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOTO BUKTI -->
+            <div class="payment-proof-image-section">
+
+                <div class="payment-proof-image-title">
+                    Foto Bukti Transfer
+                </div>
+
+                <div class="payment-proof-image-wrapper">
+
+                    <img
+                        src="../resource/img/rectangle-4232.png"
+                        alt="Bukti Pembayaran"
+                        class="payment-proof-image"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="payment-proof-footer">
+
+            <button
+                type="button"
+                class="payment-proof-btn payment-proof-btn-close"
+                id="paymentProofBtnClose"
+            >
+                Tutup
+            </button>
+
+            <button
+                type="button"
+                class="payment-proof-btn payment-proof-btn-reject"
+                id="paymentProofReject"
+            >
+                Tolak
+            </button>
+
+            <button
+                type="button"
+                class="payment-proof-btn payment-proof-btn-approve"
+                id="paymentProofApprove"
+            >
+                Terima
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================================
+     MODAL KONFIRMASI TERIMA PEMBAYARAN
+     ========================================================= -->
+
+<div class="payment-approve-overlay" id="paymentApproveModal">
+
+    <div class="payment-approve-modal">
+
+        <!-- HEADER -->
+        <div class="payment-approve-header">
+
+            <h2>
+                Terima Pembayaran
+            </h2>
+
+            <button
+                type="button"
+                class="payment-approve-close"
+                id="paymentApproveClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="payment-approve-content">
+
+            <!-- PERINGATAN -->
+            <div class="payment-approve-warning">
+
+                <img
+                    src="../resource/img/caution-green-admin.svg"
+                    alt=""
+                >
+
+                <p>
+                    Status tagihan akan berubah menjadi Lunas.
+                </p>
+
+            </div>
+
+
+            <!-- KONFIRMASI -->
+            <div class="payment-approve-question">
+
+                <p>
+                    <span>
+                        Hapus tagihan SPP Bulanan untuk siswa
+                    </span>
+
+                    <strong>
+                        Ahmad Fauzi
+                    </strong>
+
+                    <span>
+                        ?
+                    </span>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="payment-approve-footer">
+
+            <button
+                type="button"
+                class="payment-approve-btn payment-approve-btn-cancel"
+                id="paymentApproveCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="payment-approve-btn payment-approve-btn-confirm"
+                id="paymentApproveConfirm"
+            >
+                Konfirmasi Terima
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================================
+     MODAL KONFIRMASI TOLAK PEMBAYARAN
+     ========================================================= -->
+
+<div class="payment-reject-overlay" id="paymentRejectModal">
+
+    <div class="payment-reject-modal">
+
+        <!-- HEADER -->
+        <div class="payment-reject-header">
+
+            <h2>
+                Tolak Pembayaran
+            </h2>
+
+            <button
+                type="button"
+                class="payment-reject-close"
+                id="paymentRejectClose"
+            >
+                <img
+                    src="../resource/img/close-admin.svg"
+                    alt="Tutup"
+                >
+            </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="payment-reject-content">
+
+            <!-- PERINGATAN -->
+            <div class="payment-reject-warning">
+
+                <img
+                    src="../resource/img/caution-admin.svg"
+                    alt=""
+                >
+
+                <p>
+                    Siswa akan diminta mengulang pembayaran.
+                </p>
+
+            </div>
+
+
+            <!-- KONFIRMASI -->
+            <div class="payment-reject-question">
+
+                <p>
+                    <span>
+                        Tolak pembayaran
+                    </span>
+
+                    <strong>
+                        SPP Juli 2026
+                    </strong>
+
+                    <span>
+                        dari
+                    </span>
+
+                    <strong>
+                        Ahmad Fauzi
+                    </strong>
+
+                    <span>
+                        ?
+                    </span>
+                </p>
+
+            </div>
+
+
+            <!-- ALASAN PENOLAKAN -->
+            <div class="payment-reject-input-wrapper">
+
+                <label
+                    for="paymentRejectReason"
+                    class="payment-reject-label"
+                >
+                    Alasan Penolakan
+                </label>
+
+                <textarea
+                    id="paymentRejectReason"
+                    class="payment-reject-input"
+                    placeholder="Masukkan alasan penolakan..."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="payment-reject-footer">
+
+            <button
+                type="button"
+                class="payment-reject-btn payment-reject-btn-cancel"
+                id="paymentRejectCancel"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="payment-reject-btn payment-reject-btn-confirm"
+                id="paymentRejectConfirm"
+            >
+                Tolak Pembayaran
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    </main>
+</div>
+<script src="../js/script.js"></script>
+<script src="js/verifikasi-pembayaran-admin.js"></script>
+</body>
+</html>

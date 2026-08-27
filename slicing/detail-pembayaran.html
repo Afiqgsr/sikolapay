@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Siswa - SikolaPay</title>
+
+    <link rel="stylesheet" href="css/globals.css">
+    <link rel="stylesheet" href="css/styleguide.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="resource/img/logo-sikolapay.svg" alt="Logo">
+
+            <div>
+                <h2 class="logo-title">
+                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
+                </h2>
+
+                <p class="logo-subtitle">
+                    Siswa / Orang Tua
+                </p>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="dahsboard-siswa.html" class="menu-item">
+                <img src="resource/img/Home.svg" alt="">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tagihan-saya.html" class="menu-item">
+                <img src="resource/img/Date_range_light.svg" alt="">
+                <span>Tagihan Saya</span>
+            </a>
+
+            <a href="riwayat-pembayaran.html" class="menu-item">
+                <img src="resource/img/Time_light.svg" alt="">
+                <span>Riwayat Pembayaran</span>
+            </a>
+
+            <a href="profile-siswa.html" class="menu-item">
+                <img src="resource/img/User_alt_light.svg" alt="">
+                <span>Profil</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-profile">
+
+            <div class="profile-info">
+
+                <div class="avatar">
+                    AF
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        Ahmad Fauzi
+                    </div>
+
+                    <div class="profile-id">
+                        123456789
+                    </div>
+                </div>
+
+            </div>
+
+            <img src="resource/img/Sign_out_squre.svg" alt="Logout">
+
+        </div>
+
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Dashboard
+                </h1>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <img src="resource/img/Bell_pin.svg" alt="Notifikasi">
+
+                    <div class="avatar small">
+                        AF
+                    </div>
+
+                </div>
+        </header>
+<!-- DETAIL TAGIHAN CONTENT -->
+<section class="bill-detail-page">
+
+    <!-- BACK -->
+    <button
+        type="button"
+        class="bill-back"
+        onclick="history.back()"
+    >
+        <img src="resource/img/back.svg" alt="">
+        <span>Kembali ke Daftar Tagihan</span>
+    </button>
+
+
+    <!-- PAGE HEADER -->
+    <div class="bill-title-row">
+
+        <div class="bill-title">
+            <h2>Detail Tagihan</h2>
+            <p>SPP Bulan Juli 2026</p>
+        </div>
+
+        <span class="bill-status">
+            Belum Bayar
+        </span>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="bill-content-grid">
+
+
+        <!-- LEFT COLUMN -->
+        <div class="bill-left-column">
+
+
+            <!--INFORMASI TAGIHAN -->
+            <div class="bill-card bill-information-card">
+
+                <h3>Informasi Tagihan</h3>
+
+
+                <!-- DATA TAGIHAN -->
+                <div class="bill-info-grid">
+
+                    <div class="bill-info-item">
+                        <span>No. Tagihan</span>
+                        <strong>#TAG-2024-0071</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Jenis Tagihan</span>
+                        <strong>SPP Bulanan</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Bulan</span>
+                        <strong>Juli 2026</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Tahun Ajaran</span>
+                        <strong>2026/2027</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Kelas</span>
+                        <strong>XII IPA 2</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Jatuh Tempo</span>
+                        <strong>31 Juli 2026</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- PEMISAH -->
+                <div class="bill-divider"></div>
+
+
+                <!-- DETAIL NOMINAL -->
+                <div class="bill-price-list">
+
+                    <div class="bill-price-row">
+                        <span>SPP Bulanan</span>
+                        <strong>Rp 350.000</strong>
+                    </div>
+
+                    <div class="bill-price-row">
+                        <span>Biaya Admin</span>
+                        <strong>Rp 0</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- PEMISAH -->
+                <div class="bill-divider"></div>
+
+
+                <!-- TOTAL -->
+                <div class="bill-total-row">
+
+                    <span>Total Tagihan</span>
+
+                    <strong>
+                        Rp 350.000
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="bill-card student-card">
+
+                <h3>Informasi Siswa</h3>
+
+
+                <div class="student-info-grid">
+
+                    <div class="bill-info-item">
+                        <span>Nama Siswa</span>
+                        <strong>Ahmad Fauzi</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>NISN</span>
+                        <strong>123456789</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>NIS</span>
+                        <strong>2026-123</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Kelas</span>
+                        <strong>XII IPA 2</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>Nama Wali</span>
+                        <strong>Fauzi Rahman</strong>
+                    </div>
+
+                    <div class="bill-info-item">
+                        <span>No. HP Wali</span>
+                        <strong>081234567891</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="bill-right-column">
+
+            <div class="bill-card summary-card">
+
+                <h3>Ringkasan</h3>
+
+
+                <div class="summary-amount">
+
+                    <strong>
+                        Rp 350.000
+                    </strong>
+
+                    <span>
+                        Total yang harus dibayar
+                    </span>
+
+                </div>
+
+
+                <div class="summary-due">
+
+                    <img
+                        src="resource/img/info-orange.svg"
+                        alt=""
+                    >
+
+                    <span>
+                        Jatuh tempo: 31 Juli 2026
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="pay-button"
+                >
+                    Bayar Sekarang
+                </button>
+
+            </div>
+
+
+            <!-- =================================
+                 METODE PEMBAYARAN
+                 ================================= -->
+            <div class="bill-card payment-method-card">
+
+                <h3>Metode Pembayaran</h3>
+
+
+                <div class="payment-method-list">
+
+                    <div class="payment-method">
+
+                        <img
+                            src="resource/img/green-checklist.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            Transfer Bank
+                        </span>
+
+                    </div>
+
+
+                    <div class="payment-method">
+
+                        <img
+                            src="resource/img/green-checklist.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            Virtual Account
+                        </span>
+
+                    </div>
+
+
+                    <div class="payment-method">
+
+                        <img
+                            src="resource/img/green-checklist.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            QRIS
+                        </span>
+
+                    </div>
+
+
+                    <div class="payment-method">
+
+                        <img
+                            src="resource/img/green-checklist.svg"
+                            alt=""
+                        >
+
+                        <span>
+                            E-Wallet
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    </main>
+    
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>

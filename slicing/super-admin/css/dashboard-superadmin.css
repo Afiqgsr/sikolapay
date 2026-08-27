@@ -1,0 +1,600 @@
+/* =========================================================
+   SUPER ADMIN DASHBOARD
+   ========================================================= */
+
+.superadmin-dashboard {
+    width: 100%;
+    max-width: 1032px;
+
+    margin: 0 auto;
+
+    padding-top: 117px;
+    padding-bottom: 40px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.superadmin-page-header {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.superadmin-page-header h2 {
+    margin: 0 0 4px 0;
+
+    font-family: var(--heading-h5-semibold-font-family);
+    font-weight: var(--heading-h5-semibold-font-weight);
+    font-size: var(--heading-h5-semibold-font-size);
+    line-height: var(--heading-h5-semibold-line-height);
+    letter-spacing: var(--heading-h5-semibold-letter-spacing);
+    font-style: var(--heading-h5-semibold-font-style);
+
+    color: var(--neutralnr-90);
+}
+
+.superadmin-page-header p {
+    margin: 0;
+
+    font-family: var(--label-l16-regular-font-family);
+    font-weight: var(--label-l16-regular-font-weight);
+    font-size: var(--label-l16-regular-font-size);
+    line-height: var(--label-l16-regular-line-height);
+    letter-spacing: var(--label-l16-regular-letter-spacing);
+    font-style: var(--label-l16-regular-font-style);
+
+    color: var(--neutralnr-80);
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.superadmin-stat-grid {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 32px;
+}
+
+
+/* =========================================================
+   STAT CARD
+   ========================================================= */
+
+.superadmin-stat-card {
+    min-width: 0;
+    min-height: 84px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 15px 16px;
+
+    box-sizing: border-box;
+
+    background-color: var(--neutralnr-00);
+
+    border: 1px solid var(--primarypr-40);
+    border-radius: 8px;
+}
+
+
+/* =========================================================
+   STAT ICON
+   ========================================================= */
+
+.superadmin-stat-icon {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background-color: #f3f4fb;
+}
+
+.superadmin-stat-icon img {
+    width: 32px;
+    height: 32px;
+
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   STAT CONTENT
+   ========================================================= */
+
+.superadmin-stat-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.superadmin-stat-content span {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+    letter-spacing: var(--label-l12-regular-letter-spacing);
+    font-style: var(--label-l12-regular-font-style);
+
+    color: var(--neutralnr-80);
+}
+
+.superadmin-stat-content strong {
+    display: block;
+
+    font-family: var(--label-l16-bold-font-family);
+    font-weight: var(--label-l16-bold-font-weight);
+    font-size: var(--label-l16-bold-font-size);
+    line-height: var(--label-l16-bold-line-height);
+    letter-spacing: var(--label-l16-bold-letter-spacing);
+    font-style: var(--label-l16-bold-font-style);
+
+    color: var(--neutralnr-90);
+}
+
+
+/* =========================================================
+   GENERAL CARD
+   ========================================================= */
+
+.superadmin-card {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    background-color: var(--neutralnr-00);
+
+    border: 1px solid var(--neutralnr-30);
+    border-radius: 8px;
+}
+
+
+/* =========================================================
+   ADMIN LIST CARD
+   ========================================================= */
+
+.admin-list-card {
+    padding: 16px;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.superadmin-card-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 16px;
+}
+
+.superadmin-card-header h3 {
+    margin: 0 0 4px 0;
+
+    font-family: var(--label-l16-medium-font-family);
+    font-weight: var(--label-l16-medium-font-weight);
+    font-size: var(--label-l16-medium-font-size);
+    line-height: var(--label-l16-medium-line-height);
+    letter-spacing: var(--label-l16-medium-letter-spacing);
+    font-style: var(--label-l16-medium-font-style);
+
+    color: var(--neutralnr-90);
+}
+
+.superadmin-card-header p {
+    margin: 0;
+
+    font-family: var(--label-l12-regular-font-family);
+    font-weight: var(--label-l12-regular-font-weight);
+    font-size: var(--label-l12-regular-font-size);
+    line-height: var(--label-l12-regular-line-height);
+    letter-spacing: var(--label-l12-regular-letter-spacing);
+    font-style: var(--label-l12-regular-font-style);
+
+    color: var(--neutralnr-80);
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.superadmin-button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 120px;
+    height: 32px;
+
+    padding: 0 16px;
+
+    box-sizing: border-box;
+
+    border-radius: 4px;
+
+    background-color: var(--primarypr-40);
+
+    color: var(--neutralnr-00);
+
+    text-decoration: none;
+
+    font-family: var(--label-l12-medium-font-family);
+    font-weight: var(--label-l12-medium-font-weight);
+    font-size: var(--label-l12-medium-font-size);
+    line-height: var(--label-l12-medium-line-height);
+    letter-spacing: var(--label-l12-medium-letter-spacing);
+    font-style: var(--label-l12-medium-font-style);
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.superadmin-button-primary:hover {
+    background-color: var(--primarypr-80);
+}
+
+.superadmin-button-primary:active {
+    transform: translateY(1px);
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.superadmin-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid var(--neutralnr-10);
+    border-radius: 4px;
+}
+
+
+/* =========================================================
+   ADMIN TABLE
+   ========================================================= */
+
+.superadmin-admin-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    font-family: var(--label-l16-regular-font-family);
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.superadmin-admin-table thead {
+    background-color: #e0e2f4;
+}
+
+.superadmin-admin-table th {
+    height: 40px;
+
+    padding: 8px 12px;
+
+    box-sizing: border-box;
+
+    text-align: left;
+    vertical-align: middle;
+
+    border-bottom: 1px solid var(--neutralnr-10);
+
+    font-family: var(--label-l16-medium-font-family);
+    font-weight: var(--label-l16-medium-font-weight);
+    font-size: var(--label-l16-medium-font-size);
+    line-height: var(--label-l16-medium-line-height);
+    letter-spacing: var(--label-l16-medium-letter-spacing);
+    font-style: var(--label-l16-medium-font-style);
+
+    color: #000000;
+}
+
+
+/* =========================================================
+   COLUMN WIDTH
+   ========================================================= */
+
+.superadmin-admin-table th:nth-child(1),
+.superadmin-admin-table td:nth-child(1) {
+    width: 22%;
+}
+
+.superadmin-admin-table th:nth-child(2),
+.superadmin-admin-table td:nth-child(2) {
+    width: 29%;
+}
+
+.superadmin-admin-table th:nth-child(3),
+.superadmin-admin-table td:nth-child(3) {
+    width: 13%;
+}
+
+.superadmin-admin-table th:nth-child(4),
+.superadmin-admin-table td:nth-child(4) {
+    width: 16%;
+}
+
+.superadmin-admin-table th:nth-child(5),
+.superadmin-admin-table td:nth-child(5) {
+    width: 20%;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.superadmin-admin-table tbody tr {
+    background-color: var(--neutralnr-00);
+
+    border-bottom: 1px solid var(--neutralnr-10);
+
+    transition: background-color 0.15s ease;
+}
+
+.superadmin-admin-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.superadmin-admin-table tbody tr:hover {
+    background-color: #fafaff;
+}
+
+.superadmin-admin-table td {
+    height: 56px;
+
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    vertical-align: middle;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-family: var(--label-l16-regular-font-family);
+    font-weight: var(--label-l16-regular-font-weight);
+    font-size: var(--label-l16-regular-font-size);
+    line-height: var(--label-l16-regular-line-height);
+    letter-spacing: var(--label-l16-regular-letter-spacing);
+    font-style: var(--label-l16-regular-font-style);
+
+    color: var(--neutralnr-80);
+}
+
+
+/* =========================================================
+   ADMIN NAME
+   ========================================================= */
+
+.superadmin-admin-table td strong {
+    font-family: var(--label-l16-medium-font-family);
+    font-weight: var(--label-l16-medium-font-weight);
+    font-size: var(--label-l16-medium-font-size);
+    line-height: var(--label-l16-medium-line-height);
+    letter-spacing: var(--label-l16-medium-letter-spacing);
+    font-style: var(--label-l16-medium-font-style);
+
+    color: var(--neutralnr-90);
+}
+
+
+/* =========================================================
+   ROLE
+   ========================================================= */
+
+.admin-role {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 50px;
+
+    padding: 4px 8px;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    background-color: #e0e2f4;
+
+    font-family: var(--label-l16-medium-font-family);
+    font-weight: var(--label-l16-medium-font-weight);
+    font-size: var(--label-l16-medium-font-size);
+    line-height: var(--label-l16-medium-line-height);
+    letter-spacing: var(--label-l16-medium-letter-spacing);
+    font-style: var(--label-l16-medium-font-style);
+
+    color: var(--primarypr-40);
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.admin-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 72px;
+
+    padding: 4px 8px;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    font-family: var(--label-l16-medium-font-family);
+    font-weight: var(--label-l16-medium-font-weight);
+    font-size: var(--label-l16-medium-font-size);
+    line-height: var(--label-l16-medium-line-height);
+    letter-spacing: var(--label-l16-medium-letter-spacing);
+    font-style: var(--label-l16-medium-font-style);
+}
+
+
+/* AKTIF */
+
+.admin-status.active {
+    background-color: #d6ffde;
+    color: #00b724;
+}
+
+
+/* NON AKTIF */
+
+.admin-status.inactive {
+    background-color: var(--neutralnr-10);
+    color: var(--neutralnr-70);
+}
+
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 1201px) {
+
+    .superadmin-dashboard {
+        max-width: 1032px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .superadmin-dashboard {
+        width: calc(100% - 32px);
+
+        max-width: none;
+
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    .superadmin-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .superadmin-dashboard {
+        width: calc(100% - 32px);
+
+        margin-left: 16px;
+        margin-right: 16px;
+
+        padding-top: 96px;
+    }
+
+}
+
+
+@media (max-width: 640px) {
+
+    .superadmin-dashboard {
+        width: calc(100% - 24px);
+
+        margin-left: 12px;
+        margin-right: 12px;
+
+        padding-top: 88px;
+    }
+
+
+    .superadmin-stat-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .superadmin-stat-card {
+        min-height: 80px;
+    }
+
+
+    .superadmin-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    .superadmin-button-primary {
+        width: 100%;
+    }
+
+
+    .superadmin-admin-table {
+        min-width: 760px;
+    }
+
+
+    .superadmin-table-wrapper {
+        overflow-x: auto;
+    }
+
+}

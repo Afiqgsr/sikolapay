@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SikolaPay - Login</title>
+
+    <link rel="stylesheet" href="css/styleguide.css">
+    <link rel="stylesheet" href="css/login.css">
+    <script src="js/login.js" defer></script>
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <section class="login-card">
+
+            <div class="login-brand">
+                <img
+                    src="resource/img/logo-sikolapay.svg"
+                    alt="Logo SikolaPay"
+                    class="login-brand__logo"
+                >
+
+                <h1 class="login-brand__title">
+                    <span class="text-secondary">Si</span>
+                    <span class="text-tertiary">kola</span>
+                    <span class="text-optional">Pay</span>
+                </h1>
+
+                <p class="login-brand__subtitle">
+                    Sistem Pembayaran Sekolah
+                </p>
+            </div>
+
+            <div class="login-header">
+                <h2>Hai, Selamat Datang!</h2>
+                <p>Masukkan Email / NIS untuk melanjutkan</p>
+            </div>
+
+            <form class="login-form">
+
+                <div class="form-group">
+                    <label for="email">
+                        Email / NIS
+                    </label>
+
+                    <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        placeholder="Masukkan Email / NIS"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="password-field">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Masukkan Password"
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="togglePassword"
+                        >
+                            <img
+                                src="resource/img/View_hide_light.svg"
+                                alt="Toggle Password"
+                                id="passwordIcon"
+                            >
+                        </button>
+
+                    </div>
+                    
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-login"
+                >
+                    Login
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
