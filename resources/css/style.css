@@ -1,0 +1,1014 @@
+/* =========================================================
+   DASHBOARD SISWA
+   ========================================================= */
+
+/* ========================= LAYOUT ========================= */
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+
+/* ========================= SIDEBAR ========================= */
+
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+
+    min-height: 100vh;
+
+    background: #4040A8;
+    color: #FFFFFF;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-section {
+    padding: 24px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.logo-title {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.logo-red {
+    color: #FF7B48;
+}
+
+.logo-orange {
+    color: #FFB067;
+}
+
+.logo-yellow {
+    color: #FFE48B;
+}
+
+.logo-subtitle {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+
+/* ========================= SIDEBAR MENU ========================= */
+
+.sidebar-menu {
+    margin-top: 24px;
+    padding: 0 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 12px 16px;
+
+    border-radius: 8px;
+
+    color: #FFFFFF;
+    text-decoration: none;
+
+    transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item.active {
+    background: #F8843F;
+}
+
+
+/* ========================= SIDEBAR PROFILE ========================= */
+
+.sidebar-profile {
+    margin-top: auto;
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+.sidebar-profile img {
+    width: 22px;
+    height: 22px;
+
+    cursor: pointer;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.profile-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-id {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+
+    background: #F4F5F7;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+    width: 100%;
+    height: 80px;
+    min-height: 80px;
+
+    padding: 0 32px;
+
+    background: #F8843F;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.page-title {
+    color: #FFFFFF;
+
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.menu-toggle {
+    display: none;
+
+    padding: 0;
+
+    background: none;
+    border: none;
+
+    color: #FFFFFF;
+
+    font-size: 24px;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+
+.avatar {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #EDEBFF;
+    color: #4040A8;
+
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar.small {
+    width: 36px;
+    height: 36px;
+}
+
+
+/* =========================================================
+   DASHBOARD CONTENT
+   ========================================================= */
+
+.dashboard-page {
+    width: 100%;
+
+    padding: 24px 30px 40px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+.dashboard-welcome {
+    margin-bottom: 24px;
+}
+
+.dashboard-welcome h2 {
+    margin: 0 0 6px;
+
+    font-size: 30px;
+    font-weight: 600;
+
+    color: #1F2937;
+}
+
+.dashboard-welcome p {
+    margin: 0;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.dashboard-stats {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.dashboard-stat-card {
+    min-width: 0;
+    min-height: 100px;
+
+    padding: 20px;
+
+    background: #FFFFFF;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    box-sizing: border-box;
+}
+
+.dashboard-stat-card img {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+}
+
+.dashboard-stat-content {
+    min-width: 0;
+}
+
+.dashboard-stat-content span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+.dashboard-stat-content h3 {
+    margin: 0 0 4px;
+
+    color: #1F2937;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.dashboard-stat-content small {
+    display: block;
+
+    color: #9CA3AF;
+
+    font-size: 12px;
+}
+
+
+/* STAT CARD BORDER */
+
+.dashboard-stat-card:nth-child(1) {
+    border: 1px solid #6A6AF0;
+}
+
+.dashboard-stat-card:nth-child(2) {
+    border: 1px solid #FACC15;
+}
+
+.dashboard-stat-card:nth-child(3) {
+    border: 1px solid #4ADE80;
+}
+
+.dashboard-stat-card:nth-child(4) {
+    border: 1px solid #FB923C;
+}
+
+
+/* =========================================================
+   ALERT TAGIHAN
+   ========================================================= */
+
+.dashboard-alert {
+    width: 100%;
+
+    margin-bottom: 24px;
+
+    padding: 20px;
+
+    background: #FFF1B8;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    box-sizing: border-box;
+}
+
+.dashboard-alert-icon {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-alert-icon img {
+    width: 32px;
+    height: 32px;
+
+    object-fit: contain;
+}
+
+.dashboard-alert-content {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.dashboard-alert-text {
+    min-width: 0;
+}
+
+.dashboard-alert-text h3 {
+    margin: 0 0 6px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: #1F2937;
+}
+
+.dashboard-alert-text p {
+    margin: 0;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+.dashboard-alert-button {
+    flex-shrink: 0;
+
+    padding: 10px 20px;
+
+    background: #F8843F;
+
+    color: #FFFFFF;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: opacity 0.2s ease;
+}
+
+.dashboard-alert-button:hover {
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   DASHBOARD GRID
+   ========================================================= */
+
+.dashboard-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+
+    gap: 24px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   DASHBOARD CARD
+   ========================================================= */
+
+.dashboard-card {
+    background: #FFFFFF;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TAGIHAN AKTIF
+   ========================================================= */
+
+.dashboard-invoices {
+    border: 1px solid #F8843F;
+}
+
+.dashboard-section-header {
+    min-height: 60px;
+
+    padding: 16px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    box-sizing: border-box;
+}
+
+.dashboard-section-header h3 {
+    margin: 0;
+
+    color: #1F2937;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dashboard-section-header a {
+    color: #4040A8;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+.dashboard-section-header a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   INVOICE ITEM
+   ========================================================= */
+
+.dashboard-invoice-item {
+    width: 100%;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    box-sizing: border-box;
+}
+
+.dashboard-invoice-item:last-child {
+    border-bottom: none;
+}
+
+.dashboard-invoice-info {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.dashboard-invoice-date {
+    color: #6B7280;
+
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.dashboard-invoice-title {
+    color: #1F2937;
+
+    font-size: 16px;
+    font-weight: 500;
+
+    line-height: 24px;
+
+    overflow-wrap: anywhere;
+}
+
+.dashboard-invoice-price {
+    min-width: 130px;
+
+    color: #1F2937;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+.dashboard-invoice-action {
+    min-width: 100px;
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dashboard-invoice-action button {
+    padding: 8px 16px;
+
+    background: #4040A8;
+
+    color: #FFFFFF;
+
+    border: none;
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
+.dashboard-badge {
+    display: inline-flex;
+    align-items: center;
+
+    width: fit-content;
+
+    padding: 4px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.dashboard-badge.warning {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.dashboard-badge.success {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+
+/* =========================================================
+   RIGHT COLUMN
+   ========================================================= */
+
+.dashboard-right-sidebar {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   STUDENT INFORMATION
+   ========================================================= */
+
+.dashboard-student-info {
+    padding: 20px 24px;
+
+    background: #FFFFFF;
+
+    border-radius: 12px;
+}
+
+.dashboard-student-info h3 {
+    margin: 0 0 20px;
+
+    color: #1F2937;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dashboard-student-profile {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.dashboard-student-avatar {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #EDEBFF;
+
+    color: #4040A8;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dashboard-student-name {
+    min-width: 0;
+}
+
+.dashboard-student-name strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #1F2937;
+
+    font-size: 15px;
+}
+
+.dashboard-student-name span {
+    display: block;
+
+    color: #6B7280;
+
+    font-size: 12px;
+}
+
+.dashboard-student-details {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.dashboard-student-detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 16px;
+}
+
+.dashboard-student-detail span:first-child {
+    color: #6B7280;
+
+    font-size: 13px;
+}
+
+.dashboard-student-detail span:last-child {
+    color: #1F2937;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   QUICK ACTION
+   ========================================================= */
+
+.dashboard-quick-action {
+    padding: 20px 24px;
+
+    background: #FFFFFF;
+
+    border-radius: 12px;
+}
+
+.dashboard-quick-action h3 {
+    margin: 0 0 16px;
+
+    color: #1F2937;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dashboard-quick-action a {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 0;
+
+    color: #1F2937;
+
+    font-size: 14px;
+
+    text-decoration: none;
+}
+
+.dashboard-quick-action a:hover {
+    color: #4040A8;
+}
+
+.dashboard-quick-action img {
+    width: 20px;
+    height: 20px;
+
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.dashboard-empty {
+    padding: 32px 20px;
+
+    color: #6B7280;
+
+    font-size: 14px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   SIDEBAR OVERLAY
+   ========================================================= */
+
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-right-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+
+        display: none;
+
+        background: rgba(0, 0, 0, 0.4);
+
+        z-index: 999;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+
+    /* SIDEBAR */
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+
+        top: 0;
+        left: -260px;
+
+        width: 260px;
+        min-width: 260px;
+        height: 100vh;
+
+        z-index: 1000;
+
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+
+    /* TOPBAR */
+
+    .topbar {
+        height: 70px;
+        min-height: 70px;
+
+        padding: 0 20px;
+    }
+
+    .page-title {
+        font-size: 18px;
+    }
+
+
+    /* CONTENT */
+
+    .dashboard-page {
+        padding: 20px;
+    }
+
+
+    /* STATS */
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+
+    /* ALERT */
+
+    .dashboard-alert {
+        align-items: flex-start;
+    }
+
+    .dashboard-alert-content {
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 16px;
+    }
+
+    .dashboard-alert-button {
+        width: 100%;
+    }
+
+
+    /* RIGHT SIDEBAR */
+
+    .dashboard-right-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* INVOICE */
+
+    .dashboard-invoice-item {
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 12px;
+    }
+
+    .dashboard-invoice-price {
+        min-width: 0;
+
+        text-align: left;
+    }
+
+    .dashboard-invoice-action {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .dashboard-page {
+        padding: 16px;
+    }
+
+    .dashboard-welcome h2 {
+        font-size: 24px;
+    }
+
+    .dashboard-stat-card {
+        padding: 16px;
+    }
+
+    .dashboard-alert {
+        padding: 16px;
+    }
+
+    .dashboard-student-info,
+    .dashboard-quick-action {
+        padding: 16px;
+    }
+
+}
