@@ -15,10 +15,9 @@
 
 <div class="dashboard-layout">
 
-    {{--===============================  SIDEBAR  ===============================--}}
+    {{-- SIDEBAR --}}
     <aside class="sidebar">
 
-        {{-- LOGO --}}
         <div class="logo-section">
 
             <img
@@ -53,15 +52,12 @@
                     alt=""
                 >
 
-                <span>
-                    Dashboard
-                </span>
+                <span>Dashboard</span>
             </a>
 
 
-            {{-- TAGIHAN --}}
             <a
-                href="#"
+                href="{{ route('student.bills') }}"
                 class="menu-item"
             >
                 <img
@@ -69,15 +65,12 @@
                     alt=""
                 >
 
-                <span>
-                    Tagihan Saya
-                </span>
+                <span>Tagihan Saya</span>
             </a>
 
 
-            {{-- RIWAYAT --}}
             <a
-                href="#"
+                href="{{ route('student.payment-history') }}"
                 class="menu-item"
             >
                 <img
@@ -85,15 +78,12 @@
                     alt=""
                 >
 
-                <span>
-                    Riwayat Pembayaran
-                </span>
+                <span>Riwayat Pembayaran</span>
             </a>
 
 
-            {{-- PROFIL --}}
             <a
-                href="#"
+                href="{{ route('student.profile') }}"
                 class="menu-item"
             >
                 <img
@@ -101,34 +91,29 @@
                     alt=""
                 >
 
-                <span>
-                    Profil
-                </span>
+                <span>Profil</span>
             </a>
 
         </nav>
 
 
-        {{-- PROFILE USER --}}
+        {{-- PROFILE SIDEBAR --}}
         <div class="sidebar-profile">
 
             <div class="profile-info">
 
                 <div class="avatar">
-
-                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
-
+                    {{ $student->user?->initials() ?? 'S' }}
                 </div>
-
 
                 <div>
 
                     <div class="profile-name">
-                        {{ auth()->user()->name ?? '-' }}
+                        {{ $student->user?->name ?? $student->name }}
                     </div>
 
                     <div class="profile-id">
-                        {{ auth()->user()->id ?? '-' }}
+                        {{ $student->nisn ?? '-' }}
                     </div>
 
                 </div>
@@ -136,25 +121,20 @@
             </div>
 
 
-            {{-- LOGOUT --}}
             <form
-                method="POST"
                 action="{{ route('logout') }}"
+                method="POST"
             >
-
                 @csrf
 
                 <button
                     type="submit"
-                    class="logout-icon-button"
-                    title="Logout"
+                    style="background:none;border:none;padding:0;"
                 >
-
                     <img
                         src="{{ asset('resource/img/Sign_out_squre.svg') }}"
                         alt="Logout"
                     >
-
                 </button>
 
             </form>
@@ -171,28 +151,22 @@
     ></div>
 
 
-    {{-- =========================================================
-         MAIN CONTENT
-         ========================================================= --}}
+    {{-- MAIN CONTENT --}}
     <main class="main-content">
 
 
-        {{-- =====================================================
-             TOPBAR
-             ===================================================== --}}
+        {{-- TOPBAR --}}
         <header class="topbar">
 
             <div class="topbar-left">
 
                 <button
-                    type="button"
                     class="menu-toggle"
                     id="menuToggle"
-                    aria-label="Buka menu"
+                    type="button"
                 >
                     ☰
                 </button>
-
 
                 <h1 class="page-title">
                     Dashboard
@@ -203,18 +177,13 @@
 
             <div class="topbar-actions">
 
-                {{-- NOTIFICATION --}}
                 <img
                     src="{{ asset('resource/img/Bell_pin.svg') }}"
                     alt="Notifikasi"
                 >
 
-
-                {{-- AVATAR --}}
                 <div class="avatar small">
-
-                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
-
+                    {{ $student->user?->initials() ?? 'S' }}
                 </div>
 
             </div>
@@ -222,33 +191,28 @@
         </header>
 
 
-        {{-- =====================================================
-             WELCOME
-             ===================================================== --}}
+        {{-- CONTENT --}}
+
         <section class="welcome-section">
 
             <h2>
                 Selamat Datang,
-                {{ auth()->user()->name ?? '-' }}
+                {{ $student->user?->name ?? $student->name }}
             </h2>
 
-
             <p>
-                {{ $student->classroom->name ?? '-' }}
+                Kelas {{ $student->classRoom?->name ?? '-' }}
                 ·
-                NISN :
-                {{ $student->nisn ?? '-' }}
+                NISN : {{ $student->nisn ?? '-' }}
                 ·
-                TA
-                {{ $student->academicYear->name ?? '-' }}
+                TA {{ $academicYearName }}
             </p>
 
         </section>
 
 
-        {{-- =====================================================
-             STATISTICS
-             ===================================================== --}}
+        {{-- STATISTIK --}}
+
         <section class="stats-section">
 
 
@@ -267,11 +231,11 @@
                     </span>
 
                     <h3>
-                        {{ $totalBills ?? 0 }} Tagihan
+                        {{ $totalBills }} Tagihan
                     </h3>
 
                     <small>
-                        {{ $semesterName ?? 'Semester Aktif' }}
+                        Tahun Ajaran {{ $academicYearName }}
                     </small>
 
                 </div>
@@ -294,7 +258,7 @@
                     </span>
 
                     <h3>
-                        {{ $unpaidBills ?? 0 }} Tagihan
+                        {{ $unpaidBills }} Tagihan
                     </h3>
 
                     <small>
@@ -321,11 +285,11 @@
                     </span>
 
                     <h3>
-                        {{ $paidBills ?? 0 }} Tagihan
+                        {{ $paidBills }} Tagihan
                     </h3>
 
                     <small>
-                        Semester Ini
+                        Tahun Ajaran Ini
                     </small>
 
                 </div>
@@ -348,11 +312,11 @@
                     </span>
 
                     <h3>
-                        Rp {{ number_format($totalAmount ?? 0, 0, ',', '.') }}
+                        Rp {{ number_format($totalAmount, 0, ',', '.') }}
                     </h3>
 
                     <small>
-                        {{ $semesterName ?? 'Semester Aktif' }}
+                        Total Seluruh Tagihan
                     </small>
 
                 </div>
@@ -362,10 +326,9 @@
         </section>
 
 
-        {{-- =====================================================
-             ALERT TAGIHAN
-             ===================================================== --}}
-        @if(isset($nearestBill) && $nearestBill)
+        {{-- TAGIHAN TERDEKAT --}}
+
+        @if($nearestBill)
 
             <section class="alert-card">
 
@@ -373,7 +336,6 @@
                     src="{{ asset('resource/img/Hhourglass_move_light1.svg') }}"
                     alt=""
                 >
-
 
                 <div class="alert-content">
 
@@ -383,17 +345,14 @@
                             Tagihan Akan Segera Jatuh Tempo
                         </h3>
 
-
                         <p>
 
                             {{ $nearestBill->name ?? 'Tagihan' }}
 
-                            akan jatuh tempo pada
-
-                            {{ isset($nearestBill->due_date)
-                                ? \Carbon\Carbon::parse($nearestBill->due_date)->translatedFormat('d F Y')
-                                : '-'
-                            }}.
+                            @if($nearestBill->due_date)
+                                akan jatuh tempo pada
+                                {{ \Carbon\Carbon::parse($nearestBill->due_date)->translatedFormat('d F Y') }}.
+                            @endif
 
                             Segera lakukan pembayaran.
 
@@ -403,8 +362,8 @@
 
 
                     <a
-                        href="#"
-                        class="alert-button"
+                        href="{{ route('student.bills') }}"
+                        class="dashboard-alert-button"
                     >
                         Bayar Sekarang
                     </a>
@@ -416,16 +375,14 @@
         @endif
 
 
-        {{-- =====================================================
-             DASHBOARD GRID
-             ===================================================== --}}
+        {{-- GRID --}}
+
         <div class="dashboard-grid">
 
 
-            {{-- =================================================
-                 TAGIHAN AKTIF
-                 ================================================= --}}
+            {{-- TAGIHAN AKTIF --}}
             <section class="invoice-section">
+
 
                 <div class="section-header">
 
@@ -433,8 +390,7 @@
                         Tagihan Aktif
                     </h3>
 
-
-                    <a href="#">
+                    <a href="{{ route('student.bills') }}">
                         Lihat Semua
                     </a>
 
@@ -443,67 +399,57 @@
 
                 <div class="invoice-list">
 
-                    @forelse($activeBills ?? [] as $bill)
+
+                    @forelse($activeBills->take(4) as $bill)
 
                         <div class="invoice-item">
 
 
-                            {{-- INFORMASI --}}
                             <div class="invoice-info">
 
                                 <div class="invoice-title">
-                                    {{ $bill->name ?? '-' }}
+                                    {{ $bill->name ?? $bill->title ?? 'Tagihan' }}
                                 </div>
-
 
                                 <div class="invoice-date">
 
                                     Jatuh tempo:
 
-                                    {{ isset($bill->due_date)
-                                        ? \Carbon\Carbon::parse($bill->due_date)->translatedFormat('d M Y')
-                                        : '-'
-                                    }}
+                                    @if($bill->due_date)
+
+                                        {{ \Carbon\Carbon::parse($bill->due_date)->translatedFormat('d M Y') }}
+
+                                    @else
+
+                                        -
+
+                                    @endif
 
                                 </div>
 
                             </div>
 
 
-                            {{-- HARGA --}}
                             <div class="invoice-price">
 
-                                Rp
-                                {{ number_format($bill->amount ?? 0, 0, ',', '.') }}
+                                Rp {{ number_format($bill->amount, 0, ',', '.') }}
 
                             </div>
 
 
-                            {{-- STATUS --}}
                             <div class="invoice-action">
 
-
-                                @if(($bill->status ?? '') === 'paid')
-
-                                    <span class="badge success">
-                                        Lunas
-                                    </span>
-
-                                @else
-
-                                    <span class="badge warning">
-                                        Belum Bayar
-                                    </span>
+                                <span class="badge warning">
+                                    Belum Bayar
+                                </span>
 
 
-                                    <a
-                                        href="#"
-                                        class="invoice-pay-button"
-                                    >
-                                        Bayar
-                                    </a>
-
-                                @endif
+                                <a
+                                    href="{{ route('student.payment', $bill->id) }}"
+                                    class="dashboard-invoice-button"
+                                >
+                                    Bayar
+                                </a>
 
                             </div>
 
@@ -511,30 +457,27 @@
 
                     @empty
 
-                        <div class="invoice-empty">
+                        <div class="dashboard-empty">
 
-                            <p>
-                                Tidak ada tagihan aktif.
-                            </p>
+                            Tidak ada tagihan aktif.
 
                         </div>
 
                     @endforelse
+
 
                 </div>
 
             </section>
 
 
-            {{-- =================================================
-                 RIGHT SIDEBAR
-                 ================================================= --}}
+            {{-- SIDEBAR KANAN --}}
+
             <aside class="right-sidebar">
 
 
-                {{-- =============================================
-                     INFORMASI SISWA
-                     ============================================= --}}
+                {{-- INFORMASI SISWA --}}
+
                 <section class="student-info">
 
                     <h3>
@@ -546,7 +489,7 @@
 
                         <div class="avatar">
 
-                            {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
+                            {{ $student->user?->initials() ?? 'S' }}
 
                         </div>
 
@@ -554,12 +497,11 @@
                         <div>
 
                             <h4>
-                                {{ auth()->user()->name ?? '-' }}
+                                {{ $student->user?->name ?? $student->name }}
                             </h4>
 
-
                             <p>
-                                {{ $student->classroom->name ?? '-' }}
+                                {{ $student->classRoom?->name ?? '-' }}
                             </p>
 
                         </div>
@@ -570,7 +512,6 @@
                     <div class="student-detail">
 
 
-                        {{-- NISN --}}
                         <div class="detail-item">
 
                             <span>
@@ -584,7 +525,6 @@
                         </div>
 
 
-                        {{-- NIS --}}
                         <div class="detail-item">
 
                             <span>
@@ -598,7 +538,6 @@
                         </div>
 
 
-                        {{-- WALI --}}
                         <div class="detail-item">
 
                             <span>
@@ -606,13 +545,12 @@
                             </span>
 
                             <strong>
-                                {{ $student->guardian->name ?? '-' }}
+                                {{ $student->guardian?->name ?? '-' }}
                             </strong>
 
                         </div>
 
 
-                        {{-- TAHUN AJARAN --}}
                         <div class="detail-item">
 
                             <span>
@@ -620,19 +558,19 @@
                             </span>
 
                             <strong>
-                                {{ $student->academicYear->name ?? '-' }}
+                                {{ $academicYearName }}
                             </strong>
 
                         </div>
+
 
                     </div>
 
                 </section>
 
 
-                {{-- =============================================
-                     QUICK ACTION
-                     ============================================= --}}
+                {{-- AKSI CEPAT --}}
+
                 <section class="quick-action">
 
                     <h3>
@@ -640,8 +578,7 @@
                     </h3>
 
 
-                    {{-- TAGIHAN --}}
-                    <a href="#">
+                    <a href="{{ route('student.bills') }}">
 
                         <img
                             src="{{ asset('resource/img/Icon-set-pr.svg') }}"
@@ -655,8 +592,7 @@
                     </a>
 
 
-                    {{-- RIWAYAT --}}
-                    <a href="#">
+                    <a href="{{ route('student.payment-history') }}">
 
                         <img
                             src="{{ asset('resource/img/File_dock.svg') }}"
@@ -670,8 +606,7 @@
                     </a>
 
 
-                    {{-- NOTA --}}
-                    <a href="#">
+                    <a href="{{ route('student.payment-history') }}">
 
                         <img
                             src="{{ asset('resource/img/Icon-set.svg') }}"
@@ -686,6 +621,7 @@
 
                 </section>
 
+
             </aside>
 
         </div>
@@ -695,9 +631,6 @@
 </div>
 
 
-{{-- =============================================================
-     JAVASCRIPT
-     ============================================================= --}}
 <script src="{{ asset('js/script.js') }}"></script>
 
 </body>
