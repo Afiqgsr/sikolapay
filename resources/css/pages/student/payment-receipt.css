@@ -1,0 +1,661 @@
+/* =========================================================
+   HALAMAN NOTA PEMBAYARAN
+   ========================================================= */
+
+/* ========================= PAGE ========================= */
+
+.invoice-page {
+    width: 100%;
+    padding: 24px 30px 40px;
+    box-sizing: border-box;
+}
+
+
+/* ========================= HEADER ========================= */
+
+.invoice-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+}
+
+
+/* ========================= BACK BUTTON ========================= */
+
+.invoice-page .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 0;
+
+    border: none;
+    background: transparent;
+
+    font-family: var(--label-l16-regular-font-family);
+    font-size: var(--label-l16-regular-font-size);
+    font-weight: var(--label-l16-regular-font-weight);
+    line-height: var(--label-l16-regular-line-height);
+
+    color: #000000;
+
+    cursor: pointer;
+}
+
+.invoice-page .back-button img {
+    width: 20px;
+    height: 20px;
+
+    object-fit: contain;
+}
+
+
+/* ========================= ACTION BUTTON ========================= */
+
+.invoice-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.invoice-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    height: 44px;
+
+    padding: 0 16px;
+
+    border-radius: 8px;
+
+    font-family: var(--label-l14-medium-font-family);
+    font-size: var(--label-l14-medium-font-size);
+    font-weight: var(--label-l14-medium-font-weight);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.invoice-btn img {
+    width: 20px;
+    height: 20px;
+
+    object-fit: contain;
+}
+
+
+/* Download */
+
+.invoice-btn.outline {
+    background-color: #FFFFFF;
+
+    border: 1px solid var(--primarypr-40);
+
+    color: var(--primarypr-40);
+}
+
+.invoice-btn.outline:hover {
+    background-color: #F5F5FF;
+}
+
+
+/* Cetak */
+
+.invoice-btn.primary {
+    background-color: var(--primarypr-40);
+
+    border: 1px solid var(--primarypr-40);
+
+    color: #FFFFFF;
+}
+
+.invoice-btn.primary:hover {
+    opacity: 0.9;
+}
+
+
+/* ========================= INVOICE CARD ========================= */
+
+.invoice-card {
+    width: 100%;
+    max-width: 860px;
+
+    margin: 0 auto;
+
+    padding: 32px;
+
+    box-sizing: border-box;
+
+    background-color: #FFFFFF;
+
+    border: 1px solid var(--primarypr-40);
+
+    border-radius: 12px;
+}
+
+
+/* =========================================================
+   SCHOOL HEADER
+   ========================================================= */
+
+.invoice-page .invoice-school {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 12px;
+
+    padding-bottom: 24px;
+
+    border-bottom: 1px solid #E5E7EB;
+}
+
+
+/* ========================= SCHOOL LOGO ========================= */
+
+.invoice-page .school-logo {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    background-color: var(--primarypr-40);
+
+    border-radius: 8px;
+
+    color: #FFFFFF;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+
+/* ========================= SCHOOL INFO ========================= */
+
+.invoice-page .school-info {
+    text-align: center;
+}
+
+.invoice-page .school-info h2 {
+    margin: 0 0 6px;
+
+    font-family: var(--heading-h3-semibold-font-family);
+    font-size: var(--heading-h3-semibold-font-size);
+    font-weight: var(--heading-h3-semibold-font-weight);
+
+    color: #0F172A;
+}
+
+.invoice-page .school-info p {
+    margin: 2px 0;
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: var(--label-l12-regular-font-size);
+    font-weight: var(--label-l12-regular-font-weight);
+    line-height: 20px;
+
+    color: #64748B;
+}
+
+
+/* ========================= STATUS ========================= */
+
+.invoice-page .invoice-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 32px;
+
+    padding: 0 16px;
+
+    box-sizing: border-box;
+
+    background-color: #D6FFDE;
+
+    border: 1px solid #00C627;
+
+    border-radius: 999px;
+
+    color: #00C627;
+
+    font-family: var(--label-l14-medium-font-family);
+    font-size: var(--label-l14-medium-font-size);
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INVOICE INFORMATION
+   ========================================================= */
+
+.invoice-page .invoice-info {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 24px;
+
+    margin: 24px 0 32px;
+}
+
+
+/* ========================= NUMBER ========================= */
+
+.invoice-number {
+    min-width: 0;
+}
+
+.invoice-number > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-family: var(--label-l14-regular-font-family);
+    font-size: var(--label-l14-regular-font-size);
+    font-weight: var(--label-l14-regular-font-weight);
+
+    color: #64748B;
+}
+
+.invoice-number h3 {
+    margin: 0;
+
+    font-family: var(--heading-h3-semibold-font-family);
+    font-size: 24px;
+    font-weight: 700;
+
+    color: #0F172A;
+}
+
+
+/* ========================= DATE ========================= */
+
+.invoice-page .invoice-date {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    min-width: 180px;
+}
+
+.invoice-page .invoice-date-row {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.invoice-page .invoice-date-row span {
+    margin: 0;
+
+    font-family: var(--label-l14-regular-font-family);
+    font-size: var(--label-l14-regular-font-size);
+    font-weight: var(--label-l14-regular-font-weight);
+
+    line-height: 20px;
+
+    color: #64748B;
+}
+
+.invoice-page .invoice-date-row strong {
+    margin: 0;
+
+    font-family: var(--label-l14-semi-bold-font-family);
+    font-size: var(--label-l14-semi-bold-font-size);
+    font-weight: 600;
+
+    line-height: 20px;
+
+    color: #0F172A;
+}
+
+
+/* =========================================================
+   STUDENT & PAYMENT INFORMATION
+   ========================================================= */
+
+.invoice-page .invoice-detail-box {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 32px;
+
+    padding: 20px 24px;
+
+    margin-bottom: 24px;
+
+    box-sizing: border-box;
+
+    background-color: #F3F4FA;
+
+    border-radius: 8px;
+}
+
+
+/* ========================= DETAIL COLUMN ========================= */
+
+.invoice-detail-box > div {
+    min-width: 0;
+}
+
+
+/* ========================= LABEL ========================= */
+
+.invoice-detail-box small {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-family: var(--label-l12-semi-bold-font-family);
+    font-size: var(--label-l12-semi-bold-font-size);
+    font-weight: 600;
+
+    color: #94A3B8;
+}
+
+
+/* ========================= NAME ========================= */
+
+.invoice-detail-box h4 {
+    margin: 0 0 8px;
+
+    font-family: var(--label-l16-semi-bold-font-family);
+    font-size: var(--label-l16-semi-bold-font-size);
+    font-weight: 600;
+
+    color: #0F172A;
+}
+
+
+/* ========================= DESCRIPTION ========================= */
+
+.invoice-detail-box p {
+    margin: 4px 0;
+
+    font-family: var(--label-l13-regular-font-family);
+    font-size: 13px;
+    font-weight: 400;
+
+    line-height: 20px;
+
+    color: #64748B;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.invoice-page .invoice-table {
+    width: 100%;
+}
+
+
+/* ========================= ROW ========================= */
+
+.invoice-page .invoice-row {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #E2E8F0;
+
+    font-size: 14px;
+}
+
+
+/* ========================= HEADING ========================= */
+
+.invoice-page .invoice-row.heading {
+    padding-top: 0;
+    padding-bottom: 12px;
+
+    border-bottom: 2px solid var(--primarypr-40);
+
+    color: #64748B;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* ========================= VALUE ========================= */
+
+.invoice-page .invoice-row > span:last-child,
+.invoice-page .invoice-row > strong:last-child {
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+
+/* ========================= TOTAL ========================= */
+
+.invoice-page .invoice-row.total {
+    padding-top: 18px;
+    padding-bottom: 0;
+
+    border-top: 1px dashed #CBD5E1;
+    border-bottom: none;
+}
+
+.invoice-page .invoice-row.total strong:first-child {
+    color: #0F172A;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.invoice-page .invoice-row.total strong:last-child {
+    color: var(--primarypr-40);
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.invoice-page .invoice-footer {
+    margin-top: 28px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #E5E7EB;
+
+    text-align: center;
+}
+
+.invoice-page .invoice-footer p {
+    margin: 4px 0;
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: var(--label-l12-regular-font-size);
+    font-weight: var(--label-l12-regular-font-weight);
+
+    line-height: 18px;
+
+    color: #94A3B8;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .invoice-page {
+        padding: 24px 20px 40px;
+    }
+
+    .invoice-card {
+        max-width: 100%;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .invoice-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 16px;
+    }
+
+    .invoice-actions {
+        width: 100%;
+    }
+
+    .invoice-btn {
+        flex: 1;
+    }
+
+    .invoice-page .invoice-info {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+    .invoice-page .invoice-date {
+        min-width: 0;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 16px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .invoice-page {
+        padding: 20px 16px 32px;
+    }
+
+    .invoice-card {
+        padding: 20px 16px;
+
+        border-radius: 8px;
+    }
+
+    .invoice-page .invoice-school {
+        padding-bottom: 20px;
+    }
+
+    .invoice-page .school-logo {
+        width: 56px;
+        height: 56px;
+
+        font-size: 20px;
+    }
+
+    .invoice-page .school-info h2 {
+        font-size: 18px;
+    }
+
+    .invoice-page .school-info p {
+        font-size: 12px;
+    }
+
+    .invoice-page .invoice-info {
+        margin: 20px 0 24px;
+    }
+
+    .invoice-number h3 {
+        font-size: 20px;
+    }
+
+    .invoice-page .invoice-date {
+        grid-template-columns: 1fr;
+    }
+
+    .invoice-page .invoice-detail-box {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+
+        padding: 16px;
+    }
+
+    .invoice-page .invoice-row {
+        gap: 12px;
+
+        padding: 12px 0;
+    }
+
+    .invoice-page .invoice-row.total strong:last-child {
+        font-size: 18px;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .invoice-actions {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .invoice-btn {
+        width: 100%;
+
+        flex: none;
+    }
+
+    .invoice-page .back-button {
+        font-size: 14px;
+    }
+
+    .invoice-page .invoice-card {
+        padding: 16px 12px;
+    }
+
+    .invoice-detail-box h4 {
+        font-size: 15px;
+    }
+
+    .invoice-detail-box p {
+        font-size: 12px;
+    }
+
+}

@@ -1,6 +1,18 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
 
+@import './globals.css';
+@import './styleguide.css';
+@import './style.css';
+
+@import './pages/student/dashboard.css';
+@import './pages/student/bills.css';
+@import './pages/student/bill-detail.css';
+@import './pages/student/payment.css';
+@import './pages/student/payment-history.css';
+@import './pages/student/payment-receipt.css';
+@import './pages/student/profile.css';
+
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';

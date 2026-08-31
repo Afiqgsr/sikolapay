@@ -5,9 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Guardian\DashboardController as GuardianDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Guardian\BillController;
 use App\Http\Controllers\Guardian\PaymentController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Student\BillController as StudentBillController;
+use App\Http\Controllers\Student\PaymentHistoryController;
+use App\Http\Controllers\Student\PaymentController as StudentPaymentController;
+use App\Http\Controllers\Student\PaymentReceiptController as StudentPaymentReceiptController;
 
 
 Route::view('/', 'welcome')->name('home');
@@ -89,8 +94,47 @@ Route::middleware(['auth', 'role:guardian'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:student'])->group(function () {
+
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])
         ->name('student.dashboard');
+
+    Route::get('/student/profile', [StudentProfileController::class, 'index'])
+        ->name('student.profile');
+
+    Route::get('/student/profile/edit', [StudentProfileController::class, 'edit'])
+        ->name('student.profile.edit');
+    
+    Route::put('/student/profile', [StudentProfileController::class, 'update'])
+        ->name('student.profile.update');
+
+    Route::get('/student/bills', [StudentBillController::class, 'index'])
+        ->name('student.bills.index');
+
+    Route::get('/student/payment/all', [StudentPaymentController::class, 'all'])
+        ->name('student.payment.all');
+    
+    Route::get('/student/payment/all/confirm', [StudentPaymentController::class, 'allConfirm'])
+        ->name('student.payment.all.confirm');
+
+    Route::post('/student/payment/all/confirm', [StudentPaymentController::class, 'confirmAll'])
+        ->name('student.payment.all.confirm.store');
+
+    Route::get('/student/payment-history', [PaymentHistoryController::class, 'index'])
+        ->name('student.payment-history');
+
+    Route::get('/student/payment/{id}', [StudentPaymentController::class, 'create'])
+        ->name('student.payment');
+    
+    Route::post('/student/payment/{id}/confirm', [StudentPaymentController::class, 'confirm'])
+        ->name('student.payment.confirm');
+
+    Route::get('/student/payment/{id}/receipt', [StudentPaymentReceiptController::class, 'show'])
+        ->name('student.payment.receipt');
+
+    Route::get('/student/bills/{id}', [StudentBillController::class, 'show'])
+        ->name('student.bills.show');
+
 });
+
 
 require __DIR__.'/settings.php';

@@ -1,637 +1,436 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.sikolapayapp')
 
-    <title>Dashboard Siswa - SikolaPay</title>
+@section('title', 'Dashboard Siswa - SikolaPay')
 
-    <link rel="stylesheet" href="{{ asset('css/globals.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/styleguide.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
+@section('page-title', 'Dashboard')
 
-<body>
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/pages/student/dashboard.css') }}">
+@endpush
 
-<div class="dashboard-layout">
+@section('content')
 
-    {{-- SIDEBAR --}}
-    <aside class="sidebar">
+<div class="dashboard-content">
 
-        <div class="logo-section">
+    <!-- WELCOME -->
+    <section class="welcome-section">
+
+        <h2>
+            Selamat Datang, {{ $student->name }}
+        </h2>
+
+        <p>
+            {{ $student->classRoom?->name ?? '-' }}
+            · NISN : {{ $student->nisn ?? '-' }}
+            · TA {{ $academicYearName }}
+        </p>
+
+    </section>
+
+
+    <!-- STATISTIC -->
+    <section class="stats-section">
+
+        <!-- TOTAL TAGIHAN -->
+        <div class="stat-card">
 
             <img
-                src="{{ asset('resource/img/logo-sikolapay.svg') }}"
-                alt="Logo SikolaPay"
+                src="{{ asset('assets/img/Date_range_light2.svg') }}"
+                alt=""
             >
 
             <div>
+                <span>Total Tagihan</span>
 
-                <h2 class="logo-title">
-                    <span class="logo-red">Si</span><span class="logo-orange">kola</span><span class="logo-yellow">Pay</span>
-                </h2>
+                <h3>
+                    {{ $totalBills }} Tagihan
+                </h3>
 
-                <p class="logo-subtitle">
-                    Siswa / Orang Tua
+                <small>
+                    {{ $academicYearName }}
+                </small>
+            </div>
+
+        </div>
+
+
+        <!-- BELUM BAYAR -->
+        <div class="stat-card warning">
+
+            <img
+                src="{{ asset('assets/img/Hhourglass_move_light.svg') }}"
+                alt=""
+            >
+
+            <div>
+                <span>Belum Bayar</span>
+
+                <h3>
+                    {{ $unpaidBills }} Tagihan
+                </h3>
+
+                <small>
+                    Segera Lunasi
+                </small>
+            </div>
+
+        </div>
+
+
+        <!-- SUDAH LUNAS -->
+        <div class="stat-card success">
+
+            <img
+                src="{{ asset('assets/img/Check_fill.svg') }}"
+                alt=""
+            >
+
+            <div>
+                <span>Sudah Lunas</span>
+
+                <h3>
+                    {{ $paidBills }} Tagihan
+                </h3>
+
+                <small>
+                    Semester Ini
+                </small>
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL NOMINAL -->
+        <div class="stat-card">
+
+            <img
+                src="{{ asset('assets/img/Money.svg') }}"
+                alt=""
+            >
+
+            <div>
+                <span>Total Nominal</span>
+
+                <h3>
+                    Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                </h3>
+
+                <small>
+                    {{ $academicYearName }}
+                </small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ALERT -->
+    @if($nearestBill)
+
+    <section class="alert-card">
+
+        <img
+            src="{{ asset('assets/img/Hhourglass_move_light1.svg') }}"
+            alt=""
+        >
+
+        <div class="alert-content">
+
+            <div>
+
+                <h3>
+                    Tagihan Akan Segera Jatuh Tempo
+                </h3>
+
+                <p>
+                    {{ $nearestBill->name }}
+                    akan jatuh tempo pada
+                    {{ \Carbon\Carbon::parse($nearestBill->due_date)->translatedFormat('d F Y') }}.
+                    Segera lakukan pembayaran.
                 </p>
 
             </div>
 
-        </div>
-
-
-        {{-- MENU --}}
-        <nav class="sidebar-menu">
-
             <a
-                href="{{ route('student.dashboard') }}"
-                class="menu-item active"
+                href="{{ route('student.bills.index') }}"
+                class="alert-button"
             >
-                <img
-                    src="{{ asset('resource/img/Home.svg') }}"
-                    alt=""
-                >
-
-                <span>Dashboard</span>
+                Bayar Sekarang
             </a>
-
-
-            <a
-                href="{{ route('student.bills') }}"
-                class="menu-item"
-            >
-                <img
-                    src="{{ asset('resource/img/Date_range_light.svg') }}"
-                    alt=""
-                >
-
-                <span>Tagihan Saya</span>
-            </a>
-
-
-            <a
-                href="{{ route('student.payment-history') }}"
-                class="menu-item"
-            >
-                <img
-                    src="{{ asset('resource/img/Time_light.svg') }}"
-                    alt=""
-                >
-
-                <span>Riwayat Pembayaran</span>
-            </a>
-
-
-            <a
-                href="{{ route('student.profile') }}"
-                class="menu-item"
-            >
-                <img
-                    src="{{ asset('resource/img/User_alt_light.svg') }}"
-                    alt=""
-                >
-
-                <span>Profil</span>
-            </a>
-
-        </nav>
-
-
-        {{-- PROFILE SIDEBAR --}}
-        <div class="sidebar-profile">
-
-            <div class="profile-info">
-
-                <div class="avatar">
-                    {{ $student->user?->initials() ?? 'S' }}
-                </div>
-
-                <div>
-
-                    <div class="profile-name">
-                        {{ $student->user?->name ?? $student->name }}
-                    </div>
-
-                    <div class="profile-id">
-                        {{ $student->nisn ?? '-' }}
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <form
-                action="{{ route('logout') }}"
-                method="POST"
-            >
-                @csrf
-
-                <button
-                    type="submit"
-                    style="background:none;border:none;padding:0;"
-                >
-                    <img
-                        src="{{ asset('resource/img/Sign_out_squre.svg') }}"
-                        alt="Logout"
-                    >
-                </button>
-
-            </form>
 
         </div>
 
-    </aside>
+    </section>
+
+    @endif
 
 
-    {{-- MOBILE OVERLAY --}}
-    <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-    ></div>
+    <!-- GRID -->
+    <div class="dashboard-grid">
 
 
-    {{-- MAIN CONTENT --}}
-    <main class="main-content">
+        <!-- TAGIHAN -->
+        <section class="invoice-section">
 
+            <div class="section-header">
 
-        {{-- TOPBAR --}}
-        <header class="topbar">
+                <h3>
+                    Tagihan Aktif
+                </h3>
 
-            <div class="topbar-left">
-
-                <button
-                    class="menu-toggle"
-                    id="menuToggle"
-                    type="button"
-                >
-                    ☰
-                </button>
-
-                <h1 class="page-title">
-                    Dashboard
-                </h1>
+                <a href="{{ route('student.bills.index') }}">
+                    Lihat Semua
+                </a>
 
             </div>
 
 
-            <div class="topbar-actions">
+            <div class="invoice-list">
 
-                <img
-                    src="{{ asset('resource/img/Bell_pin.svg') }}"
-                    alt="Notifikasi"
-                >
+                @forelse($activeBills as $bill)
 
-                <div class="avatar small">
-                    {{ $student->user?->initials() ?? 'S' }}
-                </div>
+                    <div class="invoice-item">
 
-            </div>
+                        <!-- INFO -->
+                        <div class="invoice-info">
 
-        </header>
+                            <div class="invoice-title">
+                                {{ $bill->name }}
+                            </div>
 
+                            <div class="invoice-date">
 
-        {{-- CONTENT --}}
-
-        <section class="welcome-section">
-
-            <h2>
-                Selamat Datang,
-                {{ $student->user?->name ?? $student->name }}
-            </h2>
-
-            <p>
-                Kelas {{ $student->classRoom?->name ?? '-' }}
-                ·
-                NISN : {{ $student->nisn ?? '-' }}
-                ·
-                TA {{ $academicYearName }}
-            </p>
-
-        </section>
-
-
-        {{-- STATISTIK --}}
-
-        <section class="stats-section">
-
-
-            {{-- TOTAL TAGIHAN --}}
-            <div class="stat-card">
-
-                <img
-                    src="{{ asset('resource/img/Date_range_light2.svg') }}"
-                    alt=""
-                >
-
-                <div>
-
-                    <span>
-                        Total Tagihan
-                    </span>
-
-                    <h3>
-                        {{ $totalBills }} Tagihan
-                    </h3>
-
-                    <small>
-                        Tahun Ajaran {{ $academicYearName }}
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            {{-- BELUM BAYAR --}}
-            <div class="stat-card warning">
-
-                <img
-                    src="{{ asset('resource/img/Hhourglass_move_light.svg') }}"
-                    alt=""
-                >
-
-                <div>
-
-                    <span>
-                        Belum Bayar
-                    </span>
-
-                    <h3>
-                        {{ $unpaidBills }} Tagihan
-                    </h3>
-
-                    <small>
-                        Segera Lunasi
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            {{-- SUDAH LUNAS --}}
-            <div class="stat-card success">
-
-                <img
-                    src="{{ asset('resource/img/Check_fill.svg') }}"
-                    alt=""
-                >
-
-                <div>
-
-                    <span>
-                        Sudah Lunas
-                    </span>
-
-                    <h3>
-                        {{ $paidBills }} Tagihan
-                    </h3>
-
-                    <small>
-                        Tahun Ajaran Ini
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            {{-- TOTAL NOMINAL --}}
-            <div class="stat-card">
-
-                <img
-                    src="{{ asset('resource/img/Money.svg') }}"
-                    alt=""
-                >
-
-                <div>
-
-                    <span>
-                        Total Nominal
-                    </span>
-
-                    <h3>
-                        Rp {{ number_format($totalAmount, 0, ',', '.') }}
-                    </h3>
-
-                    <small>
-                        Total Seluruh Tagihan
-                    </small>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {{-- TAGIHAN TERDEKAT --}}
-
-        @if($nearestBill)
-
-            <section class="alert-card">
-
-                <img
-                    src="{{ asset('resource/img/Hhourglass_move_light1.svg') }}"
-                    alt=""
-                >
-
-                <div class="alert-content">
-
-                    <div>
-
-                        <h3>
-                            Tagihan Akan Segera Jatuh Tempo
-                        </h3>
-
-                        <p>
-
-                            {{ $nearestBill->name ?? 'Tagihan' }}
-
-                            @if($nearestBill->due_date)
-                                akan jatuh tempo pada
-                                {{ \Carbon\Carbon::parse($nearestBill->due_date)->translatedFormat('d F Y') }}.
-                            @endif
-
-                            Segera lakukan pembayaran.
-
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="{{ route('student.bills') }}"
-                        class="dashboard-alert-button"
-                    >
-                        Bayar Sekarang
-                    </a>
-
-                </div>
-
-            </section>
-
-        @endif
-
-
-        {{-- GRID --}}
-
-        <div class="dashboard-grid">
-
-
-            {{-- TAGIHAN AKTIF --}}
-            <section class="invoice-section">
-
-
-                <div class="section-header">
-
-                    <h3>
-                        Tagihan Aktif
-                    </h3>
-
-                    <a href="{{ route('student.bills') }}">
-                        Lihat Semua
-                    </a>
-
-                </div>
-
-
-                <div class="invoice-list">
-
-
-                    @forelse($activeBills->take(4) as $bill)
-
-                        <div class="invoice-item">
-
-
-                            <div class="invoice-info">
-
-                                <div class="invoice-title">
-                                    {{ $bill->name ?? $bill->title ?? 'Tagihan' }}
-                                </div>
-
-                                <div class="invoice-date">
+                                @if($bill->due_date)
 
                                     Jatuh tempo:
+                                    {{ \Carbon\Carbon::parse($bill->due_date)->translatedFormat('d F Y') }}
 
-                                    @if($bill->due_date)
+                                @else
 
-                                        {{ \Carbon\Carbon::parse($bill->due_date)->translatedFormat('d M Y') }}
+                                    Jatuh tempo: -
 
-                                    @else
-
-                                        -
-
-                                    @endif
-
-                                </div>
+                                @endif
 
                             </div>
 
-
-                            <div class="invoice-price">
-
-                                Rp {{ number_format($bill->amount, 0, ',', '.') }}
-
-                            </div>
+                        </div>
 
 
-                            <div class="invoice-action">
+                        <!-- HARGA -->
+                        <div class="invoice-price">
+
+                            Rp {{ number_format($bill->amount, 0, ',', '.') }}
+
+                        </div>
+
+
+                        <!-- ACTION -->
+                        <div class="invoice-action">
+
+                            @if($bill->status === 'paid')
+
+                                <span class="badge success">
+                                    Lunas
+                                </span>
+
+                            @elseif(
+                                $bill->payments->contains(
+                                    fn($payment) => $payment->status === 'pending'
+                                )
+                            )
+
+                                <span class="badge pending">
+                                    Menunggu
+                                </span>
+
+                            @else
 
                                 <span class="badge warning">
                                     Belum Bayar
                                 </span>
 
-
                                 <a
-                                    href="{{ route('student.payment', $bill->id) }}"
-                                    class="dashboard-invoice-button"
+                                    href="{{ route('student.bills.index') }}"
+                                    class="invoice-pay-button"
                                 >
                                     Bayar
                                 </a>
 
-                            </div>
+                            @endif
 
                         </div>
 
-                    @empty
+                    </div>
 
-                        <div class="dashboard-empty">
+                @empty
 
+                    <div class="empty-state">
+
+                        <p>
                             Tidak ada tagihan aktif.
+                        </p>
 
-                        </div>
+                    </div>
 
-                    @endforelse
+                @endforelse
 
+            </div>
+
+        </section>
+
+
+        <!-- SIDEBAR KANAN -->
+        <aside class="right-sidebar">
+
+
+            <!-- INFORMASI SISWA -->
+            <section class="student-info">
+
+                <h3>
+                    Informasi Siswa
+                </h3>
+
+
+                <div class="student-profile">
+
+                    <!-- AVATAR -->
+                    <div class="avatar">
+
+                        {{ \Illuminate\Support\Str::initials($student->name) }}
+
+                    </div>
+
+
+                    <!-- NAMA & KELAS -->
+                    <div>
+
+                        <h4>
+                            {{ $student->name }}
+                        </h4>
+
+                        <p>
+                            {{ $student->classRoom?->name ?? '-' }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DETAIL SISWA -->
+                <div class="student-detail">
+
+                    <!-- NISN -->
+                    <div class="detail-item">
+
+                        <span>NISN</span>
+
+                        <strong>
+                            {{ $student->nisn ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- NIS -->
+                    <div class="detail-item">
+
+                        <span>NIS</span>
+
+                        <strong>
+                            {{ $student->nis ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- WALI -->
+                    <div class="detail-item">
+
+                        <span>Wali</span>
+
+                        <strong>
+                            {{ $student->guardian?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TAHUN AJARAN -->
+                    <div class="detail-item">
+
+                        <span>Tahun Ajaran</span>
+
+                        <strong>
+                            {{ $academicYearName }}
+                        </strong>
+
+                    </div>
 
                 </div>
 
             </section>
 
 
-            {{-- SIDEBAR KANAN --}}
+            <!-- QUICK ACTION -->
+            <section class="quick-action">
 
-            <aside class="right-sidebar">
+                <h3>
+                    Aksi Cepat
+                </h3>
 
 
-                {{-- INFORMASI SISWA --}}
+                <!-- TAGIHAN -->
+                <a href="{{ route('student.bills.index') }}">
 
-                <section class="student-info">
+                    <img
+                        src="{{ asset('assets/img/Icon-set-pr.svg') }}"
+                        alt=""
+                    >
 
-                    <h3>
-                        Informasi Siswa
-                    </h3>
+                    <span>
+                        Lihat Semua Tagihan
+                    </span>
 
+                </a>
 
-                    <div class="student-profile">
 
-                        <div class="avatar">
+                <!-- RIWAYAT -->
+                <a href="{{ route('student.payment-history') }}">
 
-                            {{ $student->user?->initials() ?? 'S' }}
+                    <img
+                        src="{{ asset('assets/img/File_dock.svg') }}"
+                        alt=""
+                    >
 
-                        </div>
+                    <span>
+                        Riwayat Pembayaran
+                    </span>
 
+                </a>
 
-                        <div>
 
-                            <h4>
-                                {{ $student->user?->name ?? $student->name }}
-                            </h4>
+                <!-- PROFIL -->
+                <a href="{{ route('student.profile') }}">
 
-                            <p>
-                                {{ $student->classRoom?->name ?? '-' }}
-                            </p>
+                    <img
+                        src="{{ asset('assets/img/Icon-set.svg') }}"
+                        alt=""
+                    >
 
-                        </div>
+                    <span>
+                        Profil Saya
+                    </span>
 
-                    </div>
+                </a>
 
+            </section>
 
-                    <div class="student-detail">
+        </aside>
 
-
-                        <div class="detail-item">
-
-                            <span>
-                                NISN
-                            </span>
-
-                            <strong>
-                                {{ $student->nisn ?? '-' }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail-item">
-
-                            <span>
-                                NIS
-                            </span>
-
-                            <strong>
-                                {{ $student->nis ?? '-' }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail-item">
-
-                            <span>
-                                Wali
-                            </span>
-
-                            <strong>
-                                {{ $student->guardian?->name ?? '-' }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail-item">
-
-                            <span>
-                                Tahun Ajaran
-                            </span>
-
-                            <strong>
-                                {{ $academicYearName }}
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-                </section>
-
-
-                {{-- AKSI CEPAT --}}
-
-                <section class="quick-action">
-
-                    <h3>
-                        Aksi Cepat
-                    </h3>
-
-
-                    <a href="{{ route('student.bills') }}">
-
-                        <img
-                            src="{{ asset('resource/img/Icon-set-pr.svg') }}"
-                            alt=""
-                        >
-
-                        <span>
-                            Lihat Semua Tagihan
-                        </span>
-
-                    </a>
-
-
-                    <a href="{{ route('student.payment-history') }}">
-
-                        <img
-                            src="{{ asset('resource/img/File_dock.svg') }}"
-                            alt=""
-                        >
-
-                        <span>
-                            Riwayat Pembayaran
-                        </span>
-
-                    </a>
-
-
-                    <a href="{{ route('student.payment-history') }}">
-
-                        <img
-                            src="{{ asset('resource/img/Icon-set.svg') }}"
-                            alt=""
-                        >
-
-                        <span>
-                            Cek Nota
-                        </span>
-
-                    </a>
-
-                </section>
-
-
-            </aside>
-
-        </div>
-
-    </main>
+    </div>
 
 </div>
 
-
-<script src="{{ asset('js/script.js') }}"></script>
-
-</body>
-</html>
+@endsection

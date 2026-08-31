@@ -10,23 +10,24 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // DATA SISWA
+        // Data siswa
 
         $student = Student::with([
             'guardian',
             'classRoom.academicYear',
-            'bills',
+            'bills.payments',
+            'bills.latestPayment',
         ])
-        ->where('user_id', Auth::id())
-        ->firstOrFail();
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
 
-        // TAGIHAN
+        // Tagihan
 
         $bills = $student->bills;
 
 
-        // STATISTIK TAGIHAN
+        // Statistik
 
         $totalBills = $bills->count();
 
@@ -34,20 +35,40 @@ class DashboardController extends Controller
             ->where('status', 'paid')
             ->count();
 
-        $unpaidBills = $bills
-            ->where('status', 'unpaid')
-            ->count();
+
+        // Benar-benar belum dibayar
+        $payableBills = $bills->filter(function ($bill) {
+
+            if ($bill->status !== 'unpaid') {
+                return false;
+            }
+
+            $hasPendingOrPaidPayment = $bill->payments
+                ->contains(function ($payment) {
+                    return in_array(
+                        $payment->status,
+                        ['pending', 'paid']
+                    );
+                });
+
+            return ! $hasPendingOrPaidPayment;
+        });
+
+
+        $unpaidBills = $payableBills->count();
 
         $totalAmount = $bills->sum('amount');
 
 
-        // TAHUN AJARAN
+        // Tahun ajaran
 
-        $academicYearName = $student->classRoom?->academicYear?->name
+        $academicYearName =
+            $student->classRoom?->academicYear?->name
             ?? 'Tahun Ajaran Aktif';
 
 
-        // TAGIHAN AKTIF
+        // Tagihan aktif
+        // Tetap tampilkan pending supaya bisa terlihat "Menunggu"
 
         $activeBills = $bills
             ->where('status', 'unpaid')
@@ -55,12 +76,12 @@ class DashboardController extends Controller
             ->values();
 
 
-        // TAGIHAN TERDEKAT
+        // Tagihan terdekat yang benar-benar belum dibayar
 
-        $nearestBill = $activeBills->first();
+        $nearestBill = $payableBills
+            ->sortBy('due_date')
+            ->first();
 
-
-        // VIEW
 
         return view('student.dashboard', [
             'student'          => $student,
