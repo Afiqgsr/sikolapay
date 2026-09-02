@@ -4,29 +4,35 @@
 
 @section('page-title', 'Riwayat Pembayaran')
 
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/pages/student/payment-history.css') }}">
-@endpush
-
 @section('content')
 
 <section class="payment-history-content">
 
-    {{-- PAGE HEADER --}}
+    {{-- Header --}}
     <div class="page-header">
+
         <div>
-            <h2>Riwayat Pembayaran</h2>
-            <p>Rekap seluruh transaksi pembayaran Anda</p>
+
+            <h2>
+                Riwayat Pembayaran
+            </h2>
+
+            <p>
+                Rekap seluruh transaksi pembayaran Anda
+            </p>
+
         </div>
+
     </div>
 
-
-    {{-- HISTORY STATS --}}
+    {{-- Statistik --}}
     <div class="history-stats">
 
-        {{-- TOTAL TRANSAKSI --}}
         <div class="history-card">
-            <span>Total Transaksi</span>
+
+            <span>
+                Total Transaksi
+            </span>
 
             <h3>
                 {{ $totalTransactions }}
@@ -35,31 +41,41 @@
             <small>
                 Tahun {{ now()->year }}
             </small>
+
         </div>
 
-
-        {{-- TOTAL DIBAYAR --}}
         <div class="history-card">
-            <span>Total Dibayar</span>
+
+            <span>
+                Total Dibayar
+            </span>
 
             <h3>
-                Rp {{ number_format($totalPaid, 0, ',', '.') }}
+                Rp {{ number_format(
+                    $totalPaid,
+                    0,
+                    ',',
+                    '.'
+                ) }}
             </h3>
 
             <small>
                 Tahun {{ now()->year }}
             </small>
+
         </div>
 
-
-        {{-- TERAKHIR DIBAYAR --}}
         <div class="history-card">
-            <span>Terakhir Dibayar</span>
+
+            <span>
+                Terakhir Dibayar
+            </span>
 
             @if($lastPayment)
 
                 <h3>
-                    {{ $lastPayment->paid_at->translatedFormat('d F Y') }}
+                    {{ $lastPayment->paid_at
+                        ->translatedFormat('d F Y') }}
                 </h3>
 
                 <small>
@@ -68,27 +84,30 @@
 
             @else
 
-                <h3>-</h3>
+                <h3>
+                    -
+                </h3>
 
                 <small>
                     Belum ada pembayaran
                 </small>
 
             @endif
+
         </div>
 
     </div>
 
-
-    {{-- HISTORY TABLE --}}
+    {{-- Tabel riwayat --}}
     <div class="history-table-card">
 
-        {{-- TOOLBAR --}}
         <div class="history-toolbar">
 
             <div class="history-toolbar-title">
 
-                <h3>Riwayat Transaksi</h3>
+                <h3>
+                    Riwayat Transaksi
+                </h3>
 
                 <span>
                     {{ $payments->total() }} transaksi
@@ -101,25 +120,25 @@
                 class="btn-export"
                 id="exportPaymentHistory"
             >
+
                 <img
                     src="{{ asset('assets/img/export.svg') }}"
                     alt="Export"
                 >
 
                 Export
+
             </button>
 
         </div>
 
-
-        {{-- FILTER --}}
+        {{-- Filter --}}
         <form
             method="GET"
             action="{{ route('student.payment-history') }}"
             class="history-filter"
         >
 
-            {{-- SEARCH --}}
             <div class="search-box">
 
                 <img
@@ -136,19 +155,24 @@
 
             </div>
 
-
-            {{-- YEAR --}}
             <select name="year">
 
                 <option value="">
                     Semua Tahun
                 </option>
 
-                @for($year = now()->year; $year >= now()->year - 2; $year--)
+                @for(
+                    $year = now()->year;
+                    $year >= now()->year - 2;
+                    $year--
+                )
 
                     <option
                         value="{{ $year }}"
-                        {{ request('year') == $year ? 'selected' : '' }}
+                        {{ request('year') == $year
+                            ? 'selected'
+                            : ''
+                        }}
                     >
                         {{ $year }}
                     </option>
@@ -157,8 +181,6 @@
 
             </select>
 
-
-            {{-- TYPE --}}
             <select name="type">
 
                 <option value="">
@@ -167,36 +189,46 @@
 
                 <option
                     value="spp"
-                    {{ request('type') == 'spp' ? 'selected' : '' }}
+                    {{ request('type') == 'spp'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     SPP
                 </option>
 
                 <option
                     value="ujian"
-                    {{ request('type') == 'ujian' ? 'selected' : '' }}
+                    {{ request('type') == 'ujian'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     Ujian
                 </option>
 
                 <option
                     value="gedung"
-                    {{ request('type') == 'gedung' ? 'selected' : '' }}
+                    {{ request('type') == 'gedung'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     Gedung
                 </option>
 
                 <option
                     value="kegiatan"
-                    {{ request('type') == 'kegiatan' ? 'selected' : '' }}
+                    {{ request('type') == 'kegiatan'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     Kegiatan
                 </option>
 
             </select>
 
-
-            {{-- STATUS --}}
             <select name="status">
 
                 <option value="">
@@ -205,29 +237,36 @@
 
                 <option
                     value="paid"
-                    {{ request('status') == 'paid' ? 'selected' : '' }}
+                    {{ request('status') == 'paid'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     Lunas
                 </option>
 
                 <option
                     value="pending"
-                    {{ request('status') == 'pending' ? 'selected' : '' }}
+                    {{ request('status') == 'pending'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     Menunggu
                 </option>
 
                 <option
                     value="rejected"
-                    {{ request('status') == 'rejected' ? 'selected' : '' }}
+                    {{ request('status') == 'rejected'
+                        ? 'selected'
+                        : ''
+                    }}
                 >
                     Ditolak
                 </option>
 
             </select>
 
-
-            {{-- APPLY --}}
             <button
                 type="submit"
                 class="btn-filter"
@@ -235,8 +274,6 @@
                 Terapkan
             </button>
 
-
-            {{-- RESET --}}
             @if(request()->hasAny([
                 'search',
                 'year',
@@ -255,8 +292,7 @@
 
         </form>
 
-
-        {{-- TABLE --}}
+        {{-- Table --}}
         <div class="table-wrapper">
 
             <table class="history-table">
@@ -276,35 +312,50 @@
 
                 </thead>
 
-
                 <tbody>
 
                     @forelse($payments as $payment)
 
+                        @php
+                            $latestVerification =
+                                $payment->latestVerification;
+
+                            $hasRejectedVerification =
+                                $latestVerification?->status === 'rejected';
+
+                            $isResubmitted =
+                                $hasRejectedVerification
+                                && $payment->proof_uploaded_at
+                                && $latestVerification?->processed_at
+                                && $payment->proof_uploaded_at->gt(
+                                    $latestVerification->processed_at
+                                );
+
+                            $isRejected =
+                                $hasRejectedVerification
+                                && !$isResubmitted;
+                        @endphp
+
                         <tr>
 
-                            {{-- TRANSACTION --}}
                             <td>
+
                                 <span class="transaction-number">
                                     #{{ $payment->payment_number }}
                                 </span>
+
                             </td>
 
-
-                            {{-- BILL --}}
                             <td>
                                 {{ $payment->bill?->name ?? '-' }}
                             </td>
 
-
-                            {{-- PERIOD --}}
                             <td>
                                 {{ $payment->bill?->description ?? '-' }}
                             </td>
 
-
-                            {{-- AMOUNT --}}
                             <td>
+
                                 <strong>
                                     Rp {{ number_format(
                                         $payment->amount,
@@ -313,32 +364,35 @@
                                         '.'
                                     ) }}
                                 </strong>
+
                             </td>
 
-
-                            {{-- METHOD --}}
                             <td>
                                 {{ $payment->paymentMethod?->name ?? '-' }}
                             </td>
 
-
-                            {{-- DATE --}}
                             <td>
 
                                 @if($payment->paid_at)
 
-                                    {{ $payment->paid_at->translatedFormat('d F Y') }}
+                                    {{ $payment->paid_at
+                                        ->translatedFormat('d F Y') }}
+
+                                @elseif($payment->proof_uploaded_at)
+
+                                    {{ $payment->proof_uploaded_at
+                                        ->translatedFormat('d F Y') }}
 
                                 @else
 
-                                    {{ $payment->created_at->translatedFormat('d F Y') }}
+                                    {{ $payment->created_at
+                                        ->translatedFormat('d F Y') }}
 
                                 @endif
 
                             </td>
 
-
-                            {{-- STATUS --}}
+                            {{-- Status --}}
                             <td>
 
                                 @if($payment->status === 'paid')
@@ -347,16 +401,25 @@
                                         Lunas
                                     </span>
 
+                                @elseif($isRejected)
+
+                                    <span class="badge danger">
+                                        Ditolak
+                                    </span>
+
+                                @elseif(
+                                    $payment->status === 'pending'
+                                    && $isResubmitted
+                                )
+
+                                    <span class="badge pending">
+                                        Menunggu Verifikasi Ulang
+                                    </span>
+
                                 @elseif($payment->status === 'pending')
 
                                     <span class="badge pending">
                                         Menunggu
-                                    </span>
-
-                                @elseif($payment->status === 'rejected')
-
-                                    <span class="badge danger">
-                                        Ditolak
                                     </span>
 
                                 @else
@@ -369,8 +432,7 @@
 
                             </td>
 
-
-                            {{-- ACTION --}}
+                            {{-- Aksi --}}
                             <td>
 
                                 @if($payment->status === 'paid')
@@ -385,13 +447,7 @@
                                         Nota
                                     </a>
 
-                                @elseif($payment->status === 'pending')
-
-                                    <span class="btn-pending">
-                                        Menunggu
-                                    </span>
-
-                                @elseif($payment->status === 'rejected')
+                                @elseif($isRejected)
 
                                     <a
                                         href="{{ route(
@@ -400,8 +456,23 @@
                                         ) }}"
                                         class="btn-pay"
                                     >
-                                        Bayar Lagi
+                                        Upload Ulang Bukti
                                     </a>
+
+                                @elseif(
+                                    $payment->status === 'pending'
+                                    && $isResubmitted
+                                )
+
+                                    <span class="btn-pending">
+                                        Menunggu Verifikasi Ulang
+                                    </span>
+
+                                @elseif($payment->status === 'pending')
+
+                                    <span class="btn-pending">
+                                        Menunggu
+                                    </span>
 
                                 @else
 
@@ -436,8 +507,7 @@
 
         </div>
 
-
-        {{-- PAGINATION --}}
+        {{-- Pagination --}}
         @if($payments->hasPages())
 
             <div class="history-pagination">
@@ -453,7 +523,6 @@
                     transaksi
 
                 </div>
-
 
                 <div class="pagination-links">
 
@@ -474,8 +543,13 @@
 
                     @endif
 
-
-                    @foreach(range(1, $payments->lastPage()) as $page)
+                    @foreach(
+                        range(
+                            1,
+                            $payments->lastPage()
+                        )
+                        as $page
+                    )
 
                         @if($page == $payments->currentPage())
 
@@ -495,7 +569,6 @@
                         @endif
 
                     @endforeach
-
 
                     @if($payments->hasMorePages())
 

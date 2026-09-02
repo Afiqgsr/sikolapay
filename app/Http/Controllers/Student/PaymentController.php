@@ -35,9 +35,7 @@ class PaymentController extends Controller
             'paymentMethods' => $paymentMethods,
         ]);
     }
-
-
-    /**
+        /**
      * Konfirmasi pembayaran satu tagihan
      */
     public function confirm(Request $request, $id)
@@ -48,7 +46,6 @@ class PaymentController extends Controller
             ->where('student_id', $student->id)
             ->firstOrFail();
 
-        // Validasi input pembayaran
         $request->validate([
             'payment_method_id' => [
                 'required',
@@ -63,7 +60,6 @@ class PaymentController extends Controller
             ],
         ]);
 
-        // Ambil payment method yang aktif
         $paymentMethod = PaymentMethod::where(
             'id',
             $request->payment_method_id
@@ -71,50 +67,109 @@ class PaymentController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Cegah pembayaran ganda
-        $existingPayment = Payment::where('bill_id', $bill->id)
-            ->whereIn('status', ['pending', 'paid'])
+        /*
+        * Cari payment terakhir untuk tagihan ini
+        */
+        $existingPayment = Payment::with('latestVerification')
+            ->where('bill_id', $bill->id)
+            ->latest()
             ->first();
 
-        if ($existingPayment) {
+        /*
+        * Kalau sudah lunas, tidak boleh bayar lagi
+        */
+        if (
+            $bill->status === 'paid'
+            || $existingPayment?->status === 'paid'
+        ) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tagihan ini sudah memiliki pembayaran.'
+                'message' => 'Tagihan ini sudah lunas.'
             ], 422);
         }
 
-        // Generate nomor pembayaran
+        /*
+        * Cek apakah payment sebelumnya ditolak
+        */
+        $isRejected =
+            $existingPayment
+            && $existingPayment->status === 'pending'
+            && $existingPayment->latestVerification?->status === 'rejected';
+
+        /*
+        * Kalau masih pending dan belum ditolak,
+        * siswa tidak boleh upload pembayaran lagi
+        */
+        if (
+            $existingPayment
+            && $existingPayment->status === 'pending'
+            && !$isRejected
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pembayaran masih menunggu verifikasi.'
+            ], 422);
+        }
+
+        /*
+        * Simpan bukti pembayaran baru
+        */
+        $proofPath = $request->file('proof_of_payment')
+            ->store('payment-proofs', 'public');
+
+        /*
+        * Upload ulang bukti pembayaran yang ditolak
+        */
+        if ($isRejected) {
+
+            $existingPayment->update([
+                'payment_method_id' => $paymentMethod->id,
+                'proof_of_payment' => $proofPath,
+                'proof_uploaded_at' => now(),
+                'status' => 'pending',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bukti pembayaran berhasil dikirim ulang.',
+                'payment' => [
+                    'id' => $existingPayment->id,
+                    'payment_number' => $existingPayment->payment_number,
+                    'date' => now()->translatedFormat('d F Y'),
+                    'proof' => $existingPayment->proof_of_payment,
+                ],
+            ]);
+        }
+
+        /*
+        * Pembayaran baru
+        */
         $paymentNumber =
             'PAY-' .
             now()->format('YmdHis') .
             '-' .
             strtoupper(Str::random(5));
 
-        // Simpan bukti pembayaran
-        $proofPath = $request->file('proof_of_payment')
-            ->store('payment-proofs', 'public');
-
-        // Simpan pembayaran
         $payment = Payment::create([
-            'bill_id'            => $bill->id,
-            'payer_id'           => Auth::id(),
-            'payment_method_id'  => $paymentMethod->id,
-            'payment_number'     => $paymentNumber,
-            'amount'             => $bill->amount,
-            'proof_of_payment'   => $proofPath,
-            'proof_uploaded_at'  => now(),
-            'status'             => 'pending',
+            'bill_id' => $bill->id,
+            'payer_id' => Auth::id(),
+            'payment_method_id' => $paymentMethod->id,
+            'payment_number' => $paymentNumber,
+            'amount' => $bill->amount,
+            'proof_of_payment' => $proofPath,
+            'proof_uploaded_at' => now(),
+            'status' => 'pending',
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Pembayaran berhasil dikonfirmasi.',
             'payment' => [
-                'id'             => $payment->id,
+                'id' => $payment->id,
                 'payment_number' => $payment->payment_number,
-                'date'           => $payment->created_at
+                'date' => $payment->created_at
                     ->translatedFormat('d F Y'),
-                'proof'          => $payment->proof_of_payment,
+                'proof' => $payment->proof_of_payment,
             ],
         ]);
     }

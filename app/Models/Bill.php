@@ -10,13 +10,31 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Bill extends Model
 {
     protected $fillable = [
+        'bill_batch_id',
         'student_id',
         'name',
         'description',
+        'semester',
         'amount',
         'due_date',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'due_date' => 'date',
+        ];
+    }
+
+    public function batch(): BelongsTo
+    {
+        return $this->belongsTo(
+            BillBatch::class,
+            'bill_batch_id'
+        );
+    }
 
     public function student(): BelongsTo
     {
@@ -30,6 +48,7 @@ class Bill extends Model
 
     public function latestPayment(): HasOne
     {
-        return $this->hasOne(Payment::class)->latestOfMany();
+        return $this->hasOne(Payment::class)
+            ->latestOfMany();
     }
 }

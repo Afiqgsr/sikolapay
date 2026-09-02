@@ -1,0 +1,869 @@
+/* Payment history */
+
+.guardian-history-page {
+    width: 100%;
+    max-width: 1120px;
+
+    margin: 0 auto;
+
+    padding: 32px 32px 48px;
+
+    box-sizing: border-box;
+}
+
+
+/* Header */
+
+.guardian-history-header {
+    width: 100%;
+
+    margin-bottom: 24px;
+}
+
+.guardian-history-header h2 {
+    margin: 0 0 4px;
+
+    font-family: var(--heading-h5-semibold-font-family);
+    font-size: var(--heading-h5-semibold-font-size);
+    font-weight: var(--heading-h5-semibold-font-weight);
+    line-height: var(--heading-h5-semibold-line-height);
+
+    color: var(--neutralnr-90);
+}
+
+.guardian-history-header p {
+    margin: 0;
+
+    font-family: var(--label-l16-regular-font-family);
+    font-size: var(--label-l16-regular-font-size);
+    font-weight: var(--label-l16-regular-font-weight);
+    line-height: var(--label-l16-regular-line-height);
+
+    color: var(--neutralnr-70);
+}
+
+
+/* Statistic */
+
+.guardian-history-stats {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.guardian-history-stat {
+    min-width: 0;
+    min-height: 104px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 18px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+}
+
+.guardian-history-stat span {
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+}
+
+.guardian-history-stat strong {
+    color: var(--neutralnr-90);
+
+    font-family: var(--heading-h4-semibold-font-family);
+    font-size: 26px;
+    font-weight: var(--heading-h4-semibold-font-weight);
+    line-height: 32px;
+}
+
+
+/* Filter */
+
+.guardian-history-filter-card {
+    width: 100%;
+
+    margin-bottom: 24px;
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+}
+
+.guardian-history-filter {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 0.9fr)
+        minmax(180px, 0.9fr)
+        minmax(260px, 1.3fr)
+        auto;
+
+    align-items: end;
+
+    gap: 14px;
+}
+
+.guardian-history-filter-group {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.guardian-history-filter-group label {
+    color: var(--neutralnr-70);
+
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+}
+
+.guardian-history-filter-group select {
+    width: 100%;
+    height: 44px;
+
+    padding: 0 36px 0 14px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 9px;
+
+    color: var(--neutralnr-90);
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+}
+
+.guardian-history-filter-group select:focus {
+    border-color: var(--primarypr-40);
+}
+
+
+/* Search */
+
+.guardian-history-search {
+    min-width: 0;
+}
+
+.guardian-history-search-box {
+    width: 100%;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 0 14px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 9px;
+}
+
+.guardian-history-search-box:focus-within {
+    border-color: var(--primarypr-40);
+}
+
+.guardian-history-search-box img {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+}
+
+.guardian-history-search-box input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    color: var(--neutralnr-90);
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.guardian-history-search-box input::placeholder {
+    color: #9CA3AF;
+}
+
+
+/* Filter action */
+
+.guardian-history-filter-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.guardian-history-filter-actions button,
+.guardian-history-filter-actions a {
+    height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.guardian-history-filter-actions button {
+    background: var(--primarypr-40);
+
+    border: 1px solid var(--primarypr-40);
+
+    color: #FFFFFF;
+}
+
+.guardian-history-filter-actions button:hover {
+    background: #343B98;
+}
+
+.guardian-history-filter-actions a {
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+
+    color: #6B7280;
+}
+
+.guardian-history-filter-actions a:hover {
+    background: #F9FAFB;
+}
+
+
+/* Card */
+
+.guardian-history-card {
+    width: 100%;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+}
+
+.guardian-history-card-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.guardian-history-card-header h3 {
+    margin: 0;
+
+    color: var(--neutralnr-90);
+
+    font-family: var(--label-l16-semi-bold-font-family);
+    font-size: var(--label-l16-semi-bold-font-size);
+    font-weight: var(--label-l16-semi-bold-font-weight);
+}
+
+.guardian-history-card-header p {
+    margin: 5px 0 0;
+
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: var(--label-l12-regular-font-size);
+}
+
+
+/* Table wrapper */
+
+.guardian-history-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+}
+
+
+/* Table */
+
+.guardian-history-table {
+    width: 100%;
+    min-width: 1360px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+.guardian-history-table thead {
+    background: #E0E2F4;
+}
+
+.guardian-history-table th {
+    height: 48px;
+
+    padding: 0 14px;
+
+    box-sizing: border-box;
+
+    text-align: left;
+    vertical-align: middle;
+
+    border-bottom: 1px solid #D1D5DB;
+
+    color: #000000;
+
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+
+    white-space: nowrap;
+}
+
+.guardian-history-table td {
+    height: 74px;
+
+    padding: 12px 14px;
+
+    box-sizing: border-box;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    color: var(--neutralnr-80);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: var(--label-l12-regular-font-size);
+}
+
+.guardian-history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.guardian-history-table tbody tr:hover {
+    background: #FAFAFF;
+}
+
+
+/* Column width */
+
+.guardian-history-table th:nth-child(1),
+.guardian-history-table td:nth-child(1) {
+    width: 230px;
+}
+
+.guardian-history-table th:nth-child(2),
+.guardian-history-table td:nth-child(2) {
+    width: 165px;
+}
+
+.guardian-history-table th:nth-child(3),
+.guardian-history-table td:nth-child(3) {
+    width: 220px;
+}
+
+.guardian-history-table th:nth-child(4),
+.guardian-history-table td:nth-child(4) {
+    width: 135px;
+}
+
+.guardian-history-table th:nth-child(5),
+.guardian-history-table td:nth-child(5) {
+    width: 125px;
+}
+
+.guardian-history-table th:nth-child(6),
+.guardian-history-table td:nth-child(6) {
+    width: 135px;
+}
+
+.guardian-history-table th:nth-child(7),
+.guardian-history-table td:nth-child(7) {
+    width: 150px;
+}
+
+.guardian-history-table th:nth-child(8),
+.guardian-history-table td:nth-child(8) {
+    width: 190px;
+}
+
+
+/* Transaction number */
+
+.guardian-history-number {
+    display: block;
+
+    color: var(--primarypr-40);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* Student */
+
+.guardian-history-student {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.guardian-history-student strong {
+    color: #111827;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.guardian-history-student span {
+    color: #6B7280;
+
+    font-size: 11px;
+}
+
+
+/* Bill */
+
+.guardian-history-bill {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.guardian-history-bill strong {
+    color: #111827;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.guardian-history-bill span {
+    color: #6B7280;
+
+    font-size: 11px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Amount */
+
+.guardian-history-amount {
+    color: #111827;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* Method */
+
+.guardian-history-method {
+    white-space: nowrap;
+}
+
+
+/* Date */
+
+.guardian-history-date {
+    white-space: nowrap;
+}
+
+
+/* Status */
+
+.guardian-history-status {
+    min-height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    box-sizing: border-box;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.guardian-history-status.paid {
+    background: #DCFCE7;
+
+    color: #15803D;
+}
+
+.guardian-history-status.pending {
+    background: #FEF3C7;
+
+    color: #B45309;
+}
+
+.guardian-history-status.rejected {
+    background: #FEE2E2;
+
+    color: #B91C1C;
+}
+
+
+/* Action */
+
+.guardian-history-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    white-space: nowrap;
+}
+
+.guardian-history-detail,
+.guardian-history-receipt {
+    min-height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 11px;
+
+    box-sizing: border-box;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.guardian-history-detail {
+    background: #FFFFFF;
+
+    border: 1px solid var(--primarypr-40);
+
+    color: var(--primarypr-40);
+}
+
+.guardian-history-detail:hover {
+    background: #F3F4FF;
+}
+
+.guardian-history-receipt {
+    background: var(--primarypr-40);
+
+    border: 1px solid var(--primarypr-40);
+
+    color: #FFFFFF;
+}
+
+.guardian-history-receipt:hover {
+    background: #343B98;
+}
+
+
+/* Empty */
+
+.guardian-history-empty {
+    height: 120px !important;
+
+    text-align: center;
+}
+
+.guardian-history-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 5px;
+}
+
+.guardian-history-empty-state strong {
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.guardian-history-empty-state p {
+    margin: 0;
+
+    color: #9CA3AF;
+
+    font-size: 12px;
+}
+
+
+/* Pagination */
+
+.guardian-history-pagination {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+.guardian-history-pagination-info {
+    color: #4B5563;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+.guardian-history-pagination-buttons {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+}
+
+.pagination-button {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+
+    color: #374151;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+.pagination-button:hover {
+    background: #F3F4FF;
+
+    border-color: var(--primarypr-40);
+
+    color: var(--primarypr-40);
+}
+
+.pagination-button.active {
+    background: var(--primarypr-40);
+
+    border-color: var(--primarypr-40);
+
+    color: #FFFFFF;
+}
+
+.pagination-button.disabled {
+    opacity: 0.4;
+
+    cursor: default;
+    pointer-events: none;
+}
+
+
+/* Scrollbar */
+
+.guardian-history-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.guardian-history-table-wrapper::-webkit-scrollbar-track {
+    background: #F3F4F6;
+
+    border-radius: 999px;
+}
+
+.guardian-history-table-wrapper::-webkit-scrollbar-thumb {
+    background: #9CA3AF;
+
+    border-radius: 999px;
+}
+
+.guardian-history-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #6B7280;
+}
+
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+
+    .guardian-history-filter {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .guardian-history-search {
+        grid-column: span 2;
+    }
+
+    .guardian-history-filter-actions {
+        grid-column: span 2;
+    }
+
+}
+
+
+@media (max-width: 1000px) {
+
+    .guardian-history-page {
+        padding: 28px 24px 40px;
+    }
+
+    .guardian-history-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .guardian-history-filter {
+        grid-template-columns: 1fr;
+    }
+
+    .guardian-history-search,
+    .guardian-history-filter-actions {
+        grid-column: auto;
+    }
+
+    .guardian-history-filter-actions {
+        width: 100%;
+    }
+
+    .guardian-history-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 640px) {
+
+    .guardian-history-page {
+        padding: 24px 16px 32px;
+    }
+
+    .guardian-history-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .guardian-history-filter-card,
+    .guardian-history-card {
+        padding: 16px;
+    }
+
+    .guardian-history-filter-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .guardian-history-filter-actions button,
+    .guardian-history-filter-actions a {
+        width: 100%;
+    }
+
+}

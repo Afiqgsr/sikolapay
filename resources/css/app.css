@@ -5,6 +5,16 @@
 @import './styleguide.css';
 @import './style.css';
 
+@import './pages/admin/dashboard.css';
+@import './pages/admin/payment.css';
+@import './pages/admin/payment-detail.css';
+@import './pages/admin/student-data.css';
+@import './pages/admin/billing-data.css';
+@import './pages/admin/payment-report.css';
+
+@import './pages/superadmin/dashboard.css';
+@import './pages/superadmin/manage-admin.css';
+
 @import './pages/student/dashboard.css';
 @import './pages/student/bills.css';
 @import './pages/student/bill-detail.css';
@@ -12,6 +22,15 @@
 @import './pages/student/payment-history.css';
 @import './pages/student/payment-receipt.css';
 @import './pages/student/profile.css';
+
+@import './pages/guardian/dashboard.css';
+@import './pages/guardian/bills.css';
+@import './pages/guardian/bill-detail.css';
+@import './pages/guardian/payment.css';
+@import './pages/guardian/payment-detail.css';
+@import './pages/guardian/payment-history.css';
+@import "./pages/guardian/receipt.css";
+@import "./pages/guardian/profile.css";
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

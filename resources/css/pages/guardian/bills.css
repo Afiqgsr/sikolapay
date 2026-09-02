@@ -1,0 +1,651 @@
+/* Tagihan anak */
+
+.guardian-bills-page {
+    width: 100%;
+    max-width: 1120px;
+
+    margin: 0 auto;
+
+    padding: 32px 32px 48px;
+
+    box-sizing: border-box;
+}
+
+
+/* Header */
+
+.guardian-bills-header {
+    width: 100%;
+
+    margin-bottom: 24px;
+}
+
+.guardian-bills-header-info h2 {
+    margin: 0 0 4px;
+
+    font-family: var(--heading-h5-semibold-font-family);
+    font-size: var(--heading-h5-semibold-font-size);
+    font-weight: var(--heading-h5-semibold-font-weight);
+    line-height: var(--heading-h5-semibold-line-height);
+
+    color: var(--neutralnr-90);
+}
+
+.guardian-bills-header-info p {
+    margin: 0;
+
+    font-family: var(--label-l16-regular-font-family);
+    font-size: var(--label-l16-regular-font-size);
+    font-weight: var(--label-l16-regular-font-weight);
+    line-height: var(--label-l16-regular-line-height);
+
+    color: var(--neutralnr-70);
+}
+
+
+/* Filter card */
+
+.guardian-bills-filter-card {
+    width: 100%;
+
+    margin-bottom: 24px;
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+}
+
+.guardian-bills-filter {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 0.9fr)
+        minmax(180px, 0.9fr)
+        minmax(260px, 1.3fr)
+        auto;
+
+    gap: 14px;
+
+    align-items: end;
+}
+
+
+/* Filter group */
+
+.guardian-filter-group {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.guardian-filter-group label {
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+
+    color: var(--neutralnr-70);
+}
+
+.guardian-filter-select {
+    width: 100%;
+    height: 44px;
+
+    padding: 0 36px 0 14px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 9px;
+
+    color: var(--neutralnr-90);
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+}
+
+.guardian-filter-select:focus {
+    border-color: var(--primarypr-40);
+}
+
+
+/* Search */
+
+.guardian-filter-search {
+    min-width: 0;
+}
+
+.guardian-search-wrapper {
+    width: 100%;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 0 14px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 9px;
+}
+
+.guardian-search-wrapper:focus-within {
+    border-color: var(--primarypr-40);
+}
+
+.guardian-search-wrapper img {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+}
+
+.guardian-search-wrapper input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    color: var(--neutralnr-90);
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.guardian-search-wrapper input::placeholder {
+    color: #9CA3AF;
+}
+
+
+/* Filter actions */
+
+.guardian-filter-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.guardian-filter-button,
+.guardian-reset-button {
+    height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.guardian-filter-button {
+    background: var(--primarypr-40);
+
+    border: 1px solid var(--primarypr-40);
+
+    color: #FFFFFF;
+}
+
+.guardian-filter-button:hover {
+    background: #343B98;
+}
+
+.guardian-reset-button {
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+
+    color: #6B7280;
+}
+
+.guardian-reset-button:hover {
+    background: #F9FAFB;
+}
+
+
+/* Bills card */
+
+.guardian-bills-card {
+    width: 100%;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+}
+
+.guardian-bills-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.guardian-bills-card-header h3 {
+    margin: 0;
+
+    color: var(--neutralnr-90);
+
+    font-family: var(--label-l16-semi-bold-font-family);
+    font-size: var(--label-l16-semi-bold-font-size);
+    font-weight: var(--label-l16-semi-bold-font-weight);
+}
+
+.guardian-bills-card-header p {
+    margin: 5px 0 0;
+
+    color: var(--neutralnr-60);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: var(--label-l12-regular-font-size);
+}
+
+
+/* Table wrapper */
+
+.guardian-bills-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+}
+
+
+/* Table */
+
+.guardian-bills-table {
+    width: 100%;
+    min-width: 960px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+.guardian-bills-table thead {
+    background: #E0E2F4;
+}
+
+.guardian-bills-table th {
+    height: 50px;
+
+    padding: 0 16px;
+
+    box-sizing: border-box;
+
+    text-align: left;
+    vertical-align: middle;
+
+    border-bottom: 1px solid #D1D5DB;
+
+    color: #000000;
+
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+}
+
+.guardian-bills-table td {
+    min-height: 72px;
+
+    padding: 14px 16px;
+
+    box-sizing: border-box;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    color: var(--neutralnr-80);
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: var(--label-l12-regular-font-size);
+}
+
+.guardian-bills-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.guardian-bills-table tbody tr:hover {
+    background: #FAFAFF;
+}
+
+
+/* Column width */
+
+.guardian-bills-table th:nth-child(1),
+.guardian-bills-table td:nth-child(1) {
+    width: 24%;
+}
+
+.guardian-bills-table th:nth-child(2),
+.guardian-bills-table td:nth-child(2) {
+    width: 25%;
+}
+
+.guardian-bills-table th:nth-child(3),
+.guardian-bills-table td:nth-child(3) {
+    width: 16%;
+}
+
+.guardian-bills-table th:nth-child(4),
+.guardian-bills-table td:nth-child(4) {
+    width: 17%;
+}
+
+.guardian-bills-table th:nth-child(5),
+.guardian-bills-table td:nth-child(5) {
+    width: 18%;
+}
+
+.guardian-bills-table th:nth-child(6),
+.guardian-bills-table td:nth-child(6) {
+    width: 16%;
+}
+
+
+/* Student */
+
+.guardian-student-cell {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.guardian-student-name {
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.guardian-student-class {
+    color: #6B7280;
+
+    font-size: 12px;
+}
+
+
+/* Bill */
+
+.guardian-bill-name {
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.guardian-bill-description {
+    margin-top: 4px;
+
+    color: #6B7280;
+
+    font-size: 12px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.guardian-bill-amount {
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* Status */
+
+.guardian-bill-status {
+    min-height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    box-sizing: border-box;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.guardian-bill-status.paid {
+    background: #DCFCE7;
+
+    color: #15803D;
+}
+
+.guardian-bill-status.pending {
+    background: #FEF3C7;
+
+    color: #B45309;
+}
+
+.guardian-bill-status.unpaid {
+    background: #FEE2E2;
+
+    color: #DC2626;
+}
+
+.guardian-bill-status.rejected {
+    background: #FEE2E2;
+
+    color: #B91C1C;
+}
+
+
+/* Action */
+
+.guardian-bill-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+}
+
+.guardian-bill-action {
+    min-height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--primarypr-40);
+    border-radius: 6px;
+
+    color: var(--primarypr-40);
+
+    font-size: 11px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.guardian-bill-action:hover {
+    background: #F3F4FF;
+}
+
+.guardian-bill-action.retry {
+    border-color: #DC2626;
+
+    color: #DC2626;
+}
+
+.guardian-bill-action.retry:hover {
+    background: #FEF2F2;
+}
+
+
+/* Empty */
+
+.guardian-bills-empty {
+    height: 120px !important;
+
+    text-align: center;
+}
+
+.guardian-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 5px;
+}
+
+.guardian-empty-state strong {
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.guardian-empty-state p {
+    margin: 0;
+
+    color: #9CA3AF;
+
+    font-size: 12px;
+}
+
+
+/* Pagination */
+
+.guardian-bills-pagination {
+    margin-top: 20px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+
+    .guardian-bills-filter {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .guardian-filter-search {
+        grid-column: span 2;
+    }
+
+    .guardian-filter-actions {
+        grid-column: span 2;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .guardian-bills-page {
+        padding: 28px 24px 40px;
+    }
+
+    .guardian-bills-filter {
+        grid-template-columns: 1fr;
+    }
+
+    .guardian-filter-search,
+    .guardian-filter-actions {
+        grid-column: auto;
+    }
+
+    .guardian-filter-actions {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 640px) {
+
+    .guardian-bills-page {
+        padding: 24px 16px 32px;
+    }
+
+    .guardian-bills-filter-card,
+    .guardian-bills-card {
+        padding: 16px;
+    }
+
+    .guardian-filter-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .guardian-filter-button,
+    .guardian-reset-button {
+        width: 100%;
+    }
+
+    .guardian-bills-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}

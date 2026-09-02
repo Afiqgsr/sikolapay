@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
-
     protected $fillable = [
         'user_id',
         'guardian_id',
         'class_room_id',
+        'entry_year',
+        'status',
         'nisn',
         'nis',
         'name',
@@ -24,21 +25,29 @@ class Student extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(
+            User::class
+        );
     }
 
     public function guardian(): BelongsTo
     {
-        return $this->belongsTo(Guardian::class);
+        return $this->belongsTo(
+            Guardian::class
+        );
     }
 
     public function classRoom(): BelongsTo
     {
-        return $this->belongsTo(ClassRoom::class);
+        return $this->belongsTo(
+            ClassRoom::class
+        );
     }
 
     public function bills(): HasMany
     {
-        return $this->hasMany(Bill::class);
+        return $this->hasMany(
+            Bill::class
+        );
     }
 }

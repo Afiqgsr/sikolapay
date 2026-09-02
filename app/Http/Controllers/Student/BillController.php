@@ -17,10 +17,10 @@ class BillController extends Controller
         $query = Bill::where('student_id', $student->id)
             ->with([
                 'payments',
-                'latestPayment',
+                'latestPayment.latestVerification',
             ]);
 
-        /* FILTER STATUS */
+        /* Filter status */
 
         if ($status === 'unpaid') {
 
@@ -32,21 +32,35 @@ class BillController extends Controller
         } elseif ($status === 'pending') {
 
             $query->whereHas('payments', function ($paymentQuery) {
-                $paymentQuery->where('status', 'pending');
+                $paymentQuery
+                    ->where('status', 'pending')
+                    ->where(function ($query) {
+                        $query
+                            ->whereDoesntHave('latestVerification')
+                            ->orWhereHas('latestVerification', function ($verification) {
+                                $verification->where('status', '!=', 'rejected');
+                            });
+                    });
             });
 
         } elseif ($status === 'paid') {
 
             $query->where('status', 'paid');
+
+        } elseif ($status === 'rejected') {
+
+            $query->whereHas('latestPayment.latestVerification', function ($verification) {
+                $verification->where('status', 'rejected');
+            });
         }
 
-        /* AMBIL TAGIHAN */
+        /* Ambil tagihan */
 
         $bills = $query
             ->orderByDesc('due_date')
             ->get();
 
-        /* TOTAL TAGIHAN BELUM DIBAYAR */
+        /* Total tagihan belum dibayar */
 
         $unpaidBills = Bill::where('student_id', $student->id)
             ->where('status', 'unpaid')
@@ -57,13 +71,11 @@ class BillController extends Controller
 
         $unpaidTotal = $unpaidBills->sum('amount');
 
-        /* RETURN VIEW */
-
         return view('student.bills.index', [
-            'bills'       => $bills,
+            'bills' => $bills,
             'unpaidBills' => $unpaidBills,
             'unpaidTotal' => $unpaidTotal,
-            'status'      => $status,
+            'status' => $status,
         ]);
     }
 
@@ -76,7 +88,7 @@ class BillController extends Controller
                 'student.classRoom',
                 'student.guardian',
                 'payments.paymentMethod',
-                'latestPayment',
+                'latestPayment.latestVerification',
             ])
             ->findOrFail($id);
 

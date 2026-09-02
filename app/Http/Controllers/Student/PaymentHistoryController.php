@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Student;
 use App\Models\Payment;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,64 +15,96 @@ class PaymentHistoryController extends Controller
         $student = Student::where('user_id', Auth::id())
             ->firstOrFail();
 
-        /*-- Query pembayaran --*/
+        /* Query pembayaran */
 
         $query = Payment::whereHas('bill', function ($query) use ($student) {
             $query->where('student_id', $student->id);
-        })->with([
-            'bill',
-            'paymentMethod',
-            'latestVerification',
-        ]);
+        })
+            ->with([
+                'bill',
+                'paymentMethod',
+                'latestVerification',
+            ]);
 
-        /*-- Filter pencarian --*/
+        /* Filter pencarian */
 
         if ($request->filled('search')) {
+
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
+
                 $q->where('payment_number', 'like', "%{$search}%")
+
                     ->orWhereHas('bill', function ($bill) use ($search) {
-                        $bill->where('name', 'like', "%{$search}%")
+                        $bill
+                            ->where('name', 'like', "%{$search}%")
                             ->orWhere('description', 'like', "%{$search}%");
                     })
+
                     ->orWhereHas('paymentMethod', function ($method) use ($search) {
                         $method->where('name', 'like', "%{$search}%");
                     });
             });
         }
 
-        /*-- Filter tahun --*/
+        /* Filter tahun */
 
         if ($request->filled('year')) {
+
             $query->whereYear(
-                'paid_at',
+                'created_at',
                 $request->year
             );
         }
 
-        /*-- Filter jenis tagihan --*/
+        /* Filter jenis tagihan */
 
         if ($request->filled('type')) {
+
             $query->whereHas('bill', function ($bill) use ($request) {
                 $bill->where('type', $request->type);
             });
         }
 
-        /*-- Filter status --*/
+        /* Filter status */
 
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+
+            if ($request->status === 'rejected') {
+
+                $query->whereHas('latestVerification', function ($verification) {
+                    $verification->where('status', 'rejected');
+                });
+
+            } elseif ($request->status === 'pending') {
+
+                $query
+                    ->where('status', 'pending')
+                    ->where(function ($query) {
+
+                        $query
+                            ->whereDoesntHave('latestVerification')
+
+                            ->orWhereHas('latestVerification', function ($verification) {
+                                $verification->where('status', '!=', 'rejected');
+                            });
+                    });
+
+            } else {
+
+                $query->where('status', $request->status);
+            }
         }
 
-        /*-- Pagination --*/
+        /* Pagination */
 
         $payments = $query
-            ->latest('paid_at')
+            ->latest('created_at')
             ->paginate(10)
             ->withQueryString();
 
-        /*-- Statistik --*/
+        /* Statistik */
 
         $statQuery = Payment::whereHas('bill', function ($query) use ($student) {
             $query->where('student_id', $student->id);
@@ -93,8 +125,6 @@ class PaymentHistoryController extends Controller
             ->with('bill')
             ->latest('paid_at')
             ->first();
-
-        /*-- View --*/
 
         return view('student.payment-history', [
             'student' => $student,

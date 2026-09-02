@@ -10,6 +10,16 @@
 
 @section('content')
 
+@php
+    $latestPayment = $bill->latestPayment;
+
+    $latestVerification =
+        $latestPayment?->latestVerification;
+
+    $isRejected =
+        $latestVerification?->status === 'rejected';
+@endphp
+
 <section class="bill-detail-page">
 
     <a
@@ -19,7 +29,6 @@
         <span>←</span>
         <span>Kembali ke Daftar Tagihan</span>
     </a>
-
 
     <div class="bill-title-row">
 
@@ -33,48 +42,93 @@
 
         </div>
 
-            @if($bill->status === 'paid')
+        @if($bill->status === 'paid')
 
-                <span class="bill-status paid">
-                    Tagihan Sudah Lunas
-                </span>
+            <span class="bill-status paid">
+                Tagihan Sudah Lunas
+            </span>
 
-            @elseif($bill->latestPayment?->status === 'pending')
+        @elseif($isRejected)
 
-                <span class="bill-status pending">
-                    Menunggu Verifikasi
-                </span>
+            <span class="bill-status rejected">
+                Bukti Pembayaran Ditolak
+            </span>
 
-            @elseif($bill->latestPayment?->status === 'rejected')
+        @elseif($latestPayment?->status === 'pending')
 
-                <a
-                    href="{{ route('student.payment', $bill->id) }}"
-                    class="pay-button"
-                >
-                    Bayar Lagi
-                </a>
+            <span class="bill-status pending">
+                Menunggu Verifikasi
+            </span>
 
-            @else
+        @else
 
-                <a class="bill-status unpaid">
-                    Bayar Sekarang
-                </a>
+            <a
+                href="{{ route('student.payment', $bill->id) }}"
+                class="pay-button"
+            >
+                Bayar Sekarang
+            </a>
 
-            @endif
+        @endif
 
     </div>
 
+    {{-- Informasi penolakan --}}
+    @if($isRejected)
+
+        <div class="bill-rejection-alert">
+
+            <div class="bill-rejection-header">
+
+                <strong>
+                    Bukti pembayaran ditolak
+                </strong>
+
+            </div>
+
+            <p>
+                Bukti pembayaran yang Anda kirim belum dapat diterima oleh admin.
+            </p>
+
+            @if($latestVerification?->note)
+
+                <div class="bill-rejection-note">
+
+                    <span>
+                        Catatan Admin
+                    </span>
+
+                    <strong>
+                        {{ $latestVerification->note }}
+                    </strong>
+
+                </div>
+
+            @endif
+
+            <p class="bill-rejection-help">
+                Jika pembayaran sudah dilakukan, Anda tidak perlu membayar ulang.
+                Silakan upload ulang bukti pembayaran sesuai catatan admin.
+            </p>
+
+            <a
+                href="{{ route('student.payment', $bill->id) }}"
+                class="bill-reupload-button"
+            >
+                Upload Ulang Bukti
+            </a>
+
+        </div>
+
+    @endif
 
     <div class="bill-content-grid">
 
-
         <div class="bill-left-column">
-
 
             <div class="bill-card bill-information-card">
 
                 <h3>Informasi Tagihan</h3>
-
 
                 <div class="bill-info-grid">
 
@@ -86,7 +140,6 @@
                         </strong>
                     </div>
 
-
                     <div class="bill-info-item">
                         <span>Jenis Tagihan</span>
 
@@ -95,7 +148,6 @@
                         </strong>
                     </div>
 
-
                     <div class="bill-info-item">
                         <span>Periode</span>
 
@@ -103,7 +155,6 @@
                             {{ $bill->description ?? '-' }}
                         </strong>
                     </div>
-
 
                     <div class="bill-info-item">
                         <span>Jatuh Tempo</span>
@@ -116,7 +167,6 @@
                         </strong>
                     </div>
 
-
                     <div class="bill-info-item">
                         <span>Kelas</span>
 
@@ -125,27 +175,27 @@
                         </strong>
                     </div>
 
-
                     <div class="bill-info-item">
                         <span>Status</span>
 
                         <strong>
+
                             @if($bill->status === 'paid')
 
                                 <span class="status-text paid">
                                     Lunas
                                 </span>
 
-                            @elseif($bill->latestPayment?->status === 'pending')
-
-                                <span class="status-text pending">
-                                    Menunggu
-                                </span>
-
-                            @elseif($bill->latestPayment?->status === 'rejected')
+                            @elseif($isRejected)
 
                                 <span class="status-text rejected">
                                     Ditolak
+                                </span>
+
+                            @elseif($latestPayment?->status === 'pending')
+
+                                <span class="status-text pending">
+                                    Menunggu
                                 </span>
 
                             @else
@@ -155,14 +205,13 @@
                                 </span>
 
                             @endif
+
                         </strong>
                     </div>
 
                 </div>
 
-
                 <div class="bill-divider"></div>
-
 
                 <div class="bill-price-list">
 
@@ -178,7 +227,6 @@
 
                     </div>
 
-
                     <div class="bill-price-row">
 
                         <span>
@@ -193,9 +241,7 @@
 
                 </div>
 
-
                 <div class="bill-divider"></div>
-
 
                 <div class="bill-total-row">
 
@@ -211,11 +257,9 @@
 
             </div>
 
-
             <div class="bill-card student-card">
 
                 <h3>Informasi Siswa</h3>
-
 
                 <div class="student-info-grid">
 
@@ -229,7 +273,6 @@
 
                     </div>
 
-
                     <div class="bill-info-item">
 
                         <span>NISN</span>
@@ -239,7 +282,6 @@
                         </strong>
 
                     </div>
-
 
                     <div class="bill-info-item">
 
@@ -251,7 +293,6 @@
 
                     </div>
 
-
                     <div class="bill-info-item">
 
                         <span>Kelas</span>
@@ -262,7 +303,6 @@
 
                     </div>
 
-
                     <div class="bill-info-item">
 
                         <span>Nama Wali</span>
@@ -272,7 +312,6 @@
                         </strong>
 
                     </div>
-
 
                     <div class="bill-info-item">
 
@@ -290,14 +329,11 @@
 
         </div>
 
-
         <div class="bill-right-column">
-
 
             <div class="bill-card summary-card">
 
                 <h3>Ringkasan</h3>
-
 
                 <div class="summary-amount">
 
@@ -310,7 +346,6 @@
                     </span>
 
                 </div>
-
 
                 <div class="summary-due">
 
@@ -330,20 +365,20 @@
                         Tagihan Sudah Lunas
                     </span>
 
-                @elseif($bill->latestPayment?->status === 'pending')
-
-                    <span class="pending-button">
-                        Menunggu Verifikasi
-                    </span>
-
-                @elseif($bill->latestPayment?->status === 'rejected')
+                @elseif($isRejected)
 
                     <a
                         href="{{ route('student.payment', $bill->id) }}"
                         class="pay-button"
                     >
-                        Bayar Lagi
+                        Upload Ulang Bukti
                     </a>
+
+                @elseif($latestPayment?->status === 'pending')
+
+                    <span class="pending-button">
+                        Menunggu Verifikasi
+                    </span>
 
                 @else
 
@@ -358,11 +393,9 @@
 
             </div>
 
-
             <div class="bill-card payment-method-card">
 
                 <h3>Metode Pembayaran</h3>
-
 
                 <div class="payment-method-list">
 
@@ -371,18 +404,15 @@
                         <span>Transfer Bank</span>
                     </div>
 
-
                     <div class="payment-method">
                         <span class="payment-check">✓</span>
                         <span>Virtual Account</span>
                     </div>
 
-
                     <div class="payment-method">
                         <span class="payment-check">✓</span>
                         <span>QRIS</span>
                     </div>
-
 
                     <div class="payment-method">
                         <span class="payment-check">✓</span>

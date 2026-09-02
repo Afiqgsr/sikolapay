@@ -1,144 +1,441 @@
-<h1>Detail Pembayaran</h1>
+@extends('layouts.sikolapayapp')
 
-@if (session('success')) <p>
-{{ session('success') }} </p>
-@endif
+@section('title', 'Detail Pembayaran - SikolaPay')
 
-<h2>{{ $payment->bill->name }}</h2>
+@section('page-title', 'Pembayaran')
 
-<p>
-    Nomor Pembayaran:
-    {{ $payment->payment_number }}
-</p>
+@push('styles')
+    @vite('resources/css/pages/guardian/payment-detail.css')
+@endpush
 
-<p>
-    Nama Anak:
-    {{ $payment->bill->student->name }}
-</p>
+@section('content')
 
-<p>
-    Nominal:
-    Rp{{ number_format($payment->amount, 0, ',', '.') }}
-</p>
+@php
 
-<p>
-    Metode Pembayaran:
-    {{ $payment->paymentMethod->name }}
-</p>
+    $bill = $payment->bill;
+    $student = $bill?->student;
 
-<p>
-    Status:
-    {{ $payment->status }}
-</p>
+    $statusLabel = match ($payment->status) {
+        'paid' => 'Lunas',
+        'pending' => 'Menunggu Verifikasi',
+        'rejected' => 'Ditolak',
+        default => ucfirst($payment->status),
+    };
 
-@if ($payment->latestVerification)
+@endphp
 
-@if ($payment->latestVerification->status === 'rejected')
 
-    <hr>
+<section class="guardian-payment-detail-page">
 
-    <h3>Pembayaran Ditolak</h3>
+    <div class="payment-detail-back">
 
-    <p>
-        Bukti pembayaran yang Anda kirimkan ditolak oleh admin.
-    </p>
+        <a
+            href="{{ route('guardian.bills.index') }}"
+            class="payment-detail-back-button"
+        >
 
-    @if ($payment->latestVerification->note)
-        <p>
-            <strong>Alasan Penolakan:</strong>
-        </p>
+            <img
+                src="{{ asset('assets/img/back.svg') }}"
+                alt=""
+            >
 
-        <p>
-            {{ $payment->latestVerification->note }}
-        </p>
+            <span>
+                Kembali ke Daftar Tagihan
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <div class="payment-detail-header">
+
+        <div>
+
+            <h2>
+                Detail Pembayaran
+            </h2>
+
+            <p>
+                Informasi pembayaran dan status verifikasi
+            </p>
+
+        </div>
+
+
+        <span class="payment-detail-status {{ $payment->status }}">
+            {{ $statusLabel }}
+        </span>
+
+    </div>
+
+
+    @if(session('success'))
+
+        <div class="payment-detail-alert success">
+            {{ session('success') }}
+        </div>
+
     @endif
 
-    <h3>Upload Bukti Pembayaran Baru</h3>
 
-    <form
-        action="{{ route('guardian.payments.proof', $payment->id) }}"
-        method="POST"
-        enctype="multipart/form-data"
-    >
-        @csrf
+    @if(session('error'))
 
-        <input
-            type="file"
-            name="proof_of_payment"
-            accept=".jpg,.jpeg,.png"
-            required
-        >
+        <div class="payment-detail-alert error">
+            {{ session('error') }}
+        </div>
 
-        <br><br>
-
-        <button type="submit">
-            Upload Bukti Baru
-        </button>
-    </form>
-
-@elseif ($payment->latestVerification->status === 'verified')
-
-    <hr>
-
-    <p>
-        Pembayaran telah diverifikasi oleh admin.
-    </p>
-
-@endif
-
-@endif
-
-<hr>
-
-<h3>Bukti Pembayaran</h3>
-
-@if ($payment->proof_of_payment)
-
-<p>
-    <a
-        href="{{ asset('storage/' . $payment->proof_of_payment) }}"
-        target="_blank"
-    >
-        Lihat Bukti Pembayaran
-    </a>
-</p>
-
-@else
-
-<p>
-    Bukti pembayaran belum diunggah.
-</p>
-
-@if ($payment->status === 'pending')
-
-    <form
-        action="{{ route('guardian.payments.proof', $payment->id) }}"
-        method="POST"
-        enctype="multipart/form-data"
-    >
-        @csrf
-
-        <input
-            type="file"
-            name="proof_of_payment"
-            accept=".jpg,.jpeg,.png"
-            required
-        >
-
-        <br><br>
-
-        <button type="submit">
-            Upload Bukti Pembayaran
-        </button>
-    </form>
-
-@endif
+    @endif
 
 
-@endif
+    <div class="payment-detail-grid">
 
-<hr>
 
-<a href="{{ route('guardian.bills.index') }}">
-    Kembali ke Daftar Tagihan
-</a>
+        <div class="payment-detail-left">
+
+
+            <div class="payment-detail-card">
+
+                <div class="payment-detail-card-header">
+
+                    <h3>
+                        Informasi Pembayaran
+                    </h3>
+
+                </div>
+
+
+                <div class="payment-detail-content">
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Nomor Pembayaran
+                        </span>
+
+                        <strong class="payment-number">
+                            {{ $payment->payment_number }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Jenis Tagihan
+                        </span>
+
+                        <strong>
+                            {{ $bill?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Periode
+                        </span>
+
+                        <strong>
+                            {{ $bill?->description ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Nama Anak
+                        </span>
+
+                        <strong>
+                            {{ $student?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Kelas
+                        </span>
+
+                        <strong>
+                            {{ $student?->classRoom?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Metode Pembayaran
+                        </span>
+
+                        <strong>
+                            {{ $payment->paymentMethod?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-detail-row">
+
+                        <span>
+                            Tanggal Pembayaran
+                        </span>
+
+                        <strong>
+                            {{ $payment->created_at
+                                ? $payment->created_at->translatedFormat('d F Y, H:i')
+                                : '-'
+                            }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="payment-detail-card">
+
+                <div class="payment-detail-card-header">
+
+                    <h3>
+                        Bukti Pembayaran
+                    </h3>
+
+                </div>
+
+
+                <div class="payment-proof-content">
+
+                    @if($payment->proof_of_payment)
+
+                        <div class="payment-proof-preview">
+
+                            <img
+                                src="{{ asset(
+                                    'storage/' . $payment->proof_of_payment
+                                ) }}"
+                                alt="Bukti Pembayaran"
+                            >
+
+                        </div>
+
+
+                        <div class="payment-proof-actions">
+
+                            <a
+                                href="{{ asset(
+                                    'storage/' . $payment->proof_of_payment
+                                ) }}"
+                                target="_blank"
+                                class="payment-proof-button"
+                            >
+                                Lihat Bukti Pembayaran
+                            </a>
+
+                        </div>
+
+                    @else
+
+                        <div class="payment-proof-empty">
+
+                            <p>
+                                Bukti pembayaran belum tersedia.
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+            </div>
+
+
+            @if($payment->status === 'rejected')
+
+                <div class="payment-detail-card rejection-card">
+
+                    <div class="payment-detail-card-header">
+
+                        <h3>
+                            Pembayaran Ditolak
+                        </h3>
+
+                    </div>
+
+
+                    <div class="rejection-content">
+
+                        <p>
+                            {{ $payment->latestVerification?->note
+                                ?? 'Pembayaran ditolak oleh admin.'
+                            }}
+                        </p>
+
+
+                        <a
+                            href="{{ route(
+                                'guardian.payments.create',
+                                $bill->id
+                            ) }}"
+                            class="payment-retry-button"
+                        >
+                            Bayar Lagi
+                        </a>
+
+                    </div>
+
+                </div>
+
+            @endif
+
+        </div>
+
+
+        <aside class="payment-detail-right">
+
+            <div class="payment-summary-card">
+
+                <div class="payment-summary-header">
+
+                    <h3>
+                        Ringkasan
+                    </h3>
+
+                </div>
+
+
+                <div class="payment-summary-content">
+
+                    <div class="payment-summary-row">
+
+                        <span>
+                            Tagihan
+                        </span>
+
+                        <strong>
+                            {{ $bill?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-summary-row">
+
+                        <span>
+                            Metode
+                        </span>
+
+                        <strong>
+                            {{ $payment->paymentMethod?->name ?? '-' }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-summary-row">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <strong class="summary-status {{ $payment->status }}">
+                            {{ $statusLabel }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-summary-divider"></div>
+
+
+                    <div class="payment-summary-total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong>
+                            Rp {{ number_format(
+                                $payment->amount,
+                                0,
+                                ',',
+                                '.'
+                            ) }}
+                        </strong>
+
+                    </div>
+
+
+                    @if($payment->status === 'pending')
+
+                        <div class="payment-waiting-info">
+
+                            <strong>
+                                Menunggu Verifikasi
+                            </strong>
+
+                            <p>
+                                Bukti pembayaran telah diterima.
+                                Admin akan melakukan verifikasi
+                                dalam 1×24 jam kerja.
+                            </p>
+
+                        </div>
+
+                    @elseif($payment->status === 'paid')
+
+                        <div class="payment-paid-info">
+
+                            <strong>
+                                Pembayaran Berhasil
+                            </strong>
+
+                            <p>
+                                Pembayaran telah diverifikasi dan
+                                tagihan dinyatakan lunas.
+                            </p>
+
+                        </div>
+
+                    @elseif($payment->status === 'rejected')
+
+                        <div class="payment-rejected-info">
+
+                            <strong>
+                                Pembayaran Ditolak
+                            </strong>
+
+                            <p>
+                                Silakan periksa alasan penolakan
+                                dan lakukan pembayaran kembali.
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+@endsection

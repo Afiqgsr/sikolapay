@@ -8,6 +8,12 @@
 }
 
 
+.dashboard-content .invoice-item .invoice-action .badge.rejected {
+    color: #d6452d !important;
+    background-color: #f9e0db !important;
+    border: 1px solid #efc2b9 !important;
+}
+
 /* WELCOME */
 
 .welcome-section {

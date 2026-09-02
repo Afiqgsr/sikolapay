@@ -4,15 +4,11 @@
 
 @section('page-title', 'Dashboard')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/student/dashboard.css') }}">
-@endpush
-
 @section('content')
 
 <div class="dashboard-content">
 
-    <!-- WELCOME -->
+    {{-- Welcome --}}
     <section class="welcome-section">
 
         <h2>
@@ -27,11 +23,9 @@
 
     </section>
 
-
-    <!-- STATISTIC -->
+    {{-- Statistic --}}
     <section class="stats-section">
 
-        <!-- TOTAL TAGIHAN -->
         <div class="stat-card">
 
             <img
@@ -40,6 +34,7 @@
             >
 
             <div>
+
                 <span>Total Tagihan</span>
 
                 <h3>
@@ -49,12 +44,11 @@
                 <small>
                     {{ $academicYearName }}
                 </small>
+
             </div>
 
         </div>
 
-
-        <!-- BELUM BAYAR -->
         <div class="stat-card warning">
 
             <img
@@ -63,6 +57,7 @@
             >
 
             <div>
+
                 <span>Belum Bayar</span>
 
                 <h3>
@@ -72,12 +67,11 @@
                 <small>
                     Segera Lunasi
                 </small>
+
             </div>
 
         </div>
 
-
-        <!-- SUDAH LUNAS -->
         <div class="stat-card success">
 
             <img
@@ -86,6 +80,7 @@
             >
 
             <div>
+
                 <span>Sudah Lunas</span>
 
                 <h3>
@@ -95,12 +90,11 @@
                 <small>
                     Semester Ini
                 </small>
+
             </div>
 
         </div>
 
-
-        <!-- TOTAL NOMINAL -->
         <div class="stat-card">
 
             <img
@@ -109,68 +103,76 @@
             >
 
             <div>
+
                 <span>Total Nominal</span>
 
                 <h3>
-                    Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                    Rp {{ number_format(
+                        $totalAmount,
+                        0,
+                        ',',
+                        '.'
+                    ) }}
                 </h3>
 
                 <small>
                     {{ $academicYearName }}
                 </small>
+
             </div>
 
         </div>
 
     </section>
 
-
-    <!-- ALERT -->
+    {{-- Alert jatuh tempo --}}
     @if($nearestBill)
 
-    <section class="alert-card">
+        <section class="alert-card">
 
-        <img
-            src="{{ asset('assets/img/Hhourglass_move_light1.svg') }}"
-            alt=""
-        >
+            <img
+                src="{{ asset('assets/img/Hhourglass_move_light1.svg') }}"
+                alt=""
+            >
 
-        <div class="alert-content">
+            <div class="alert-content">
 
-            <div>
+                <div>
 
-                <h3>
-                    Tagihan Akan Segera Jatuh Tempo
-                </h3>
+                    <h3>
+                        Tagihan Akan Segera Jatuh Tempo
+                    </h3>
 
-                <p>
-                    {{ $nearestBill->name }}
-                    akan jatuh tempo pada
-                    {{ \Carbon\Carbon::parse($nearestBill->due_date)->translatedFormat('d F Y') }}.
-                    Segera lakukan pembayaran.
-                </p>
+                    <p>
+                        {{ $nearestBill->name }}
+                        akan jatuh tempo pada
+
+                        {{ \Carbon\Carbon::parse(
+                            $nearestBill->due_date
+                        )->translatedFormat('d F Y') }}.
+
+                        Segera lakukan pembayaran.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{{ route('student.bills.index') }}"
+                    class="alert-button"
+                >
+                    Bayar Sekarang
+                </a>
 
             </div>
 
-            <a
-                href="{{ route('student.bills.index') }}"
-                class="alert-button"
-            >
-                Bayar Sekarang
-            </a>
-
-        </div>
-
-    </section>
+        </section>
 
     @endif
 
-
-    <!-- GRID -->
+    {{-- Grid --}}
     <div class="dashboard-grid">
 
-
-        <!-- TAGIHAN -->
+        {{-- Tagihan aktif --}}
         <section class="invoice-section">
 
             <div class="section-header">
@@ -185,14 +187,35 @@
 
             </div>
 
-
             <div class="invoice-list">
 
                 @forelse($activeBills as $bill)
 
+                    @php
+                        $latestPayment = $bill->latestPayment;
+
+                        $latestVerification =
+                            $latestPayment?->latestVerification;
+
+                        $hasRejectedVerification =
+                            $latestVerification?->status === 'rejected';
+
+                        $isResubmitted =
+                            $hasRejectedVerification
+                            && $latestPayment?->proof_uploaded_at
+                            && $latestVerification?->processed_at
+                            && $latestPayment->proof_uploaded_at->gt(
+                                $latestVerification->processed_at
+                            );
+
+                        $isRejected =
+                            $hasRejectedVerification
+                            && !$isResubmitted;
+                    @endphp
+
                     <div class="invoice-item">
 
-                        <!-- INFO -->
+                        {{-- Info --}}
                         <div class="invoice-info">
 
                             <div class="invoice-title">
@@ -204,7 +227,10 @@
                                 @if($bill->due_date)
 
                                     Jatuh tempo:
-                                    {{ \Carbon\Carbon::parse($bill->due_date)->translatedFormat('d F Y') }}
+
+                                    {{ \Carbon\Carbon::parse(
+                                        $bill->due_date
+                                    )->translatedFormat('d F Y') }}
 
                                 @else
 
@@ -216,16 +242,19 @@
 
                         </div>
 
-
-                        <!-- HARGA -->
+                        {{-- Harga --}}
                         <div class="invoice-price">
 
-                            Rp {{ number_format($bill->amount, 0, ',', '.') }}
+                            Rp {{ number_format(
+                                $bill->amount,
+                                0,
+                                ',',
+                                '.'
+                            ) }}
 
                         </div>
 
-
-                        <!-- ACTION -->
+                        {{-- Action --}}
                         <div class="invoice-action">
 
                             @if($bill->status === 'paid')
@@ -234,14 +263,38 @@
                                     Lunas
                                 </span>
 
+                            @elseif($isRejected)
+
+                                <span class="badge rejected">
+                                    Ditolak
+                                </span>
+
+                                <a
+                                    href="{{ route(
+                                        'student.payment',
+                                        $bill->id
+                                    ) }}"
+                                    class="invoice-pay-button"
+                                >
+                                    Upload Ulang
+                                </a>
+
                             @elseif(
-                                $bill->payments->contains(
-                                    fn($payment) => $payment->status === 'pending'
-                                )
+                                $latestPayment?->status === 'pending'
                             )
 
                                 <span class="badge pending">
-                                    Menunggu
+
+                                    @if($isResubmitted)
+
+                                        Menunggu Verifikasi Ulang
+
+                                    @else
+
+                                        Menunggu
+
+                                    @endif
+
                                 </span>
 
                             @else
@@ -251,7 +304,10 @@
                                 </span>
 
                                 <a
-                                    href="{{ route('student.bills.index') }}"
+                                    href="{{ route(
+                                        'student.payment',
+                                        $bill->id
+                                    ) }}"
                                     class="invoice-pay-button"
                                 >
                                     Bayar
@@ -279,30 +335,26 @@
 
         </section>
 
-
-        <!-- SIDEBAR KANAN -->
+        {{-- Sidebar kanan --}}
         <aside class="right-sidebar">
 
-
-            <!-- INFORMASI SISWA -->
+            {{-- Informasi siswa --}}
             <section class="student-info">
 
                 <h3>
                     Informasi Siswa
                 </h3>
 
-
                 <div class="student-profile">
 
-                    <!-- AVATAR -->
                     <div class="avatar">
 
-                        {{ \Illuminate\Support\Str::initials($student->name) }}
+                        {{ \Illuminate\Support\Str::initials(
+                            $student->name
+                        ) }}
 
                     </div>
 
-
-                    <!-- NAMA & KELAS -->
                     <div>
 
                         <h4>
@@ -317,14 +369,13 @@
 
                 </div>
 
-
-                <!-- DETAIL SISWA -->
                 <div class="student-detail">
 
-                    <!-- NISN -->
                     <div class="detail-item">
 
-                        <span>NISN</span>
+                        <span>
+                            NISN
+                        </span>
 
                         <strong>
                             {{ $student->nisn ?? '-' }}
@@ -332,11 +383,11 @@
 
                     </div>
 
-
-                    <!-- NIS -->
                     <div class="detail-item">
 
-                        <span>NIS</span>
+                        <span>
+                            NIS
+                        </span>
 
                         <strong>
                             {{ $student->nis ?? '-' }}
@@ -344,11 +395,11 @@
 
                     </div>
 
-
-                    <!-- WALI -->
                     <div class="detail-item">
 
-                        <span>Wali</span>
+                        <span>
+                            Wali
+                        </span>
 
                         <strong>
                             {{ $student->guardian?->name ?? '-' }}
@@ -356,11 +407,11 @@
 
                     </div>
 
-
-                    <!-- TAHUN AJARAN -->
                     <div class="detail-item">
 
-                        <span>Tahun Ajaran</span>
+                        <span>
+                            Tahun Ajaran
+                        </span>
 
                         <strong>
                             {{ $academicYearName }}
@@ -372,16 +423,13 @@
 
             </section>
 
-
-            <!-- QUICK ACTION -->
+            {{-- Quick action --}}
             <section class="quick-action">
 
                 <h3>
                     Aksi Cepat
                 </h3>
 
-
-                <!-- TAGIHAN -->
                 <a href="{{ route('student.bills.index') }}">
 
                     <img
@@ -395,8 +443,6 @@
 
                 </a>
 
-
-                <!-- RIWAYAT -->
                 <a href="{{ route('student.payment-history') }}">
 
                     <img
@@ -410,8 +456,6 @@
 
                 </a>
 
-
-                <!-- PROFIL -->
                 <a href="{{ route('student.profile') }}">
 
                     <img

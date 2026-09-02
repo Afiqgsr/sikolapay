@@ -11,76 +11,68 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-
     public function index()
     {
-    $payments = Payment::where('status', 'pending')
-    ->whereNotNull('proof_of_payment')
-    ->where(function ($query) {
-    // blum pernah ditolak
-    $query->whereDoesntHave('verifications', function ($verification) {
-    $verification->where('status', 'rejected');
-    })
-
-            // atau sudah ditolak, akan tetapi sudah upload bukti baru
-            ->orWhereHas('latestVerification', function ($verification) {
-                $verification->where('status', 'rejected')
-                    ->whereColumn(
-                        'payments.proof_uploaded_at',
-                        '>',
-                        'payment_verifications.processed_at'
-                    );
-            });
-        })
-        ->with([
-            'bill.student',
-            'paymentMethod',
-            'payer',
-            'latestVerification',
-        ])
-        ->latest()
-        ->get();
-
-    return view('admin.payments.index', compact('payments'));
-
-    }
-
-
-    public function show($id)
-    {
-        $payment = Payment::where('id', $id)
+        $payments = Payment::query()
+            ->where('status', 'pending')
+            ->whereNotNull('proof_of_payment')
+            ->where(function ($query) {
+                $query
+                    ->whereDoesntHave('verifications', function ($verification) {
+                        $verification->where('status', 'rejected');
+                    })
+                    ->orWhereHas('latestVerification', function ($verification) {
+                        $verification
+                            ->where('status', 'rejected')
+                            ->whereColumn(
+                                'payments.proof_uploaded_at',
+                                '>',
+                                'payment_verifications.processed_at'
+                            );
+                    });
+            })
             ->with([
-                'bill.student',
+                'bill.student.classRoom',
                 'paymentMethod',
                 'payer',
                 'latestVerification',
             ])
-            ->firstOrFail();
+            ->latest()
+            ->get();
+
+        return view('admin.payments.index', compact('payments'));
+    }
+
+    public function show($id)
+    {
+        $payment = Payment::with([
+                'bill.student.classRoom',
+                'paymentMethod',
+                'payer',
+                'latestVerification',
+            ])
+            ->findOrFail($id);
 
         return view('admin.payments.show', compact('payment'));
     }
 
     public function verify($id)
     {
-        $payment = Payment::where('id', $id)
+        $payment = Payment::with('bill')
             ->where('status', 'pending')
             ->whereNotNull('proof_of_payment')
-            ->firstOrFail();
+            ->findOrFail($id);
 
         DB::transaction(function () use ($payment) {
-
-            // Ubah status payment menjadi paid
             $payment->update([
                 'status' => 'paid',
                 'paid_at' => now(),
             ]);
 
-            // Ubah status tagihan menjadi paid
             $payment->bill->update([
                 'status' => 'paid',
             ]);
 
-            // Simpan riwayat verifikasi
             PaymentVerification::create([
                 'payment_id' => $payment->id,
                 'admin_id' => Auth::id(),
@@ -98,33 +90,27 @@ class PaymentController extends Controller
 
     public function reject(Request $request, $id)
     {
-    $request->validate([
-    'note' => ['required', 'string', 'max:1000'],
-    ]);
-
-    $payment = Payment::where('id', $id)
-        ->where('status', 'pending')
-        ->whereNotNull('proof_of_payment')
-        ->firstOrFail();
-
-    DB::transaction(function () use ($payment, $request) {
-
-        PaymentVerification::create([
-            'payment_id' => $payment->id,
-            'admin_id' => Auth::id(),
-            'status' => 'rejected',
-            'note' => $request->note,
-            'verified_at' => null,
-            'processed_at' => now(),
+        $validated = $request->validate([
+            'note' => ['required', 'string', 'max:1000'],
         ]);
-    });
 
-    return redirect()
-        ->route('admin.payments.show', $payment->id)
-        ->with('success', 'Bukti pembayaran berhasil ditolak.');
+        $payment = Payment::where('status', 'pending')
+            ->whereNotNull('proof_of_payment')
+            ->findOrFail($id);
 
+        DB::transaction(function () use ($payment, $validated) {
+            PaymentVerification::create([
+                'payment_id' => $payment->id,
+                'admin_id' => Auth::id(),
+                'status' => 'rejected',
+                'note' => $validated['note'],
+                'verified_at' => null,
+                'processed_at' => now(),
+            ]);
+        });
 
+        return redirect()
+            ->route('admin.payments.show', $payment->id)
+            ->with('success', 'Bukti pembayaran berhasil ditolak.');
     }
-
-
 }

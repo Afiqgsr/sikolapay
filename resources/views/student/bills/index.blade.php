@@ -10,10 +10,9 @@
 
 @section('content')
 
-<!-- BILLING CONTENT -->
 <section class="billing-content">
 
-    <!-- HEADER -->
+    {{-- Header --}}
     <div class="page-header">
 
         <h2>Daftar Tagihan</h2>
@@ -24,8 +23,7 @@
 
     </div>
 
-
-    <!-- SUMMARY -->
+    {{-- Summary --}}
     <div class="billing-summary">
 
         <div class="summary-info">
@@ -51,12 +49,10 @@
 
     </div>
 
-
-    <!-- BILLING CARD -->
+    {{-- Billing card --}}
     <div class="billing-card">
 
-
-        <!-- FILTER -->
+        {{-- Filter --}}
         <div class="billing-filter">
 
             <a
@@ -66,25 +62,41 @@
                 Semua
             </a>
 
-
             <a
-                href="{{ route('student.bills.index', ['status' => 'unpaid']) }}"
+                href="{{ route(
+                    'student.bills.index',
+                    ['status' => 'unpaid']
+                ) }}"
                 class="filter-btn {{ $status === 'unpaid' ? 'active' : '' }}"
             >
                 Belum Bayar
             </a>
 
-
             <a
-                href="{{ route('student.bills.index', ['status' => 'pending']) }}"
+                href="{{ route(
+                    'student.bills.index',
+                    ['status' => 'pending']
+                ) }}"
                 class="filter-btn {{ $status === 'pending' ? 'active' : '' }}"
             >
                 Menunggu
             </a>
 
+            <a
+                href="{{ route(
+                    'student.bills.index',
+                    ['status' => 'rejected']
+                ) }}"
+                class="filter-btn {{ $status === 'rejected' ? 'active' : '' }}"
+            >
+                Ditolak
+            </a>
 
             <a
-                href="{{ route('student.bills.index', ['status' => 'paid']) }}"
+                href="{{ route(
+                    'student.bills.index',
+                    ['status' => 'paid']
+                ) }}"
                 class="filter-btn {{ $status === 'paid' ? 'active' : '' }}"
             >
                 Lunas
@@ -92,8 +104,7 @@
 
         </div>
 
-
-        <!-- TABLE -->
+        {{-- Table --}}
         <div class="billing-table-wrapper">
 
             <table class="billing-table">
@@ -101,54 +112,60 @@
                 <thead>
 
                     <tr>
-
                         <th>Jenis Tagihan</th>
-
                         <th>Keterangan</th>
-
                         <th>Nominal</th>
-
                         <th>Jatuh Tempo</th>
-
                         <th>Status</th>
-
                         <th>Aksi</th>
-
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
                     @forelse($bills as $bill)
 
+                        @php
+                            $latestPayment = $bill->latestPayment;
+
+                            $latestVerification =
+                                $latestPayment?->latestVerification;
+
+                            $isRejected =
+                                $latestVerification?->status === 'rejected';
+                        @endphp
+
                         <tr>
 
-                            <!-- JENIS TAGIHAN -->
+                            {{-- Jenis tagihan --}}
                             <td>
                                 {{ $bill->name }}
                             </td>
 
-
-                            <!-- KETERANGAN -->
+                            {{-- Keterangan --}}
                             <td>
                                 {{ $bill->description ?? '-' }}
                             </td>
 
-
-                            <!-- NOMINAL -->
+                            {{-- Nominal --}}
                             <td>
-                                Rp {{ number_format($bill->amount, 0, ',', '.') }}
+                                Rp {{ number_format(
+                                    $bill->amount,
+                                    0,
+                                    ',',
+                                    '.'
+                                ) }}
                             </td>
 
-
-                            <!-- JATUH TEMPO -->
+                            {{-- Jatuh tempo --}}
                             <td>
 
                                 @if($bill->due_date)
 
-                                    {{ \Carbon\Carbon::parse($bill->due_date)->translatedFormat('d F Y') }}
+                                    {{ \Carbon\Carbon::parse(
+                                        $bill->due_date
+                                    )->translatedFormat('d F Y') }}
 
                                 @else
 
@@ -158,16 +175,22 @@
 
                             </td>
 
-
-                            <!-- STATUS -->
+                            {{-- Status --}}
                             <td>
+
                                 @if($bill->status === 'paid')
 
                                     <span class="badge success">
                                         Lunas
                                     </span>
 
-                                @elseif($bill->payments->where('status', 'pending')->count() > 0)
+                                @elseif($isRejected)
+
+                                    <span class="badge danger">
+                                        Ditolak
+                                    </span>
+
+                                @elseif($latestPayment?->status === 'pending')
 
                                     <span class="badge pending">
                                         Menunggu
@@ -183,30 +206,49 @@
 
                             </td>
 
-
-                           <!-- AKSI -->
+                            {{-- Aksi --}}
                             <td>
 
                                 <div class="billing-actions">
 
                                     <a
-                                        href="{{ route('student.bills.show', $bill->id) }}"
+                                        href="{{ route(
+                                            'student.bills.show',
+                                            $bill->id
+                                        ) }}"
                                         class="btn-detail"
                                     >
                                         Detail
                                     </a>
 
-
-                                    @if($bill->status === 'paid' && $bill->latestPayment)
+                                    @if(
+                                        $bill->status === 'paid'
+                                        && $latestPayment
+                                    )
 
                                         <a
-                                            href="{{ route('student.payment.receipt', $bill->latestPayment->id) }}"
+                                            href="{{ route(
+                                                'student.payment.receipt',
+                                                $latestPayment->id
+                                            ) }}"
                                             class="btn-nota"
                                         >
                                             Nota
                                         </a>
 
-                                    @elseif($bill->latestPayment?->status === 'pending')
+                                    @elseif($isRejected)
+
+                                        <a
+                                            href="{{ route(
+                                                'student.payment',
+                                                $bill->id
+                                            ) }}"
+                                            class="btn-pay"
+                                        >
+                                            Upload Ulang Bukti
+                                        </a>
+
+                                    @elseif($latestPayment?->status === 'pending')
 
                                         <span class="btn-pending">
                                             Menunggu
@@ -215,7 +257,10 @@
                                     @else
 
                                         <a
-                                            href="{{ route('student.payment', $bill->id) }}"
+                                            href="{{ route(
+                                                'student.payment',
+                                                $bill->id
+                                            ) }}"
                                             class="btn-pay"
                                         >
                                             Bayar
@@ -238,7 +283,6 @@
                                 class="empty-state"
                             >
                                 Tidak ada tagihan.
-
                             </td>
 
                         </tr>

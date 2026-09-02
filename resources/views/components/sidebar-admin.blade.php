@@ -41,8 +41,8 @@
         </a>
 
         <a
-            href="#"
-            class="menu-item"
+            href="{{ route('admin.students.index') }}"
+            class="menu-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
         >
 
             <img
@@ -55,8 +55,8 @@
         </a>
 
         <a
-            href="#"
-            class="menu-item"
+            href="{{ route('admin.bills.index') }}"
+            class="menu-item {{ request()->routeIs('admin.bills.*') ? 'active' : '' }}"
         >
 
             <img
@@ -83,8 +83,8 @@
         </a>
 
         <a
-            href="#"
-            class="menu-item"
+            href="{{ route('admin.reports.index') }}"
+            class="menu-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
         >
 
             <img

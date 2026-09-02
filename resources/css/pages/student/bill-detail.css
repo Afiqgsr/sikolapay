@@ -577,3 +577,101 @@ body {
     }
 
 }
+
+/* Rejection info */
+
+.bill-detail-page .bill-status.rejected {
+    background: #FCE8E6;
+    color: #D6452D;
+}
+
+.bill-detail-page .status-text.rejected {
+    color: #D6452D;
+}
+
+.bill-detail-page .bill-rejection-alert {
+    width: 100%;
+
+    margin-bottom: 24px;
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    background: #FFF1F0;
+
+    border: 1px solid #D6452D;
+    border-radius: 8px;
+}
+
+.bill-detail-page .bill-rejection-header {
+    margin-bottom: 8px;
+
+    color: #D6452D;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.bill-detail-page .bill-rejection-alert p {
+    margin: 0 0 12px;
+
+    color: #374151;
+
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.bill-detail-page .bill-rejection-note {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    margin-bottom: 12px;
+    padding: 12px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #F3B8B1;
+    border-radius: 6px;
+}
+
+.bill-detail-page .bill-rejection-note span {
+    color: #6B7280;
+
+    font-size: 12px;
+}
+
+.bill-detail-page .bill-rejection-note strong {
+    color: #1F2937;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bill-detail-page .bill-rejection-help {
+    color: #6B7280 !important;
+}
+
+.bill-detail-page .bill-reupload-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 14px;
+
+    background: #4040A8;
+
+    border-radius: 6px;
+
+    color: #FFFFFF;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.bill-detail-page .bill-reupload-button:hover {
+    background: #35358F;
+}

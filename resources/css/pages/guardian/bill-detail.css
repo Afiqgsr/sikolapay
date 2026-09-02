@@ -1,0 +1,370 @@
+/* DETAIL TAGIHAN */
+
+.guardian-bill-detail-page {
+    width: 1032px;
+    max-width: calc(100% - 80px);
+
+    margin-left: 64px;
+    margin-right: 16px;
+
+    padding-top: 117px;
+    padding-bottom: 40px;
+
+    box-sizing: border-box;
+}
+
+
+/* HEADER */
+
+.guardian-detail-header {
+    width: 100%;
+
+    margin-bottom: 24px;
+}
+
+.guardian-back-button {
+    margin-bottom: 16px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--primarypr-40);
+
+    cursor: pointer;
+}
+
+.guardian-detail-header h2 {
+    margin: 0 0 4px;
+
+    font-family: var(--heading-h5-semibold-font-family);
+    font-weight: var(--heading-h5-semibold-font-weight);
+    font-size: var(--heading-h5-semibold-font-size);
+
+    color: var(--neutralnr-90);
+}
+
+.guardian-detail-header p {
+    margin: 0;
+
+    font-family: var(--label-l16-regular-font-family);
+    font-size: var(--label-l16-regular-font-size);
+
+    color: var(--neutralnr-70);
+}
+
+
+/* LAYOUT */
+
+.guardian-detail-layout {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+
+    gap: 24px;
+}
+
+
+/* DETAIL CARD */
+
+.guardian-detail-card {
+    width: 100%;
+
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    background-color: var(--neutralnr-00);
+
+    border: 1px solid var(--neutralnr-30);
+    border-radius: 8px;
+}
+
+.guardian-detail-card-header {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid var(--neutralnr-20);
+}
+
+.guardian-detail-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 12px;
+
+    color: var(--neutralnr-60);
+}
+
+.guardian-detail-card-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: var(--neutralnr-90);
+}
+
+
+/* STATUS */
+
+.guardian-detail-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 90px;
+
+    padding: 4px 10px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.guardian-detail-status.paid {
+    background-color: #d6ffde;
+
+    color: #00b724;
+}
+
+.guardian-detail-status.pending {
+    background-color: #fff2cc;
+
+    color: #c98700;
+}
+
+.guardian-detail-status.unpaid {
+    background-color: #ffd6d6;
+
+    color: var(--error);
+}
+
+
+/* SECTION */
+
+.guardian-detail-section {
+    padding: 20px 0;
+
+    border-bottom: 1px solid var(--neutralnr-20);
+}
+
+.guardian-detail-section:last-child {
+    border-bottom: none;
+}
+
+.guardian-detail-section h4 {
+    margin: 0 0 12px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    color: var(--neutralnr-90);
+}
+
+
+/* ROW */
+
+.guardian-detail-row {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    min-height: 44px;
+
+    padding: 8px 0;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid var(--neutralnr-10);
+}
+
+.guardian-detail-row:last-child {
+    border-bottom: none;
+}
+
+.guardian-detail-row span {
+    color: var(--neutralnr-60);
+}
+
+.guardian-detail-row strong {
+    text-align: right;
+
+    color: var(--neutralnr-90);
+}
+
+
+/* SUMMARY */
+
+.guardian-detail-summary {
+    width: 100%;
+
+    height: fit-content;
+
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    background-color: var(--neutralnr-00);
+
+    border: 1px solid var(--neutralnr-30);
+    border-radius: 8px;
+}
+
+.guardian-detail-summary h3 {
+    margin: 0 0 16px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    color: var(--neutralnr-90);
+}
+
+.guardian-summary-row {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 16px;
+}
+
+.guardian-summary-row span {
+    color: var(--neutralnr-60);
+}
+
+.guardian-summary-row strong {
+    color: var(--neutralnr-90);
+}
+
+
+/* BUTTON BAYAR */
+
+.guardian-pay-button {
+    width: 100%;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    background-color: var(--primarypr-40);
+
+    color: var(--neutralnr-00);
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.guardian-pay-button:hover {
+    background-color: var(--primarypr-80);
+}
+
+
+/* STATUS INFO */
+
+.guardian-waiting-box,
+.guardian-paid-box {
+    width: 100%;
+
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.guardian-waiting-box {
+    background-color: #fff2cc;
+
+    color: #9a6a00;
+}
+
+.guardian-paid-box {
+    background-color: #d6ffde;
+
+    color: #008a1c;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+    .guardian-detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .guardian-detail-summary {
+        max-width: none;
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    .guardian-bill-detail-page {
+        width: calc(100% - 32px);
+
+        margin-left: auto;
+        margin-right: auto;
+
+        padding-top: 96px;
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .guardian-bill-detail-page {
+        width: calc(100% - 24px);
+
+        padding-top: 88px;
+    }
+
+    .guardian-detail-card-header {
+        flex-direction: column;
+    }
+
+    .guardian-detail-row {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+    .guardian-detail-row strong {
+        text-align: left;
+    }
+
+}
