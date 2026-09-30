@@ -12,6 +12,7 @@ class BillBatch extends Model
         'description',
         'semester',
         'amount',
+        'billing_period',
         'due_date',
         'target_type',
         'target_value',
@@ -21,6 +22,7 @@ class BillBatch extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'billing_period' => 'date',
             'due_date' => 'date',
         ];
     }

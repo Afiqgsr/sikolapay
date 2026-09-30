@@ -327,6 +327,11 @@ document.addEventListener('DOMContentLoaded', function () {
             rupiah(data.amount);
 
         document.getElementById(
+            'detailBillingPeriod'
+        ).textContent =
+            data.billing_period || 'Belum ditentukan';
+
+        document.getElementById(
             'detailBillingDueDate'
         ).textContent =
             data.due_date || '-';
@@ -488,6 +493,11 @@ document.addEventListener('DOMContentLoaded', function () {
             'editBillingAmount'
         ).value =
             data.amount || '';
+
+        document.getElementById(
+            'editBillingPeriod'
+        ).value =
+            data.billingPeriod || '';
 
         document.getElementById(
             'editBillingDueDate'

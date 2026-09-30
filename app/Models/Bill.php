@@ -30,6 +30,7 @@ class Bill extends Model
         'description',
         'semester',
         'amount',
+        'billing_period',
         'due_date',
         'status',
     ];
@@ -38,6 +39,7 @@ class Bill extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'billing_period' => 'date',
             'due_date' => 'date',
         ];
     }

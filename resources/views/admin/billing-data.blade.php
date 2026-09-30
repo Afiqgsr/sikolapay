@@ -204,6 +204,7 @@
                         <th>Jenis Tagihan</th>
                         <th>Target</th>
                         <th>Semester</th>
+                        <th>Periode Tagihan</th>
                         <th>Nominal</th>
                         <th>Penerima</th>
                         <th>Jatuh Tempo</th>
@@ -299,6 +300,13 @@
 
                             <td>
                                 {{ $batch->semester ?? '-' }}
+                            </td>
+
+                            <td>
+                                {{ $batch->billing_period
+                                    ? $batch->billing_period->translatedFormat('F Y')
+                                    : 'Belum ditentukan'
+                                }}
                             </td>
 
                             <td>
@@ -404,6 +412,8 @@
 
                                         data-amount="{{ (float) $batch->amount }}"
 
+                                        data-billing-period="{{ $batch->billing_period?->format('Y-m') ?? '' }}"
+
                                         data-due-date="{{ $batch->due_date?->format('Y-m-d') ?? '' }}"
 
                                         data-target-type="{{ $batch->target_type }}"
@@ -439,7 +449,7 @@
                         <tr>
 
                             <td
-                                colspan="9"
+                                colspan="10"
                                 class="billing-empty"
                             >
                                 Belum ada data tagihan.
@@ -678,6 +688,10 @@
             'amount' =>
                 (float) $batch->amount,
 
+            'billing_period' =>
+                $batch->billing_period
+                    ?->translatedFormat('F Y'),
+
             'due_date' =>
                 $batch->due_date
                     ?->translatedFormat('d F Y'),
@@ -889,7 +903,7 @@
 
                 </div>
 
-                {{-- Nominal dan Jatuh Tempo --}}
+                {{-- Nominal dan Periode Tagihan --}}
                 <div class="billing-add-row">
 
                     <div class="billing-add-field">
@@ -914,17 +928,34 @@
                     <div class="billing-add-field">
 
                         <label>
-                            Jatuh Tempo
+                            Periode Tagihan
+                            <span>*</span>
                         </label>
 
                         <input
-                            type="date"
-                            name="due_date"
+                            type="month"
+                            name="billing_period"
                             class="billing-add-input"
-                            value="{{ old('due_date') }}"
+                            value="{{ old('billing_period') }}"
+                            required
                         >
 
                     </div>
+
+                </div>
+
+                <div class="billing-add-field billing-add-field-full">
+
+                    <label>
+                        Jatuh Tempo
+                    </label>
+
+                    <input
+                        type="date"
+                        name="due_date"
+                        class="billing-add-input"
+                        value="{{ old('due_date') }}"
+                    >
 
                 </div>
 
@@ -1015,6 +1046,21 @@
                         id="detailBillingName"
                     >
                         -
+                    </span>
+
+                </div>
+
+                <div class="billing-detail-item">
+
+                    <span class="billing-detail-label">
+                        Periode Tagihan
+                    </span>
+
+                    <span
+                        class="billing-detail-value"
+                        id="detailBillingPeriod"
+                    >
+                        Belum ditentukan
                     </span>
 
                 </div>
@@ -1307,7 +1353,7 @@
 
                 </div>
 
-                {{-- Nominal dan Jatuh Tempo --}}
+                {{-- Nominal dan Periode Tagihan --}}
                 <div class="billing-edit-row">
 
                     <div class="billing-edit-field">
@@ -1331,17 +1377,34 @@
                     <div class="billing-edit-field">
 
                         <label>
-                            Jatuh Tempo
+                            Periode Tagihan
+                            <span>*</span>
                         </label>
 
                         <input
-                            type="date"
-                            name="due_date"
-                            id="editBillingDueDate"
+                            type="month"
+                            name="billing_period"
+                            id="editBillingPeriod"
                             class="billing-edit-input"
+                            required
                         >
 
                     </div>
+
+                </div>
+
+                <div class="billing-edit-field billing-edit-field-full">
+
+                    <label>
+                        Jatuh Tempo
+                    </label>
+
+                    <input
+                        type="date"
+                        name="due_date"
+                        id="editBillingDueDate"
+                        class="billing-edit-input"
+                    >
 
                 </div>
 

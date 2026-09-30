@@ -154,6 +154,11 @@ class BillController extends Controller
                 'min:1',
             ],
 
+            'billing_period' => [
+                'required',
+                'date_format:Y-m',
+            ],
+
             'due_date' => [
                 'nullable',
                 'date',
@@ -194,7 +199,10 @@ class BillController extends Controller
                 ]);
         }
 
+        $billingPeriod = $validated['billing_period'].'-01';
+
         DB::transaction(function () use (
+            $billingPeriod,
             $validated,
             $students
         ) {
@@ -206,6 +214,8 @@ class BillController extends Controller
                 'semester' => $validated['semester'],
 
                 'amount' => $validated['amount'],
+
+                'billing_period' => $billingPeriod,
 
                 'due_date' => $validated['due_date'] ?? null,
 
@@ -229,6 +239,8 @@ class BillController extends Controller
                     'semester' => $validated['semester'],
 
                     'amount' => $validated['amount'],
+
+                    'billing_period' => $billingPeriod,
 
                     'due_date' => $validated['due_date'] ?? null,
 
@@ -288,6 +300,11 @@ class BillController extends Controller
                 'min:1',
             ],
 
+            'billing_period' => [
+                'required',
+                'date_format:Y-m',
+            ],
+
             'due_date' => [
                 'nullable',
                 'date',
@@ -340,8 +357,11 @@ class BillController extends Controller
                 ]);
         }
 
+        $billingPeriod = $validated['billing_period'].'-01';
+
         DB::transaction(function () use (
             $bill,
+            $billingPeriod,
             $validated,
             $students
         ) {
@@ -353,6 +373,8 @@ class BillController extends Controller
                 'semester' => $validated['semester'],
 
                 'amount' => $validated['amount'],
+
+                'billing_period' => $billingPeriod,
 
                 'due_date' => $validated['due_date'] ?? null,
 
@@ -378,6 +400,8 @@ class BillController extends Controller
                     'semester' => $validated['semester'],
 
                     'amount' => $validated['amount'],
+
+                    'billing_period' => $billingPeriod,
 
                     'due_date' => $validated['due_date'] ?? null,
 

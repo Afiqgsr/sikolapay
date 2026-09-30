@@ -226,7 +226,7 @@
 
 .billing-table {
     width: 100%;
-    min-width: 1180px;
+    min-width: 1300px;
 
     border-collapse: collapse;
 
@@ -298,16 +298,21 @@
 
 .billing-table th:nth-child(7),
 .billing-table td:nth-child(7) {
-    width: 110px;
+    width: 120px;
 }
 
 .billing-table th:nth-child(8),
 .billing-table td:nth-child(8) {
-    width: 105px;
+    width: 110px;
 }
 
 .billing-table th:nth-child(9),
 .billing-table td:nth-child(9) {
+    width: 105px;
+}
+
+.billing-table th:nth-child(10),
+.billing-table td:nth-child(10) {
     width: 190px;
 }
 
@@ -1003,7 +1008,7 @@
 /* Table batch */
 
 .billing-batch-table {
-    min-width: 1100px;
+    min-width: 1250px;
 }
 
 .billing-batch-table th:nth-child(1),
@@ -1028,25 +1033,30 @@
 
 .billing-batch-table th:nth-child(5),
 .billing-batch-table td:nth-child(5) {
-    width: 110px;
+    width: 120px;
 }
 
 .billing-batch-table th:nth-child(6),
 .billing-batch-table td:nth-child(6) {
-    width: 90px;
+    width: 110px;
 }
 
 .billing-batch-table th:nth-child(7),
 .billing-batch-table td:nth-child(7) {
-    width: 115px;
+    width: 90px;
 }
 
 .billing-batch-table th:nth-child(8),
 .billing-batch-table td:nth-child(8) {
-    width: 120px;
+    width: 115px;
 }
 
 .billing-batch-table th:nth-child(9),
 .billing-batch-table td:nth-child(9) {
+    width: 120px;
+}
+
+.billing-batch-table th:nth-child(10),
+.billing-batch-table td:nth-child(10) {
     width: 190px;
 }

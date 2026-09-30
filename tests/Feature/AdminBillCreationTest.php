@@ -5,6 +5,8 @@ use App\Models\Bill;
 use App\Models\BillBatch;
 use App\Models\ClassRoom;
 use App\Models\Guardian;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
@@ -73,6 +75,7 @@ test('can create bill batch per siswa', function () {
         'name' => 'SPP Bulanan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 350000,
+        'billing_period' => '2026-09',
         'due_date' => '2026-09-10',
     ]);
 
@@ -103,7 +106,8 @@ test('can create bill batch per kelas', function () {
         'name' => 'Uang Ujian',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 200000,
-        'due_date' => '2026-09-10',
+        'billing_period' => '2026-09',
+        'due_date' => '2026-10-05',
     ]);
 
     $response->assertRedirect(route('admin.bills.index'));
@@ -112,7 +116,13 @@ test('can create bill batch per kelas', function () {
         'target_value' => (string) $classX->id,
         'name' => 'Uang Ujian',
     ]);
-    expect(Bill::where('name', 'Uang Ujian')->count())->toBe(2);
+
+    $batch = BillBatch::where('name', 'Uang Ujian')->firstOrFail();
+
+    expect($batch->billing_period->toDateString())->toBe('2026-09-01')
+        ->and($batch->due_date->toDateString())->toBe('2026-10-05')
+        ->and($batch->bills()->whereDate('billing_period', '2026-09-01')->count())->toBe(2)
+        ->and($batch->bills()->whereDate('due_date', '2026-10-05')->count())->toBe(2);
 });
 
 // 5. Create Per Tingkat X membuat tagihan hanya untuk siswa tingkat X, bukan XI/XII
@@ -138,6 +148,7 @@ test('per tingkat X only generates bills for students in grade X, excluding XI a
         'name' => 'SPP Bulanan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 500000,
+        'billing_period' => '2026-09',
         'due_date' => '2026-09-10',
     ]);
 
@@ -172,6 +183,7 @@ test('seluruh sekolah creates bill for all active students without target_value'
         'name' => 'Kegiatan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 100000,
+        'billing_period' => '2026-09',
         'due_date' => '2026-09-10',
     ]);
 
@@ -187,6 +199,7 @@ test('cohort target type is rejected for new submissions', function () {
         'name' => 'SPP Bulanan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 500000,
+        'billing_period' => '2026-09',
     ]);
 
     $response->assertSessionHasErrors('target_type');
@@ -199,6 +212,7 @@ test('invalid bill name is rejected by validation', function () {
         'name' => 'SPP September 2026', // Invalid, harus kategori resmi
         'semester' => 'Ganjil 2026/2027',
         'amount' => 500000,
+        'billing_period' => '2026-09',
     ]);
 
     $response->assertSessionHasErrors('name');
@@ -211,6 +225,7 @@ test('invalid or manual semester input is rejected by validation', function () {
         'name' => 'SPP Bulanan',
         'semester' => 'Semester Ganjil 2026', // Tidak sesuai opsi AcademicYear
         'amount' => 500000,
+        'billing_period' => '2026-09',
     ]);
 
     $response->assertSessionHasErrors('semester');
@@ -224,6 +239,7 @@ test('invalid grade target is rejected by validation', function () {
         'name' => 'SPP Bulanan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 500000,
+        'billing_period' => '2026-09',
     ]);
 
     $response->assertSessionHasErrors('target_value');
@@ -243,6 +259,7 @@ test('update supports per tingkat target', function () {
         'name' => 'SPP Bulanan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 500000,
+        'billing_period' => '2026-09-01',
         'target_type' => 'grade',
         'target_value' => 'X',
     ]);
@@ -253,6 +270,7 @@ test('update supports per tingkat target', function () {
         'name' => 'SPP Bulanan',
         'semester' => 'Genap 2026/2027',
         'amount' => 600000,
+        'billing_period' => '2026-10',
     ]);
 
     $response->assertRedirect(route('admin.bills.index'));
@@ -263,6 +281,11 @@ test('update supports per tingkat target', function () {
         'semester' => 'Genap 2026/2027',
         'amount' => 600000,
     ]);
+
+    $updatedBatch = $batch->fresh();
+
+    expect($updatedBatch->billing_period->toDateString())->toBe('2026-10-01')
+        ->and($updatedBatch->bills()->whereDate('billing_period', '2026-10-01')->count())->toBe(1);
 });
 
 // 12. Legacy Cohort tetap dapat dibaca pada index list
@@ -279,4 +302,99 @@ test('legacy cohort bill batch can still be displayed on index page', function (
 
     $response->assertOk();
     $response->assertSee('Angkatan 2026');
+    $response->assertSee('Belum ditentukan');
+    expect($batch->fresh()->billing_period)->toBeNull();
+});
+
+test('billing period is required for new bill batches', function () {
+    $response = $this->actingAs($this->adminUser)->post(route('admin.bills.store'), [
+        'target_type' => 'school',
+        'name' => 'SPP Bulanan',
+        'semester' => 'Ganjil 2026/2027',
+        'amount' => 500000,
+    ]);
+
+    $response->assertSessionHasErrors('billing_period');
+});
+
+test('invalid billing periods are rejected', function (string $billingPeriod) {
+    $response = $this->actingAs($this->adminUser)->post(route('admin.bills.store'), [
+        'target_type' => 'school',
+        'name' => 'SPP Bulanan',
+        'semester' => 'Ganjil 2026/2027',
+        'amount' => 500000,
+        'billing_period' => $billingPeriod,
+    ]);
+
+    $response->assertSessionHasErrors('billing_period');
+})->with([
+    'month name' => 'September 2026',
+    'month before year' => '09-2026',
+    'invalid month number' => '2026-13',
+    'free text' => 'periode berikutnya',
+]);
+
+test('bill batch with a payment remains protected from billing period edits', function () {
+    $classRoom = ClassRoom::create([
+        'academic_year_id' => $this->academicYear->id,
+        'name' => 'X RPL 1',
+        'grade' => 'X',
+    ]);
+    $studentUser = User::factory()->create(['role' => 'student', 'status' => 'active']);
+    $student = Student::create([
+        'user_id' => $studentUser->id,
+        'guardian_id' => $this->guardian->id,
+        'class_room_id' => $classRoom->id,
+        'entry_year' => 2026,
+        'status' => 'active',
+        'nis' => 'NIS-PROTECTED',
+        'name' => 'Siswa Protected',
+        'gender' => 'L',
+    ]);
+    $batch = BillBatch::create([
+        'name' => 'SPP Bulanan',
+        'semester' => 'Ganjil 2026/2027',
+        'amount' => 500000,
+        'billing_period' => '2026-09-01',
+        'target_type' => 'student',
+        'target_value' => (string) $student->id,
+    ]);
+    $bill = Bill::create([
+        'bill_batch_id' => $batch->id,
+        'student_id' => $student->id,
+        'name' => 'SPP Bulanan',
+        'semester' => 'Ganjil 2026/2027',
+        'amount' => 500000,
+        'billing_period' => '2026-09-01',
+        'status' => 'unpaid',
+    ]);
+    $paymentMethod = PaymentMethod::create([
+        'name' => 'Bank Transfer',
+        'type' => 'bank_transfer',
+        'code' => 'BILL-EDIT-PROTECTION',
+        'provider' => 'Test Bank',
+        'is_active' => true,
+    ]);
+    Payment::create([
+        'bill_id' => $bill->id,
+        'payer_id' => $studentUser->id,
+        'payment_method_id' => $paymentMethod->id,
+        'payment_number' => 'PAY-BILL-EDIT-PROTECTION',
+        'amount' => 500000,
+        'status' => 'pending',
+    ]);
+
+    $response = $this->actingAs($this->adminUser)->put(route('admin.bills.update', $batch), [
+        'target_type' => 'student',
+        'target_value' => $student->id,
+        'name' => 'SPP Bulanan',
+        'semester' => 'Ganjil 2026/2027',
+        'amount' => 500000,
+        'billing_period' => '2026-10',
+    ]);
+
+    $response->assertRedirect(route('admin.bills.index'));
+    $response->assertSessionHas('error');
+    expect($batch->fresh()->billing_period->toDateString())->toBe('2026-09-01')
+        ->and($bill->fresh()->billing_period->toDateString())->toBe('2026-09-01');
 });
