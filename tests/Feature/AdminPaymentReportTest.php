@@ -12,6 +12,8 @@ use App\Models\PaymentVerification;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     $this->adminUser = User::factory()->create([
@@ -60,6 +62,17 @@ beforeEach(function () {
         'is_active' => true,
     ]);
 });
+
+function createPaymentReportBill(array $attributes): Bill
+{
+    $dueDate = $attributes['due_date'] ?? null;
+
+    if (! array_key_exists('billing_period', $attributes) && is_string($dueDate)) {
+        $attributes['billing_period'] = Carbon::parse($dueDate)->startOfMonth()->toDateString();
+    }
+
+    return Bill::create($attributes);
+}
 
 // 1. Admin dapat membuka halaman laporan
 test('admin can access report page', function () {
@@ -112,7 +125,7 @@ test('existing transaction details report works properly', function () {
         'gender' => 'L',
     ]);
 
-    $bill = Bill::create([
+    $bill = createPaymentReportBill([
         'student_id' => $student->id,
         'name' => 'SPP Bulanan',
         'amount' => 500000,
@@ -139,6 +152,137 @@ test('existing transaction details report works properly', function () {
     $response->assertSee('Rp 500.000');
 });
 
+test('transaction details and payment summary use bill billing period', function () {
+    $classRoom = ClassRoom::create([
+        'academic_year_id' => $this->academicYear->id,
+        'name' => 'X RPL 1',
+        'grade' => 'X',
+    ]);
+
+    $createPaidBill = function (string $studentName, string $billingPeriod, string $paidAt, int $amount) use ($classRoom): Bill {
+        $user = User::factory()->create(['role' => 'student', 'status' => 'active']);
+        $student = Student::create([
+            'user_id' => $user->id,
+            'guardian_id' => $this->guardian->id,
+            'class_room_id' => $classRoom->id,
+            'entry_year' => 2026,
+            'status' => 'active',
+            'nis' => 'NIS-DETAIL-'.$amount,
+            'name' => $studentName,
+            'gender' => 'L',
+        ]);
+        $bill = createPaymentReportBill([
+            'student_id' => $student->id,
+            'name' => 'SPP Bulanan',
+            'amount' => $amount,
+            'billing_period' => $billingPeriod,
+            'due_date' => '2026-10-05',
+            'status' => 'paid',
+        ]);
+
+        Payment::create([
+            'bill_id' => $bill->id,
+            'payer_id' => $user->id,
+            'payment_method_id' => $this->paymentMethod->id,
+            'payment_number' => 'PAY-DETAIL-'.$amount,
+            'amount' => $amount,
+            'status' => 'paid',
+            'paid_at' => $paidAt,
+        ]);
+
+        return $bill;
+    };
+
+    $septemberBill = $createPaidBill('Siswa Periode September', '2026-09-01', '2026-10-03', 700000);
+    $octoberBill = $createPaidBill('Siswa Periode Oktober', '2026-10-01', '2026-09-29', 900000);
+
+    DB::table((new Bill)->getTable())->where('id', $septemberBill->id)->update(['created_at' => '2026-08-20 08:00:00']);
+    DB::table((new Bill)->getTable())->where('id', $octoberBill->id)->update(['created_at' => '2026-09-20 08:00:00']);
+
+    $response = $this->actingAs($this->adminUser)->get(route('admin.reports.index', [
+        'tab' => 'detail',
+        'start_date' => '2026-09-01',
+        'end_date' => '2026-09-30',
+    ]));
+
+    $response->assertOk()
+        ->assertSee('Periode Tagihan Awal')
+        ->assertSee('Siswa Periode September')
+        ->assertDontSee('Siswa Periode Oktober')
+        ->assertViewHas('totalIncome', 700000)
+        ->assertViewHas('totalSuccessfulTransactions', 1);
+});
+
+test('class recap period depends only on billing period and current bill status', function () {
+    $classRoom = ClassRoom::create([
+        'academic_year_id' => $this->academicYear->id,
+        'name' => 'X RPL 1',
+        'grade' => 'X',
+    ]);
+
+    $createBill = function (
+        string $nis,
+        string $name,
+        int $amount,
+        string $billingPeriod,
+        string $dueDate,
+        string $status = 'unpaid',
+    ) use ($classRoom): Bill {
+        $user = User::factory()->create(['role' => 'student', 'status' => 'active']);
+        $student = Student::create([
+            'user_id' => $user->id,
+            'guardian_id' => $this->guardian->id,
+            'class_room_id' => $classRoom->id,
+            'entry_year' => 2026,
+            'status' => 'active',
+            'nis' => $nis,
+            'name' => $nis,
+            'gender' => 'L',
+        ]);
+
+        return createPaymentReportBill([
+            'student_id' => $student->id,
+            'name' => $name,
+            'amount' => $amount,
+            'billing_period' => $billingPeriod,
+            'due_date' => $dueDate,
+            'status' => $status,
+        ]);
+    };
+
+    $septemberDueSeptember = $createBill('NIS-A', 'SPP Bulanan', 100000, '2026-09-01', '2026-09-10');
+    $septemberDueOctober = $createBill('NIS-B', 'SPP Bulanan', 200000, '2026-09-01', '2026-10-05');
+    $septemberPaidOctober = $createBill('NIS-C', 'SPP Bulanan', 300000, '2026-09-01', '2026-10-05', 'paid');
+    $octoberBill = $createBill('NIS-D', 'SPP Bulanan', 400000, '2026-10-01', '2026-10-02', 'paid');
+    $octoberCreatedSeptember = $createBill('NIS-E', 'SPP Bulanan', 500000, '2026-10-01', '2026-10-02', 'paid');
+    $septemberCreatedAugust = $createBill('NIS-F', 'SPP Bulanan', 600000, '2026-09-01', '2026-10-05');
+    $createBill('NIS-G', 'Uang Ujian', 700000, '2026-09-01', '2026-09-15', 'paid');
+
+    Payment::create([
+        'bill_id' => $septemberPaidOctober->id,
+        'payer_id' => $septemberPaidOctober->student->user_id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'payment_number' => 'PAY-OCTOBER-FOR-SEPTEMBER',
+        'amount' => 300000,
+        'status' => 'paid',
+        'paid_at' => '2026-10-03',
+    ]);
+
+    DB::table((new Bill)->getTable())->where('id', $octoberCreatedSeptember->id)->update(['created_at' => '2026-09-29 08:00:00']);
+    DB::table((new Bill)->getTable())->where('id', $septemberCreatedAugust->id)->update(['created_at' => '2026-08-20 08:00:00']);
+
+    $result = app(BuildClassPaymentRecapAction::class)->execute(9, 2026, 'SPP Bulanan');
+
+    expect($result['total_bills_count'])->toBe(4)
+        ->and($result['grand_totals']['paid_count'])->toBe(1)
+        ->and($result['grand_totals']['paid_total'])->toBe(300000.0)
+        ->and($result['grand_totals']['unpaid_count'])->toBe(3)
+        ->and($result['grand_totals']['unpaid_total'])->toBe(900000.0)
+        ->and($septemberDueSeptember->billing_period->toDateString())->toBe('2026-09-01')
+        ->and($septemberDueOctober->billing_period->toDateString())->toBe('2026-09-01')
+        ->and($octoberBill->billing_period->toDateString())->toBe('2026-10-01');
+});
+
 // 6 & 11. Rekap Kelas X seluruhnya lunas dan Total Kelas X benar
 test('recap grade X with all paid bills', function () {
     $classX = ClassRoom::create([
@@ -160,7 +304,7 @@ test('recap grade X with all paid bills', function () {
             'gender' => 'L',
         ]);
 
-        Bill::create([
+        createPaymentReportBill([
             'student_id' => $student->id,
             'name' => 'SPP Bulanan',
             'amount' => 1000000,
@@ -207,7 +351,7 @@ test('recap grade X with mixed paid and unpaid bills', function () {
             'gender' => 'L',
         ]);
 
-        Bill::create([
+        createPaymentReportBill([
             'student_id' => $student->id,
             'name' => 'SPP Bulanan',
             'amount' => 1000000,
@@ -229,7 +373,7 @@ test('recap grade X with mixed paid and unpaid bills', function () {
         'gender' => 'L',
     ]);
 
-    Bill::create([
+    createPaymentReportBill([
         'student_id' => $studentUnpaid->id,
         'name' => 'SPP Bulanan',
         'amount' => 1000000,
@@ -266,7 +410,7 @@ test('multi-grade recap groups correctly and calculates grade totals and grand t
             'name' => $name,
             'gender' => 'L',
         ]);
-        Bill::create([
+        createPaymentReportBill([
             'student_id' => $s->id,
             'name' => 'SPP Bulanan',
             'amount' => $amount,
@@ -344,7 +488,7 @@ test('filter month, year, and bill_name isolates correct bills', function () {
             'name' => 'Siswa Test',
             'gender' => 'L',
         ]);
-        Bill::create([
+        createPaymentReportBill([
             'student_id' => $s->id,
             'name' => $name,
             'amount' => $amount,
@@ -380,20 +524,20 @@ test('payment pending and rejected are counted as unpaid while bill paid is paid
     // Siswa 1: Bill unpaid + Payment pending (belum diverifikasi) -> Belum Lunas
     $u1 = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s1 = Student::create(['user_id' => $u1->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-PND', 'name' => 'Siswa Pending', 'gender' => 'L']);
-    $b1 = Bill::create(['student_id' => $s1->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'unpaid']);
+    $b1 = createPaymentReportBill(['student_id' => $s1->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'unpaid']);
     Payment::create(['bill_id' => $b1->id, 'payer_id' => $u1->id, 'payment_method_id' => $this->paymentMethod->id, 'payment_number' => 'PAY-PND', 'amount' => 500000, 'status' => 'pending', 'proof_of_payment' => 'proof.jpg']);
 
     // Siswa 2: Bill unpaid + Payment rejected -> Belum Lunas
     $u2 = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s2 = Student::create(['user_id' => $u2->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-REJ', 'name' => 'Siswa Rejected', 'gender' => 'L']);
-    $b2 = Bill::create(['student_id' => $s2->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'unpaid']);
+    $b2 = createPaymentReportBill(['student_id' => $s2->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'unpaid']);
     $p2 = Payment::create(['bill_id' => $b2->id, 'payer_id' => $u2->id, 'payment_method_id' => $this->paymentMethod->id, 'payment_number' => 'PAY-REJ', 'amount' => 500000, 'status' => 'pending', 'proof_of_payment' => 'proof.jpg']);
     PaymentVerification::create(['payment_id' => $p2->id, 'admin_id' => $this->adminUser->id, 'status' => 'rejected', 'note' => 'Buram', 'processed_at' => now()]);
 
     // Siswa 3: Bill paid -> Lunas
     $u3 = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s3 = Student::create(['user_id' => $u3->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-LNS', 'name' => 'Siswa Lunas', 'gender' => 'L']);
-    Bill::create(['student_id' => $s3->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
+    createPaymentReportBill(['student_id' => $s3->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
 
     $action = app(BuildClassPaymentRecapAction::class);
     $result = $action->execute(9, 2026, 'SPP Bulanan');
@@ -424,7 +568,7 @@ test('student without class room is grouped under Tanpa Kelas', function () {
         'gender' => 'L',
     ]);
 
-    Bill::create([
+    createPaymentReportBill([
         'student_id' => $s->id,
         'name' => 'SPP Bulanan',
         'amount' => 750000,
@@ -445,8 +589,8 @@ test('student without class room is grouped under Tanpa Kelas', function () {
         ->and($result['grand_totals']['paid_total'])->toBe(750000.0);
 });
 
-// 22 & 23. Fallback Periode: bills.due_date utama, fallback ke bill_batches.due_date
-test('due_date priority: uses bills.due_date first, then falls back to bill_batches.due_date', function () {
+// 22 & 23. Periode hanya mengikuti bills.billing_period, tanpa fallback batch due_date
+test('billing period does not fall back to bill batch due date', function () {
     $classX = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'X RPL 1', 'grade' => 'X']);
     $u1 = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s1 = Student::create(['user_id' => $u1->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-D1', 'name' => 'Siswa Direct', 'gender' => 'L']);
@@ -455,38 +599,41 @@ test('due_date priority: uses bills.due_date first, then falls back to bill_batc
         'name' => 'SPP Bulanan',
         'semester' => 'Ganjil 2026/2027',
         'amount' => 500000,
+        'billing_period' => '2026-09-01',
         'due_date' => '2026-09-15',
         'target_type' => 'school',
     ]);
 
-    // Tagihan 1: bills.due_date NULL, memiliki batch dengan due_date 2026-09-15
-    Bill::create([
+    $bill = createPaymentReportBill([
         'bill_batch_id' => $batch->id,
         'student_id' => $s1->id,
         'name' => 'SPP Bulanan',
         'amount' => 500000,
+        'billing_period' => '2026-10-01',
         'due_date' => null,
         'status' => 'paid',
     ]);
 
     $action = app(BuildClassPaymentRecapAction::class);
-    $result = $action->execute(9, 2026, 'SPP Bulanan');
+    $septemberResult = $action->execute(9, 2026, 'SPP Bulanan');
+    $octoberResult = $action->execute(10, 2026, 'SPP Bulanan');
 
-    expect($result['total_bills_count'])->toBe(1)
-        ->and($result['grand_totals']['paid_count'])->toBe(1)
-        ->and($result['grand_totals']['paid_total'])->toBe(500000.0);
+    expect($septemberResult['total_bills_count'])->toBe(0)
+        ->and($octoberResult['total_bills_count'])->toBe(1)
+        ->and($bill->fresh()->due_date)->toBeNull();
 });
 
-// 24. Tagihan tanpa due_date dan tanpa batch due_date tidak masuk filter bulan/tahun spesifik
-test('bills without due date and without batch due date are excluded from specific month filter', function () {
+// 24. due_date tidak diperlukan untuk menentukan periode laporan
+test('bill without due date is included by its billing period', function () {
     $classX = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'X RPL 1', 'grade' => 'X']);
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-NODUE', 'name' => 'Siswa No Due', 'gender' => 'L']);
 
-    Bill::create([
+    createPaymentReportBill([
         'student_id' => $s->id,
         'name' => 'SPP Bulanan',
         'amount' => 500000,
+        'billing_period' => '2026-09-01',
         'due_date' => null,
         'status' => 'unpaid',
     ]);
@@ -494,8 +641,9 @@ test('bills without due date and without batch due date are excluded from specif
     $action = app(BuildClassPaymentRecapAction::class);
     $result = $action->execute(9, 2026, 'SPP Bulanan');
 
-    expect($result['has_data'])->toBeFalse()
-        ->and($result['total_bills_count'])->toBe(0);
+    expect($result['has_data'])->toBeTrue()
+        ->and($result['total_bills_count'])->toBe(1)
+        ->and($result['grand_totals']['unpaid_count'])->toBe(1);
 });
 
 // 25. Preview menghasilkan angka yang sama dengan halaman Rekap
@@ -504,7 +652,7 @@ test('preview page returns identical data to recap action', function () {
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-PRV', 'name' => 'Siswa Preview', 'gender' => 'L']);
 
-    Bill::create([
+    createPaymentReportBill([
         'student_id' => $s->id,
         'name' => 'SPP Bulanan',
         'amount' => 1250000,
@@ -535,7 +683,7 @@ test('csv export streams correct recap structure', function () {
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-CSV', 'name' => 'Siswa CSV', 'gender' => 'L']);
 
-    Bill::create([
+    createPaymentReportBill([
         'student_id' => $s->id,
         'name' => 'SPP Bulanan',
         'amount' => 800000,
@@ -568,7 +716,7 @@ test('one student with multiple payment attempts is not double counted in studen
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-DBL', 'name' => 'Siswa Multi Pay', 'gender' => 'L']);
 
-    $bill = Bill::create([
+    $bill = createPaymentReportBill([
         'student_id' => $s->id,
         'name' => 'SPP Bulanan',
         'amount' => 500000,
@@ -594,7 +742,7 @@ test('recap tab remains active when filter query is submitted', function () {
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-TAB', 'name' => 'Siswa Tab', 'gender' => 'L']);
 
-    Bill::create([
+    createPaymentReportBill([
         'student_id' => $s->id,
         'name' => 'SPP Bulanan',
         'amount' => 500000,
@@ -627,7 +775,7 @@ test('grade filter null displays all grades X, XI, XII', function () {
     $createBillForClass = function ($class, $name, $amt) {
         $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
         $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $class->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-'.uniqid(), 'name' => 'Siswa '.$name, 'gender' => 'L']);
-        Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
+        createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
     };
 
     $createBillForClass($cX, 'X', 1000000);
@@ -652,7 +800,7 @@ test('grade=X only includes grade X and isolates grand total', function () {
     $createBillForClass = function ($class, $name, $amt) {
         $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
         $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $class->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-'.uniqid(), 'name' => 'Siswa '.$name, 'gender' => 'L']);
-        Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
+        createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
     };
 
     $createBillForClass($cX, 'X', 1000000);
@@ -679,7 +827,7 @@ test('grade=XI only includes grade XI', function () {
     $createBillForClass = function ($class, $name, $amt) {
         $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
         $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $class->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-'.uniqid(), 'name' => 'Siswa '.$name, 'gender' => 'L']);
-        Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
+        createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
     };
 
     $createBillForClass($cX, 'X', 1000000);
@@ -702,7 +850,7 @@ test('grade=XII only includes grade XII', function () {
     $createBillForClass = function ($class, $name, $amt) {
         $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
         $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $class->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-'.uniqid(), 'name' => 'Siswa '.$name, 'gender' => 'L']);
-        Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
+        createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
     };
 
     $createBillForClass($cXI, 'XI', 1200000);
@@ -725,7 +873,7 @@ test('preview page handles grade=X and Semua Tingkat accurately', function () {
     $createBillForClass = function ($class, $name, $amt) {
         $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
         $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $class->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-'.uniqid(), 'name' => 'Siswa '.$name, 'gender' => 'L']);
-        Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
+        createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
     };
 
     $createBillForClass($cX, 'X', 1000000);
@@ -765,7 +913,7 @@ test('csv export with grade=XI only contains grade XI data and metadata', functi
     $createBillForClass = function ($class, $name, $amt) {
         $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
         $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $class->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-'.uniqid(), 'name' => 'Siswa '.$name, 'gender' => 'L']);
-        Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
+        createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => $amt, 'due_date' => '2026-09-10', 'status' => 'paid']);
     };
 
     $createBillForClass($cX, 'X', 1000000);
@@ -803,7 +951,7 @@ test('recap tab keeps grade parameter selected after submission', function () {
     $cX = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'X RPL 1', 'grade' => 'X']);
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $cX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-GRADE-X', 'name' => 'Siswa X Grade', 'gender' => 'L']);
-    Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
+    createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
 
     $response = $this->actingAs($this->adminUser)->get(route('admin.reports.index', [
         'tab' => 'recap',
@@ -823,7 +971,7 @@ test('student without class only appears when grade filter is null', function ()
     $cNoClass = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'Tanpa Kelas', 'grade' => 'TANPA_KELAS']);
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $cNoClass->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-TK', 'name' => 'Siswa TK', 'gender' => 'L']);
-    Bill::create(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
+    createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
 
     $action = app(BuildClassPaymentRecapAction::class);
 
@@ -843,7 +991,7 @@ test('recap bill type dropdown only contains official Bill::TYPES and excludes l
     $cX = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'X RPL 1', 'grade' => 'X']);
     $u = User::factory()->create(['role' => 'student', 'status' => 'active']);
     $s = Student::create(['user_id' => $u->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $cX->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-LEG', 'name' => 'Siswa Leg', 'gender' => 'L']);
-    Bill::create(['student_id' => $s->id, 'name' => 'SPP September 2026', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
+    createPaymentReportBill(['student_id' => $s->id, 'name' => 'SPP September 2026', 'amount' => 500000, 'due_date' => '2026-09-10', 'status' => 'paid']);
 
     $response = $this->actingAs($this->adminUser)->get(route('admin.reports.index', ['tab' => 'recap']));
 

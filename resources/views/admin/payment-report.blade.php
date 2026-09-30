@@ -48,10 +48,10 @@
             >
                 <input type="hidden" name="tab" value="detail">
 
-                {{-- Tanggal Awal --}}
+                {{-- Periode Tagihan Awal --}}
                 <div class="report-filter-item">
                     <label for="startDate">
-                        Tanggal Awal
+                        Periode Tagihan Awal
                     </label>
                     <div class="report-input">
                         <input
@@ -68,10 +68,10 @@
                     </div>
                 </div>
 
-                {{-- Tanggal Akhir --}}
+                {{-- Periode Tagihan Akhir --}}
                 <div class="report-filter-item">
                     <label for="endDate">
-                        Tanggal Akhir
+                        Periode Tagihan Akhir
                     </label>
                     <div class="report-input">
                         <input

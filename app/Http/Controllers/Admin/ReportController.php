@@ -56,6 +56,12 @@ class ReportController extends Controller
                 'student.classRoom',
                 'latestPayment.latestVerification',
             ]);
+        $startBillingPeriod = $request->filled('start_date')
+            ? Carbon::parse((string) $request->input('start_date'))->startOfMonth()->toDateString()
+            : null;
+        $endBillingPeriod = $request->filled('end_date')
+            ? Carbon::parse((string) $request->input('end_date'))->startOfMonth()->toDateString()
+            : null;
 
         // Filter kelas (existing)
         if ($request->filled('class_room_id')) {
@@ -70,21 +76,21 @@ class ReportController extends Controller
             );
         }
 
-        // Filter tanggal awal (existing)
-        if ($request->filled('start_date')) {
+        // Filter periode tagihan awal
+        if ($startBillingPeriod !== null) {
             $query->whereDate(
-                'created_at',
+                'billing_period',
                 '>=',
-                $request->start_date
+                $startBillingPeriod
             );
         }
 
-        // Filter tanggal akhir (existing)
-        if ($request->filled('end_date')) {
+        // Filter periode tagihan akhir
+        if ($endBillingPeriod !== null) {
             $query->whereDate(
-                'created_at',
+                'billing_period',
                 '<=',
-                $request->end_date
+                $endBillingPeriod
             );
         }
 
@@ -146,20 +152,16 @@ class ReportController extends Controller
         $paymentSummaryQuery = Payment::query()
             ->where('status', 'paid');
 
-        if ($request->filled('start_date')) {
-            $paymentSummaryQuery->whereDate(
-                'paid_at',
-                '>=',
-                $request->start_date
-            );
+        if ($startBillingPeriod !== null) {
+            $paymentSummaryQuery->whereHas('bill', function (Builder $billQuery) use ($startBillingPeriod) {
+                $billQuery->whereDate('billing_period', '>=', $startBillingPeriod);
+            });
         }
 
-        if ($request->filled('end_date')) {
-            $paymentSummaryQuery->whereDate(
-                'paid_at',
-                '<=',
-                $request->end_date
-            );
+        if ($endBillingPeriod !== null) {
+            $paymentSummaryQuery->whereHas('bill', function (Builder $billQuery) use ($endBillingPeriod) {
+                $billQuery->whereDate('billing_period', '<=', $endBillingPeriod);
+            });
         }
 
         if ($request->filled('class_room_id')) {

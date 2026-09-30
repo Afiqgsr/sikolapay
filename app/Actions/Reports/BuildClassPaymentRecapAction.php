@@ -29,30 +29,14 @@ class BuildClassPaymentRecapAction
         // Ambil data sekolah untuk KOP laporan
         $school = School::first();
 
-        // 1. Query data tagihan yang sesuai dengan filter jenis tagihan, periode jatuh tempo, dan tingkat kelas.
-        // Periode tagihan ditentukan dengan prioritas:
-        // - Utama: bills.due_date
-        // - Fallback: bill_batches.due_date jika bills.due_date bernilai NULL
-        // - Tagihan dengan due_date NULL dan tanpa batch due_date tidak disertakan dalam periode bulan/tahun spesifik.
+        $billingPeriodStart = Carbon::create($year, $month, 1)->startOfMonth();
+        $billingPeriodEnd = $billingPeriodStart->copy()->addMonth();
+
+        // 1. Query data tagihan berdasarkan periode tagihan canonical pada Bill.
         $query = Bill::query()
             ->where('bills.name', $billName)
-            ->where(function (Builder $query) use ($month, $year) {
-                // Kondisi 1: bills.due_date terisi dan sesuai bulan & tahun
-                $query->where(function (Builder $q) use ($month, $year) {
-                    $q->whereNotNull('bills.due_date')
-                        ->whereYear('bills.due_date', $year)
-                        ->whereMonth('bills.due_date', $month);
-                })
-                // Kondisi 2: bills.due_date NULL, gunakan fallback bill_batches.due_date
-                    ->orWhere(function (Builder $q) use ($month, $year) {
-                        $q->whereNull('bills.due_date')
-                            ->whereHas('batch', function (Builder $batchQuery) use ($month, $year) {
-                                $batchQuery->whereNotNull('due_date')
-                                    ->whereYear('due_date', $year)
-                                    ->whereMonth('due_date', $month);
-                            });
-                    });
-            });
+            ->where('bills.billing_period', '>=', $billingPeriodStart)
+            ->where('bills.billing_period', '<', $billingPeriodEnd);
 
         // Jika tingkat kelas spesifik dipilih (misal 'X', 'XI', atau 'XII'):
         // Filter sedini mungkin di level database menggunakan whereHas pada relasi student.classRoom
@@ -66,7 +50,6 @@ class BuildClassPaymentRecapAction
 
         $bills = $query->with([
             'student.classRoom',
-            'batch',
         ])->get();
 
         // 2. Kelompokkan tagihan berdasarkan Tingkat / Grade dari Kelas Siswa
