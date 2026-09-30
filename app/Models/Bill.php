@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,6 +45,34 @@ class Bill extends Model
             'billing_period' => 'date',
             'due_date' => 'date',
         ];
+    }
+
+    public function hasBillingPeriodStarted(): bool
+    {
+        $billingPeriod = $this->getAttribute('billing_period');
+
+        if (! $billingPeriod instanceof CarbonInterface) {
+            return false;
+        }
+
+        $currentPeriod = Carbon::now((string) config('app.timezone'))->startOfMonth();
+
+        return $billingPeriod->copy()->startOfMonth()->lessThanOrEqualTo($currentPeriod);
+    }
+
+    /**
+     * @param  Builder<Bill>  $query
+     * @return Builder<Bill>
+     */
+    public function scopeBillingPeriodStarted(Builder $query): Builder
+    {
+        $nextPeriod = Carbon::now((string) config('app.timezone'))
+            ->startOfMonth()
+            ->addMonth();
+
+        return $query
+            ->whereNotNull('billing_period')
+            ->where('billing_period', '<', $nextPeriod);
     }
 
     public function batch(): BelongsTo

@@ -9,6 +9,7 @@ use App\Models\PaymentMethod;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
@@ -66,6 +67,7 @@ beforeEach(function () {
         'student_id' => $this->student->id,
         'name' => 'SPP Juli 2026',
         'amount' => 150000,
+        'billing_period' => now()->startOfMonth()->toDateString(),
         'status' => 'unpaid',
     ]);
 
@@ -219,4 +221,45 @@ test('student batch payment returns error and does not create payments when proo
         ]);
 
     expect(Payment::query()->count())->toBe(0);
+});
+
+test('student payment selection excludes future billing periods', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-09-01']);
+    $futureBill = Bill::create([
+        'student_id' => $this->student->id,
+        'name' => 'SPP Bulanan',
+        'amount' => 200000,
+        'billing_period' => '2026-10-01',
+        'status' => 'unpaid',
+    ]);
+
+    $response = $this->actingAs($this->studentUser)
+        ->get(route('student.payment.all'));
+
+    $response->assertOk()
+        ->assertViewHas('unpaidBills', function ($bills) use ($futureBill): bool {
+            return $bills->contains('id', $this->bill->id)
+                && ! $bills->contains('id', $futureBill->id);
+        });
+});
+
+test('student future period rejection cleans the uploaded proof', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-10-01']);
+
+    $response = $this->actingAs($this->studentUser)
+        ->postJson(route('student.payment.confirm', $this->bill->id), [
+            'payment_method_id' => $this->paymentMethod->id,
+            'proof_of_payment' => UploadedFile::fake()->image('future-proof.jpg'),
+        ]);
+
+    $response->assertStatus(422)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Tagihan periode ini belum dapat dibayar.',
+        ]);
+
+    expect(Payment::query()->count())->toBe(0)
+        ->and(Storage::disk('public')->allFiles('payment-proofs'))->toBe([]);
 });

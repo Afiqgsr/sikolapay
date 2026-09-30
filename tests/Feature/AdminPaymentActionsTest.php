@@ -13,7 +13,9 @@ use App\Models\PaymentVerification;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     $this->admin = User::factory()->create([
@@ -70,6 +72,7 @@ beforeEach(function () {
         'student_id' => $this->student->id,
         'name' => 'Tuition',
         'amount' => 100000,
+        'billing_period' => now()->startOfMonth()->toDateString(),
         'status' => 'unpaid',
     ]);
 
@@ -157,4 +160,74 @@ test('manual payment marks the bill paid and records the admin', function () {
         ->and($this->bill->fresh()->status)->toBe('paid')
         ->and($verification->status)->toBe('verified')
         ->and($verification->admin_id)->toBe($this->admin->id);
+});
+
+test('admin cannot record a future period manual payment', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update([
+        'billing_period' => '2026-10-01',
+        'due_date' => '2026-09-20',
+    ]);
+
+    expect(fn () => app(RecordManualPaymentAction::class)->execute([
+        'student_id' => $this->student->id,
+        'bill_id' => $this->bill->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'paid_at' => '2026-09-30 12:00:00',
+    ], $this->admin->id))->toThrow(HttpException::class, 'Tagihan periode ini belum dapat dibayar.')
+        ->and(Payment::query()->count())->toBe(0)
+        ->and($this->bill->fresh()->status)->toBe('unpaid');
+});
+
+test('admin can record an October manual payment when October starts', function () {
+    $this->travelTo(Carbon::create(2026, 10, 1, 0, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-10-01']);
+
+    $payment = app(RecordManualPaymentAction::class)->execute([
+        'student_id' => $this->student->id,
+        'bill_id' => $this->bill->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'paid_at' => '2026-10-01 00:00:00',
+    ], $this->admin->id);
+
+    expect($payment->status)->toBe('paid')
+        ->and($this->bill->fresh()->status)->toBe('paid');
+});
+
+test('admin cannot backdate manual payment before the billing period', function () {
+    $this->travelTo(Carbon::create(2026, 10, 2, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-10-01']);
+
+    expect(fn () => app(RecordManualPaymentAction::class)->execute([
+        'student_id' => $this->student->id,
+        'bill_id' => $this->bill->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'paid_at' => '2026-09-29 12:00:00',
+    ], $this->admin->id))->toThrow(
+        HttpException::class,
+        'Tanggal pembayaran tidak boleh lebih awal dari periode tagihan.'
+    )
+        ->and(Payment::query()->count())->toBe(0)
+        ->and($this->bill->fresh()->status)->toBe('unpaid');
+});
+
+test('admin manual payment form excludes future billing periods', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-09-01']);
+    $futureBill = Bill::create([
+        'student_id' => $this->student->id,
+        'name' => 'SPP Bulanan',
+        'amount' => 200000,
+        'billing_period' => '2026-10-01',
+        'status' => 'unpaid',
+    ]);
+
+    $response = $this->actingAs($this->admin)
+        ->get(route('admin.payments.create'));
+
+    $response->assertOk()
+        ->assertViewHas('bills', function ($bills) use ($futureBill): bool {
+            return $bills->contains('id', $this->bill->id)
+                && ! $bills->contains('id', $futureBill->id);
+        });
 });

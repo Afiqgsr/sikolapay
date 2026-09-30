@@ -47,6 +47,7 @@ class PaymentController extends Controller
         // Hal ini penting agar Admin tidak mencatat pembayaran manual untuk tagihan yang sedang menunggu verifikasi transfer
         $bills = Bill::query()
             ->where('status', 'unpaid')
+            ->billingPeriodStarted()
             ->whereDoesntHave('latestPayment', function (Builder $query) {
                 $query->where('status', 'pending');
             })

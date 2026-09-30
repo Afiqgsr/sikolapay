@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Payments\CreateGuardianPaymentAction;
 use App\Models\AcademicYear;
 use App\Models\Bill;
 use App\Models\ClassRoom;
@@ -9,10 +10,12 @@ use App\Models\PaymentMethod;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     Storage::fake('public');
@@ -93,6 +96,7 @@ beforeEach(function () {
         'student_id' => $this->student->id,
         'name' => 'SPP Juli 2026',
         'amount' => 250000,
+        'billing_period' => now()->startOfMonth()->toDateString(),
         'status' => 'unpaid',
     ]);
 
@@ -100,6 +104,7 @@ beforeEach(function () {
         'student_id' => $this->otherStudent->id,
         'name' => 'SPP Juli 2026 Lain',
         'amount' => 250000,
+        'billing_period' => now()->startOfMonth()->toDateString(),
         'status' => 'unpaid',
     ]);
 
@@ -161,6 +166,11 @@ test('create payment redirects to show if bill has pending payment', function ()
 });
 
 test('guardian can store payment successfully with proof upload', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update([
+        'billing_period' => '2026-09-01',
+        'due_date' => '2026-10-05',
+    ]);
     $file = UploadedFile::fake()->image('proof.jpg');
 
     $response = $this->actingAs($this->guardianUser)
@@ -316,6 +326,8 @@ test('guardian cannot view show page for another student payment', function () {
 });
 
 test('guardian can upload new proof for pending payment and cleans old proof', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-10-01']);
     $oldFile = UploadedFile::fake()->image('old_proof.jpg');
     $oldPath = $oldFile->store('payments/proofs', 'public');
 
@@ -423,4 +435,67 @@ test('guardian cannot view receipt for non-paid payment', function () {
         ->get(route('guardian.payments.receipt', $payment->id));
 
     $response->assertNotFound();
+});
+
+test('guardian cannot create a future period payment and uploaded proof is cleaned', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update([
+        'billing_period' => '2026-10-01',
+        'due_date' => '2026-09-20',
+    ]);
+
+    $response = $this->actingAs($this->guardianUser)
+        ->from(route('guardian.payments.create', $this->bill->id))
+        ->post(route('guardian.payments.store'), [
+            'bill_id' => $this->bill->id,
+            'payment_method_id' => $this->paymentMethod->id,
+            'proof_of_payment' => UploadedFile::fake()->image('future-proof.jpg'),
+        ]);
+
+    $response->assertRedirect(route('guardian.payments.create', $this->bill->id))
+        ->assertSessionHas('error', 'Tagihan periode ini belum dapat dibayar.');
+
+    expect(Payment::where('bill_id', $this->bill->id)->doesntExist())->toBeTrue()
+        ->and(Storage::disk('public')->allFiles('payments/proofs'))->toBe([]);
+});
+
+test('guardian can create an October payment when October starts', function () {
+    $this->travelTo(Carbon::create(2026, 10, 1, 0, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-10-01']);
+
+    $response = $this->actingAs($this->guardianUser)
+        ->post(route('guardian.payments.store'), [
+            'bill_id' => $this->bill->id,
+            'payment_method_id' => $this->paymentMethod->id,
+            'proof_of_payment' => UploadedFile::fake()->image('october-proof.jpg'),
+        ]);
+
+    $payment = Payment::where('bill_id', $this->bill->id)->first();
+
+    $response->assertRedirect(route('guardian.payments.show', $payment->id));
+    expect($payment)->not->toBeNull();
+});
+
+test('guardian action rechecks payment state from the locked bill', function () {
+    $this->travelTo(Carbon::create(2026, 9, 30, 12, 0, 0, (string) config('app.timezone')));
+    $this->bill->update(['billing_period' => '2026-09-01']);
+    $staleBill = $this->bill->fresh();
+
+    Payment::create([
+        'bill_id' => $this->bill->id,
+        'payer_id' => $this->guardianUser->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'payment_number' => 'PAY-GUARDIAN-RACE',
+        'amount' => $this->bill->amount,
+        'status' => 'pending',
+    ]);
+
+    expect(fn () => app(CreateGuardianPaymentAction::class)->execute(
+        $staleBill,
+        $this->paymentMethod,
+        $this->guardian->id,
+        $this->guardianUser->id,
+        'payments/proofs/race.jpg',
+    ))->toThrow(HttpException::class, 'Pembayaran tagihan ini sedang menunggu verifikasi.')
+        ->and(Payment::where('bill_id', $this->bill->id)->count())->toBe(1);
 });

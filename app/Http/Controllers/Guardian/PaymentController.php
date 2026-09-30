@@ -15,6 +15,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PaymentController extends Controller
 {
@@ -120,9 +121,16 @@ class PaymentController extends Controller
             $payment = $action->execute(
                 $bill,
                 $paymentMethod,
+                $guardian->id,
                 (int) Auth::id(),
                 $proofPath
             );
+        } catch (HttpException $exception) {
+            Storage::disk('public')->delete($proofPath);
+
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         } catch (\Throwable $exception) {
             // Jika proses database gagal, hapus file bukti yang baru saja diunggah agar tidak jadi file sampah
             Storage::disk('public')->delete($proofPath);

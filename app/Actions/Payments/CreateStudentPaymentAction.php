@@ -76,6 +76,10 @@ class CreateStudentPaymentAction
                 throw new HttpException(422, 'Pembayaran masih menunggu verifikasi.');
             }
 
+            if (! $isRejected && ! $ownedBill->hasBillingPeriodStarted()) {
+                throw new HttpException(422, 'Tagihan periode ini belum dapat dibayar.');
+            }
+
             // Cari metode pembayaran yang dipilih dan pastikan masih berstatus aktif
             $paymentMethod = PaymentMethod::query()
                 ->whereKey($paymentMethodId)

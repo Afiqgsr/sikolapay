@@ -45,6 +45,7 @@ class CreateStudentBatchPaymentsAction
             $bills = Bill::query()
                 ->where('student_id', $student->id)
                 ->where('status', 'unpaid')
+                ->billingPeriodStarted()
                 ->whereDoesntHave('payments', function ($query) {
                     $query->whereIn('status', ['pending', 'paid']);
                 })

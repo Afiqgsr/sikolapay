@@ -5,6 +5,8 @@ namespace App\Actions\Payments;
 use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 
 class RecordManualPaymentAction
@@ -50,6 +52,20 @@ class RecordManualPaymentAction
                     422,
                     'Tagihan ini masih memiliki pembayaran yang menunggu verifikasi.'
                 );
+            }
+
+            if (! $bill->hasBillingPeriodStarted()) {
+                abort(422, 'Tagihan periode ini belum dapat dibayar.');
+            }
+
+            $billingPeriod = $bill->getAttribute('billing_period');
+            $paidAt = Carbon::parse(
+                (string) $validated['paid_at'],
+                (string) config('app.timezone')
+            );
+
+            if (! $billingPeriod instanceof CarbonInterface || $paidAt->lessThan($billingPeriod)) {
+                abort(422, 'Tanggal pembayaran tidak boleh lebih awal dari periode tagihan.');
             }
 
             // Cari metode pembayaran yang dipilih dan pastikan metode tersebut masih dalam kondisi aktif
