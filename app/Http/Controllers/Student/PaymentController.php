@@ -13,6 +13,7 @@ use App\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -59,7 +60,11 @@ class PaymentController extends Controller
         $validated = $request->validated();
 
         // Simpan file bukti transfer ke storage publik di folder 'payment-proofs'
-        $proofPath = $request->file('proof_of_payment')->store('payment-proofs', 'public');
+        $proofPath = $this->storeProofOfPayment($request->file('proof_of_payment'));
+
+        if ($proofPath === null) {
+            return $this->proofUploadFailedResponse();
+        }
 
         try {
             // Eksekusi action untuk membuat record pembayaran atau update bukti (jika resubmission)
@@ -177,7 +182,11 @@ class PaymentController extends Controller
         $validated = $request->validated();
 
         // Simpan file bukti transfer bersama ke storage publik di folder 'payment-proofs'
-        $proofPath = $request->file('proof_of_payment')->store('payment-proofs', 'public');
+        $proofPath = $this->storeProofOfPayment($request->file('proof_of_payment'));
+
+        if ($proofPath === null) {
+            return $this->proofUploadFailedResponse();
+        }
 
         try {
             // Eksekusi action untuk membuat record pembayaran batch di dalam database transaction
@@ -216,6 +225,25 @@ class PaymentController extends Controller
                 'date' => now()->translatedFormat('d F Y'),
             ],
         ]);
+    }
+
+    private function storeProofOfPayment(mixed $proofOfPayment): ?string
+    {
+        if (! $proofOfPayment instanceof UploadedFile) {
+            return null;
+        }
+
+        $proofPath = $proofOfPayment->store('payment-proofs', 'public');
+
+        return $proofPath === false ? null : $proofPath;
+    }
+
+    private function proofUploadFailedResponse(): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Bukti pembayaran gagal diunggah. Silakan coba lagi.',
+        ], 500);
     }
 
     /**

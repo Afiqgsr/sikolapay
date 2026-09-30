@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Reports;
 
+use App\Models\Bill;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -38,7 +39,7 @@ class FilterPaymentReportRequest extends FormRequest
             'bill_name' => [
                 'required',
                 'string',
-                'max:255',
+                Rule::in(Bill::TYPES),
             ],
             'grade' => [
                 'nullable',
@@ -61,6 +62,7 @@ class FilterPaymentReportRequest extends FormRequest
             'year.required' => 'Tahun periode tagihan wajib diisi.',
             'year.between' => 'Pilihan tahun di luar batas yang diperbolehkan.',
             'bill_name.required' => 'Jenis tagihan wajib dipilih.',
+            'bill_name.in' => 'Pilihan jenis tagihan tidak valid.',
             'grade.in' => 'Pilihan tingkat kelas tidak valid (hanya Kelas X, XI, atau XII).',
         ];
     }

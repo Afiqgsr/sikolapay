@@ -9,6 +9,8 @@ use App\Models\PaymentMethod;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -181,6 +183,31 @@ test('guardian can store payment successfully with proof upload', function () {
         ->assertSessionHas('success', 'Pembayaran berhasil dikirim dan menunggu verifikasi admin.');
 });
 
+test('guardian store redirects with error and does not create payment when proof upload fails', function () {
+    $disk = Mockery::mock(Filesystem::class);
+    $disk->shouldReceive('putFileAs')->once()->andReturn(false);
+
+    $filesystem = Mockery::mock(FilesystemFactory::class);
+    $filesystem->shouldReceive('disk')->once()->with('public')->andReturn($disk);
+
+    $this->app->instance(FilesystemFactory::class, $filesystem);
+
+    $file = UploadedFile::fake()->image('proof.jpg');
+
+    $response = $this->actingAs($this->guardianUser)
+        ->from(route('guardian.payments.create', $this->bill->id))
+        ->post(route('guardian.payments.store'), [
+            'bill_id' => $this->bill->id,
+            'payment_method_id' => $this->paymentMethod->id,
+            'proof_of_payment' => $file,
+        ]);
+
+    $response->assertRedirect(route('guardian.payments.create', $this->bill->id))
+        ->assertSessionHas('error', 'Bukti pembayaran gagal diunggah. Silakan coba lagi.');
+
+    expect(Payment::where('bill_id', $this->bill->id)->count())->toBe(0);
+});
+
 test('guardian cannot store payment for another student bill', function () {
     $file = UploadedFile::fake()->image('proof.jpg');
 
@@ -319,6 +346,48 @@ test('guardian can upload new proof for pending payment and cleans old proof', f
 
     $response->assertRedirect(route('guardian.payments.show', $payment->id))
         ->assertSessionHas('success', 'Bukti pembayaran berhasil diperbarui dan menunggu verifikasi admin.');
+});
+
+test('guardian upload proof redirects with error and keeps old proof when new proof upload fails', function () {
+    $oldFile = UploadedFile::fake()->image('old_proof.jpg');
+    $oldPath = $oldFile->store('payments/proofs', 'public');
+
+    $payment = Payment::create([
+        'bill_id' => $this->bill->id,
+        'payer_id' => $this->guardianUser->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'payment_number' => 'PAY-TEST-PROOF-FAIL-01',
+        'amount' => $this->bill->amount,
+        'proof_of_payment' => $oldPath,
+        'proof_uploaded_at' => now()->subDay(),
+        'status' => 'pending',
+    ]);
+
+    $originalProofUploadedAt = $payment->proof_uploaded_at;
+
+    $disk = Mockery::mock(Filesystem::class);
+    $disk->shouldReceive('putFileAs')->once()->andReturn(false);
+
+    $filesystem = Mockery::mock(FilesystemFactory::class);
+    $filesystem->shouldReceive('disk')->once()->with('public')->andReturn($disk);
+
+    $this->app->instance(FilesystemFactory::class, $filesystem);
+
+    $newFile = UploadedFile::fake()->image('new_proof.jpg');
+
+    $response = $this->actingAs($this->guardianUser)
+        ->from(route('guardian.payments.show', $payment->id))
+        ->post(route('guardian.payments.proof', $payment->id), [
+            'proof_of_payment' => $newFile,
+        ]);
+
+    $payment->refresh();
+
+    $response->assertRedirect(route('guardian.payments.show', $payment->id))
+        ->assertSessionHas('error', 'Bukti pembayaran gagal diunggah. Silakan coba lagi.');
+
+    expect($payment->proof_of_payment)->toBe($oldPath)
+        ->and($payment->proof_uploaded_at?->equalTo($originalProofUploadedAt))->toBeTrue();
 });
 
 test('guardian can view receipt for paid payment', function () {

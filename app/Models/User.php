@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 /**
  * @property int $id
@@ -44,7 +45,7 @@ use Illuminate\Support\Str;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     protected function casts(): array
     {

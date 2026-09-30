@@ -1,0 +1,595 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Payments/CreateStudentPaymentAction.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: app/Actions/Payments/CreateStudentPaymentAction.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$classRoom\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Actions/Reports/BuildClassPaymentRecapAction.php
+
+		-
+			message: '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\Support\\Collection\<int,App\\Models\\Bill\>\:\:groupBy\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Actions/Reports/BuildClassPaymentRecapAction.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Actions/Reports/BuildClassPaymentRecapAction.php
+
+		-
+			message: '#^Trait App\\Concerns\\ProfileValidationRules is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: app/Concerns/ProfileValidationRules.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Console/Commands/BackfillBillBatches.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\BillController\:\:destroy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\BillController\:\:getValidSemesters\(\) should return Illuminate\\Support\\Collection\<int, string\> but returns Illuminate\\Support\\Collection\<int, non\-falsy\-string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/Admin/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\BillController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\BillController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\BillController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/BillController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$latestVerification\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$processed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$proof_of_payment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$proof_uploaded_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Cannot call method gt\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\DashboardController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Admin/ReportController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Guardian\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Guardian\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:students\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\StudentController\:\:destroy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\StudentController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\StudentController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Admin\\StudentController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Admin/StudentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:students\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Guardian/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\BillController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\BillController\:\:show\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\BillController\:\:show\(\) has parameter \$id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/Guardian/BillController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Guardian/BillController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:students\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Guardian/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\DashboardController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Guardian/PaymentController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, App\\Models\\Guardian\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Guardian/PaymentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:students\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Guardian/PaymentHistoryController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\PaymentHistoryController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/PaymentHistoryController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Guardian/PaymentHistoryController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\ProfileController\:\:edit\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\ProfileController\:\:editPassword\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\ProfileController\:\:show\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\ProfileController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Guardian\\ProfileController\:\:updatePassword\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, App\\Models\\Guardian\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 5
+			path: app/Http/Controllers/Guardian/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\PaymentController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/PaymentController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Student/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\BillController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Student/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\BillController\:\:show\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Student/BillController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\BillController\:\:show\(\) has parameter \$id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/Student/BillController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$academicYear\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Student/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$payments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Student/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Student/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\DashboardController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Student/DashboardController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Student/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\PaymentController\:\:getActivePaymentMethods\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/Student/PaymentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\PaymentController\:\:getEligibleUnpaidBills\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/Student/PaymentController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, App\\Models\\Student\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Student/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$password\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Student/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\ProfileController\:\:edit\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Student/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\ProfileController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Student/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Student\\ProfileController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Student/ProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SuperAdmin\\AdminController\:\:destroy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Superadmin/AdminController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SuperAdmin\\AdminController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Superadmin/AdminController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SuperAdmin\\AdminController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Superadmin/AdminController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SuperAdmin\\AdminController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Superadmin/AdminController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SuperAdmin\\DashboardController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Superadmin/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\RoleMiddleware\:\:handle\(\) has parameter \$roles with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Middleware/RoleMiddleware.php
+
+		-
+			message: '#^Method App\\Models\\AcademicYear\:\:classRooms\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/AcademicYear.php
+
+		-
+			message: '#^Method App\\Models\\AcademicYear\:\:school\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/AcademicYear.php
+
+		-
+			message: '#^Method App\\Models\\Bill\:\:batch\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Bill.php
+
+		-
+			message: '#^Method App\\Models\\Bill\:\:latestPayment\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Bill.php
+
+		-
+			message: '#^Method App\\Models\\Bill\:\:payments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Bill.php
+
+		-
+			message: '#^Method App\\Models\\Bill\:\:student\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Bill.php
+
+		-
+			message: '#^Method App\\Models\\BillBatch\:\:bills\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/BillBatch.php
+
+		-
+			message: '#^Method App\\Models\\ClassRoom\:\:academicYear\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ClassRoom.php
+
+		-
+			message: '#^Method App\\Models\\ClassRoom\:\:students\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ClassRoom.php
+
+		-
+			message: '#^Method App\\Models\\Guardian\:\:students\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Guardian.php
+
+		-
+			message: '#^Method App\\Models\\Guardian\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Guardian.php
+
+		-
+			message: '#^Method App\\Models\\Payment\:\:bill\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Method App\\Models\\Payment\:\:latestVerification\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Method App\\Models\\Payment\:\:payer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Method App\\Models\\Payment\:\:paymentMethod\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Method App\\Models\\Payment\:\:recordedBy\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Method App\\Models\\Payment\:\:verifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Method App\\Models\\PaymentMethod\:\:payments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PaymentMethod.php
+
+		-
+			message: '#^Method App\\Models\\PaymentVerification\:\:admin\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PaymentVerification.php
+
+		-
+			message: '#^Method App\\Models\\PaymentVerification\:\:payment\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PaymentVerification.php
+
+		-
+			message: '#^Method App\\Models\\School\:\:academicYears\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/School.php
+
+		-
+			message: '#^Method App\\Models\\Student\:\:bills\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Student.php
+
+		-
+			message: '#^Method App\\Models\\Student\:\:classRoom\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Student.php
+
+		-
+			message: '#^Method App\\Models\\Student\:\:guardian\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Student.php
+
+		-
+			message: '#^Method App\\Models\\Student\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Student.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:guardian\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:student\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$password\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Providers/FortifyServiceProvider.php

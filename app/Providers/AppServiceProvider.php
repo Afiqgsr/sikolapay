@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         date_default_timezone_set(
-            env('APP_TIMEZONE', 'Asia/Jakarta')
+            config('app.timezone', 'Asia/Jakarta')
         );
 
         $this->configureDefaults();

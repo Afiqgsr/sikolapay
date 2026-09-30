@@ -277,6 +277,10 @@ class ReportController extends Controller
         return response()->streamDownload(function () use ($recap) {
             $handle = fopen('php://output', 'w');
 
+            if ($handle === false) {
+                throw new \RuntimeException('Unable to open CSV output stream.');
+            }
+
             // Tulis UTF-8 BOM agar Microsoft Excel membaca karakter aksen/bahasa Indonesia dengan benar
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 

@@ -11,6 +11,7 @@ use App\Models\Guardian;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -106,7 +107,13 @@ class PaymentController extends Controller
             ->firstOrFail();
 
         // Simpan file bukti transfer ke storage publik di folder 'payments/proofs'
-        $proofPath = $request->file('proof_of_payment')->store('payments/proofs', 'public');
+        $proofPath = $this->storeProofOfPayment($request->file('proof_of_payment'));
+
+        if ($proofPath === null) {
+            return back()
+                ->withInput()
+                ->with('error', 'Bukti pembayaran gagal diunggah. Silakan coba lagi.');
+        }
 
         try {
             // Jalankan action untuk membuat record Payment dalam database transaction
@@ -176,7 +183,13 @@ class PaymentController extends Controller
         $oldProof = $payment->proof_of_payment;
 
         // Simpan file bukti baru ke storage publik
-        $newProofPath = $request->file('proof_of_payment')->store('payments/proofs', 'public');
+        $newProofPath = $this->storeProofOfPayment($request->file('proof_of_payment'));
+
+        if ($newProofPath === null) {
+            return back()
+                ->withInput()
+                ->with('error', 'Bukti pembayaran gagal diunggah. Silakan coba lagi.');
+        }
 
         try {
             // Perbarui record payment dengan path bukti pembayaran yang baru
@@ -199,6 +212,17 @@ class PaymentController extends Controller
         return redirect()
             ->route('guardian.payments.show', $payment->id)
             ->with('success', 'Bukti pembayaran berhasil diperbarui dan menunggu verifikasi admin.');
+    }
+
+    private function storeProofOfPayment(mixed $proofOfPayment): ?string
+    {
+        if (! $proofOfPayment instanceof UploadedFile) {
+            return null;
+        }
+
+        $proofPath = $proofOfPayment->store('payments/proofs', 'public');
+
+        return $proofPath === false ? null : $proofPath;
     }
 
     /**

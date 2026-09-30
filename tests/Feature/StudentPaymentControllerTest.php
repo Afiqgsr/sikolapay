@@ -9,6 +9,8 @@ use App\Models\PaymentMethod;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -118,6 +120,32 @@ test('student can confirm single payment and receives json response', function (
     Storage::disk('public')->assertExists($payment->proof_of_payment);
 });
 
+test('student single payment returns error and does not create payment when proof upload fails', function () {
+    $disk = Mockery::mock(Filesystem::class);
+    $disk->shouldReceive('putFileAs')->once()->andReturn(false);
+
+    $filesystem = Mockery::mock(FilesystemFactory::class);
+    $filesystem->shouldReceive('disk')->once()->with('public')->andReturn($disk);
+
+    $this->app->instance(FilesystemFactory::class, $filesystem);
+
+    $file = UploadedFile::fake()->image('proof.jpg');
+
+    $response = $this->actingAs($this->studentUser)
+        ->postJson(route('student.payment.confirm', $this->bill->id), [
+            'payment_method_id' => $this->paymentMethod->id,
+            'proof_of_payment' => $file,
+        ]);
+
+    $response->assertStatus(500)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Bukti pembayaran gagal diunggah. Silakan coba lagi.',
+        ]);
+
+    expect(Payment::where('bill_id', $this->bill->id)->count())->toBe(0);
+});
+
 test('student can view payment all page when unpaid bills exist', function () {
     $response = $this->actingAs($this->studentUser)
         ->get(route('student.payment.all'));
@@ -165,4 +193,30 @@ test('student can confirm batch payment and receives json response', function ()
     expect($payment)->not->toBeNull()
         ->and($payment->payer_id)->toBe($this->studentUser->id)
         ->and($payment->status)->toBe('pending');
+});
+
+test('student batch payment returns error and does not create payments when proof upload fails', function () {
+    $disk = Mockery::mock(Filesystem::class);
+    $disk->shouldReceive('putFileAs')->once()->andReturn(false);
+
+    $filesystem = Mockery::mock(FilesystemFactory::class);
+    $filesystem->shouldReceive('disk')->once()->with('public')->andReturn($disk);
+
+    $this->app->instance(FilesystemFactory::class, $filesystem);
+
+    $file = UploadedFile::fake()->image('batch_proof.jpg');
+
+    $response = $this->actingAs($this->studentUser)
+        ->postJson(route('student.payment.all.confirm.store'), [
+            'payment_method_id' => $this->paymentMethod->id,
+            'proof_of_payment' => $file,
+        ]);
+
+    $response->assertStatus(500)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Bukti pembayaran gagal diunggah. Silakan coba lagi.',
+        ]);
+
+    expect(Payment::query()->count())->toBe(0);
 });
