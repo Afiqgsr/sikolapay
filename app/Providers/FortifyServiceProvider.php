@@ -2,13 +2,15 @@
 
 namespace App\Providers;
 
+use App\Actions\Fortify\ResetUserPassword;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -37,7 +39,9 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureActions(): void
     {
-        //
+        Fortify::resetUserPasswordsUsing(
+            ResetUserPassword::class
+        );
     }
 
     /**
@@ -45,7 +49,9 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn () => view('pages::auth.login'));
+        Fortify::loginView(
+            fn () => view('pages::auth.login')
+        );
 
         Fortify::verifyEmailView(
             fn () => view('pages::auth.verify-email')
@@ -73,13 +79,15 @@ class FortifyServiceProvider extends ServiceProvider
             /*
              * Login menggunakan email.
              */
-            $user = User::where('email', $login)->first();
+            $user = User::where('email', $login)
+                ->first();
 
             /*
              * Jika bukan email, coba cari berdasarkan NIS student.
              */
             if (! $user) {
-                $student = \App\Models\Student::where('nis', $login)
+
+                $student = Student::where('nis', $login)
                     ->first();
 
                 if ($student) {
@@ -90,7 +98,10 @@ class FortifyServiceProvider extends ServiceProvider
             /*
              * User tidak ditemukan atau password salah.
              */
-            if (! $user || ! Hash::check($password, $user->password)) {
+            if (
+                ! $user ||
+                ! Hash::check($password, $user->password)
+            ) {
                 return null;
             }
 
@@ -104,16 +115,21 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureRateLimiting(): void
     {
         RateLimiter::for('two-factor', function (Request $request) {
+
             return Limit::perMinute(5)
-                ->by($request->session()->get('login.id'));
+                ->by(
+                    $request->session()->get('login.id')
+                );
         });
 
         RateLimiter::for('login', function (Request $request) {
 
             $throttleKey = Str::transliterate(
                 Str::lower(
-                    $request->input(Fortify::username())
-                ) . '|' . $request->ip()
+                    $request->input(
+                        Fortify::username()
+                    )
+                ).'|'.$request->ip()
             );
 
             return Limit::perMinute(5)

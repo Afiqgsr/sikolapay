@@ -9,7 +9,6 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
@@ -51,11 +50,17 @@ class StudentController extends Controller
             ->orderBy('name')
             ->get();
 
+        $guardians = Guardian::query()
+            ->with('user')
+            ->orderBy('name')
+            ->get();
+
         $totalStudents = Student::count();
 
         return view('admin.student-data', [
             'students' => $students,
             'classRooms' => $classRooms,
+            'guardians' => $guardians,
             'totalStudents' => $totalStudents,
         ]);
     }
@@ -94,6 +99,14 @@ class StudentController extends Controller
                 'digits:4',
             ],
 
+            'gender' => [
+                'required',
+                Rule::in([
+                    'L',
+                    'P',
+                ]),
+            ],
+
             'status' => [
                 'required',
                 Rule::in([
@@ -109,62 +122,144 @@ class StudentController extends Controller
                 'unique:users,email',
             ],
 
-            'guardian_name' => [
+            'guardian_mode' => [
                 'required',
+                Rule::in([
+                    'new',
+                    'existing',
+                ]),
+            ],
+
+            'guardian_id' => [
+                'nullable',
+                'required_if:guardian_mode,existing',
+                'exists:guardians,id',
+            ],
+
+            'guardian_name' => [
+                'nullable',
+                'required_if:guardian_mode,new',
                 'string',
                 'max:255',
             ],
 
+            'guardian_phone' => [
+                'nullable',
+                'required_if:guardian_mode,new',
+                'string',
+                'max:20',
+            ],
+
             'guardian_email' => [
-                'required',
+                'nullable',
                 'email',
                 'max:255',
                 'unique:users,email',
             ],
 
-            'guardian_phone' => [
-                'required',
+            'guardian_relationship' => [
+                'nullable',
                 'string',
-                'max:20',
+                'max:50',
+            ],
+
+            'guardian_address' => [
+                'nullable',
+                'string',
+                'max:1000',
             ],
         ]);
 
         DB::transaction(function () use ($validated) {
 
+            /* Akun siswa */
+
             $studentUser = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                'password' => Hash::make('password123'),
+
+                // Password awal siswa = NIS.
+                'password' => $validated['nis'],
+
                 'role' => 'student',
+                'status' => $validated['status'],
             ]);
 
-            $guardianUser = User::create([
-                'name' => $validated['guardian_name'],
-                'email' => $validated['guardian_email'],
-                'password' => Hash::make('password123'),
-                'role' => 'guardian',
-            ]);
+            // Akun dibuat oleh admin.
+            $studentUser->forceFill([
+                'email_verified_at' => now(),
+            ])->save();
 
-            $guardian = Guardian::create([
-                'user_id' => $guardianUser->id,
-                'name' => $validated['guardian_name'],
-                'phone' => $validated['guardian_phone'],
-                'address' => null,
-            ]);
+            /* Tentukan wali */
+
+            if ($validated['guardian_mode'] === 'existing') {
+
+                /*
+                 * Gunakan wali yang sudah terdaftar.
+                 *
+                 * Tidak membuat User guardian baru dan
+                 * tidak membuat record Guardian baru.
+                 */
+                $guardian = Guardian::findOrFail(
+                    $validated['guardian_id']
+                );
+
+            } else {
+
+                /*
+                 * Tambah wali baru.
+                 */
+
+                $guardianUser = null;
+
+                /*
+                 * Akun login wali hanya dibuat
+                 * jika email wali diisi.
+                 */
+                if (! empty($validated['guardian_email'])) {
+
+                    $guardianUser = User::create([
+                        'name' => $validated['guardian_name'],
+                        'email' => $validated['guardian_email'],
+                        'password' => 'password123',
+                        'role' => 'guardian',
+                        'status' => 'active',
+                    ]);
+
+                    $guardianUser->forceFill([
+                        'email_verified_at' => now(),
+                    ])->save();
+                }
+
+                /*
+                 * Data wali tetap dibuat walaupun
+                 * tidak mempunyai akun login.
+                 */
+                $guardian = Guardian::create([
+                    'user_id' => $guardianUser?->id,
+                    'name' => $validated['guardian_name'],
+                    'phone' => $validated['guardian_phone'],
+                    'email' => $validated['guardian_email'] ?? null,
+                    'relationship' => $validated['guardian_relationship'] ?? null,
+                    'address' => $validated['guardian_address'] ?? null,
+                ]);
+            }
+
+            /* Data siswa */
 
             Student::create([
                 'user_id' => $studentUser->id,
                 'guardian_id' => $guardian->id,
                 'class_room_id' => $validated['class_room_id'],
+
                 'entry_year' => $validated['entry_year'],
                 'status' => $validated['status'],
+
                 'nis' => $validated['nis'],
                 'nisn' => $validated['nisn'] ?: null,
-                'name' => $validated['name'],
 
-                // sementara default karena form Data Siswa
-                // belum menyediakan gender
-                'gender' => 'L',
+                'name' => $validated['name'],
+                'gender' => $validated['gender'],
 
                 'birth_date' => null,
                 'birth_place' => null,
@@ -174,11 +269,16 @@ class StudentController extends Controller
 
         return redirect()
             ->route('admin.students.index')
-            ->with('success', 'Data siswa berhasil ditambahkan.');
+            ->with(
+                'success',
+                'Data siswa berhasil ditambahkan.'
+            );
     }
 
-    public function update(Request $request, Student $student)
-    {
+    public function update(
+        Request $request,
+        Student $student
+    ) {
         $student->load([
             'user',
             'guardian.user',
@@ -189,6 +289,7 @@ class StudentController extends Controller
                 'required',
                 'string',
                 'max:50',
+
                 Rule::unique('students', 'nis')
                     ->ignore($student->id),
             ],
@@ -197,6 +298,7 @@ class StudentController extends Controller
                 'nullable',
                 'string',
                 'max:50',
+
                 Rule::unique('students', 'nisn')
                     ->ignore($student->id),
             ],
@@ -218,6 +320,14 @@ class StudentController extends Controller
                 'digits:4',
             ],
 
+            'gender' => [
+                'required',
+                Rule::in([
+                    'L',
+                    'P',
+                ]),
+            ],
+
             'status' => [
                 'required',
                 Rule::in([
@@ -230,6 +340,7 @@ class StudentController extends Controller
                 'required',
                 'email',
                 'max:255',
+
                 Rule::unique('users', 'email')
                     ->ignore($student->user_id),
             ],
@@ -240,51 +351,143 @@ class StudentController extends Controller
                 'max:255',
             ],
 
-            'guardian_email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')
-                    ->ignore($student->guardian?->user_id),
-            ],
-
             'guardian_phone' => [
                 'required',
                 'string',
                 'max:20',
             ],
+
+            'guardian_email' => [
+                'nullable',
+                'email',
+                'max:255',
+
+                Rule::unique('users', 'email')
+                    ->ignore(
+                        $student->guardian?->user_id
+                    ),
+            ],
+
+            'guardian_relationship' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
+
+            'guardian_address' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
         ]);
 
-        DB::transaction(function () use ($student, $validated) {
+        DB::transaction(function () use (
+            $student,
+            $validated
+        ) {
+
+            /* Update akun siswa */
 
             $student->user->update([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
+                'status' => $validated['status'],
             ]);
 
-            $student->guardian->user->update([
-                'name' => $validated['guardian_name'],
-                'email' => $validated['guardian_email'],
-            ]);
+            /* Ambil data wali */
 
-            $student->guardian->update([
+            $guardian = $student->guardian;
+
+            /*
+             * Jika email wali diisi.
+             */
+            if (! empty($validated['guardian_email'])) {
+
+                /*
+                 * Wali sudah mempunyai akun.
+                 */
+                if ($guardian->user) {
+
+                    $guardian->user->update([
+                        'name' => $validated['guardian_name'],
+                        'email' => $validated['guardian_email'],
+                        'status' => 'active',
+                    ]);
+
+                } else {
+
+                    /*
+                     * Wali belum mempunyai akun.
+                     * Buat akun guardian baru.
+                     */
+                    $guardianUser = User::create([
+                        'name' => $validated['guardian_name'],
+                        'email' => $validated['guardian_email'],
+                        'password' => 'password123',
+                        'role' => 'guardian',
+                        'status' => 'active',
+                    ]);
+
+                    $guardianUser->forceFill([
+                        'email_verified_at' => now(),
+                    ])->save();
+
+                    $guardian->update([
+                        'user_id' => $guardianUser->id,
+                    ]);
+                }
+
+            } else {
+
+                /*
+                 * Email wali dikosongkan.
+                 *
+                 * Jika sebelumnya punya akun login,
+                 * akun tersebut dilepas dan dihapus.
+                 */
+                if ($guardian->user) {
+
+                    $guardianUser = $guardian->user;
+
+                    $guardian->update([
+                        'user_id' => null,
+                    ]);
+
+                    $guardianUser->delete();
+                }
+            }
+
+            /* Update data wali */
+
+            $guardian->update([
                 'name' => $validated['guardian_name'],
                 'phone' => $validated['guardian_phone'],
+                'email' => $validated['guardian_email'] ?? null,
+                'relationship' => $validated['guardian_relationship'] ?? null,
+                'address' => $validated['guardian_address'] ?? null,
             ]);
+
+            /* Update data siswa */
 
             $student->update([
                 'class_room_id' => $validated['class_room_id'],
                 'entry_year' => $validated['entry_year'],
                 'status' => $validated['status'],
+
                 'nis' => $validated['nis'],
                 'nisn' => $validated['nisn'] ?: null,
+
                 'name' => $validated['name'],
+                'gender' => $validated['gender'],
             ]);
         });
 
         return redirect()
             ->route('admin.students.index')
-            ->with('success', 'Data siswa berhasil diperbarui.');
+            ->with(
+                'success',
+                'Data siswa berhasil diperbarui.'
+            );
     }
 
     public function destroy(Student $student)
@@ -292,7 +495,7 @@ class StudentController extends Controller
         DB::transaction(function () use ($student) {
 
             $student->load([
-                'guardian',
+                'guardian.user',
                 'user',
             ]);
 
@@ -302,13 +505,25 @@ class StudentController extends Controller
 
             $guardianUser = $guardian?->user;
 
+            /* Hapus siswa */
+
             $student->delete();
+
+            /* Hapus akun siswa */
 
             if ($studentUser) {
                 $studentUser->delete();
             }
 
-            if ($guardian && $guardian->students()->count() === 0) {
+            /*
+             * Guardian hanya dihapus apabila
+             * sudah tidak mempunyai siswa lain.
+             */
+            if (
+                $guardian &&
+                $guardian->students()->count() === 0
+            ) {
+
                 $guardian->delete();
 
                 if ($guardianUser) {
@@ -319,6 +534,9 @@ class StudentController extends Controller
 
         return redirect()
             ->route('admin.students.index')
-            ->with('success', 'Data siswa berhasil dihapus.');
+            ->with(
+                'success',
+                'Data siswa berhasil dihapus.'
+            );
     }
 }

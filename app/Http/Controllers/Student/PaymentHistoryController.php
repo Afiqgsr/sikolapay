@@ -7,108 +7,82 @@ use App\Models\Payment;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PaymentHistoryController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $student = Student::where('user_id', Auth::id())
+        $student = Student::query()
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        /* Query pembayaran */
-
-        $query = Payment::whereHas('bill', function ($query) use ($student) {
-            $query->where('student_id', $student->id);
-        })
+        $query = Payment::query()
+            ->whereHas('bill', function ($billQuery) use ($student) {
+                $billQuery->where('student_id', $student->id);
+            })
             ->with([
                 'bill',
                 'paymentMethod',
                 'latestVerification',
             ]);
 
-        /* Filter pencarian */
-
         if ($request->filled('search')) {
-
             $search = $request->search;
 
-            $query->where(function ($q) use ($search) {
-
-                $q->where('payment_number', 'like', "%{$search}%")
-
-                    ->orWhereHas('bill', function ($bill) use ($search) {
-                        $bill
+            $query->where(function ($paymentQuery) use ($search) {
+                $paymentQuery
+                    ->where('payment_number', 'like', "%{$search}%")
+                    ->orWhereHas('bill', function ($billQuery) use ($search) {
+                        $billQuery
                             ->where('name', 'like', "%{$search}%")
                             ->orWhere('description', 'like', "%{$search}%");
                     })
-
-                    ->orWhereHas('paymentMethod', function ($method) use ($search) {
-                        $method->where('name', 'like', "%{$search}%");
+                    ->orWhereHas('paymentMethod', function ($methodQuery) use ($search) {
+                        $methodQuery->where('name', 'like', "%{$search}%");
                     });
             });
         }
-
-        /* Filter tahun */
 
         if ($request->filled('year')) {
-
-            $query->whereYear(
-                'created_at',
-                $request->year
-            );
+            $query->whereYear('created_at', $request->year);
         }
 
-        /* Filter jenis tagihan */
-
         if ($request->filled('type')) {
-
-            $query->whereHas('bill', function ($bill) use ($request) {
-                $bill->where('type', $request->type);
+            $query->whereHas('bill', function ($billQuery) use ($request) {
+                $billQuery->where('type', $request->type);
             });
         }
 
-        /* Filter status */
-
         if ($request->filled('status')) {
-
             if ($request->status === 'rejected') {
-
-                $query->whereHas('latestVerification', function ($verification) {
-                    $verification->where('status', 'rejected');
+                $query->whereHas('latestVerification', function ($verificationQuery) {
+                    $verificationQuery->where('status', 'rejected');
                 });
-
             } elseif ($request->status === 'pending') {
-
                 $query
                     ->where('status', 'pending')
-                    ->where(function ($query) {
-
-                        $query
+                    ->where(function ($pendingQuery) {
+                        $pendingQuery
                             ->whereDoesntHave('latestVerification')
-
-                            ->orWhereHas('latestVerification', function ($verification) {
-                                $verification->where('status', '!=', 'rejected');
+                            ->orWhereHas('latestVerification', function ($verificationQuery) {
+                                $verificationQuery->where('status', '!=', 'rejected');
                             });
                     });
-
             } else {
-
                 $query->where('status', $request->status);
             }
         }
-
-        /* Pagination */
 
         $payments = $query
             ->latest('created_at')
             ->paginate(10)
             ->withQueryString();
 
-        /* Statistik */
-
-        $statQuery = Payment::whereHas('bill', function ($query) use ($student) {
-            $query->where('student_id', $student->id);
-        });
+        $statQuery = Payment::query()
+            ->whereHas('bill', function ($billQuery) use ($student) {
+                $billQuery->where('student_id', $student->id);
+            });
 
         $totalTransactions = (clone $statQuery)
             ->whereYear('created_at', now()->year)

@@ -12,6 +12,7 @@ class Payment extends Model
     protected $fillable = [
         'bill_id',
         'payer_id',
+        'recorded_by',
         'payment_method_id',
         'payment_number',
         'amount',
@@ -35,6 +36,11 @@ class Payment extends Model
         return $this->belongsTo(User::class, 'payer_id');
     }
 
+    public function recordedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
+    }
+
     public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
@@ -50,6 +56,7 @@ class Payment extends Model
         return $this->hasOne(PaymentVerification::class)
             ->latestOfMany('processed_at');
     }
+
     protected function casts(): array
     {
         return [

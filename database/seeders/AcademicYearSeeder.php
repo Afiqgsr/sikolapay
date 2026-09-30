@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\School;
 use App\Models\AcademicYear;
+use App\Models\School;
+use Illuminate\Database\Seeder;
 
 class AcademicYearSeeder extends Seeder
 {

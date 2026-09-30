@@ -21,6 +21,13 @@
 
         </div>
 
+        <a
+            href="{{ route('admin.payments.create') }}"
+            class="verification-add-payment"
+        >
+            + Tambah Pembayaran
+        </a>
+
     </div>
 
     {{-- Info --}}
@@ -179,7 +186,6 @@
 </section>
 
 {{-- Modal bukti pembayaran --}}
-
 <div
     class="payment-proof-overlay"
     id="paymentProofModal"
@@ -311,7 +317,6 @@
 </div>
 
 {{-- Modal terima pembayaran --}}
-
 <div
     class="payment-approve-overlay"
     id="paymentApproveModal"
@@ -407,7 +412,6 @@
 </div>
 
 {{-- Modal tolak pembayaran --}}
-
 <div
     class="payment-reject-overlay"
     id="paymentRejectModal"

@@ -6,17 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PaymentReceiptController extends Controller
 {
-    public function show($id)
+    public function show(int|string $id): View
     {
-        // Ambil data siswa yang sedang login
-        $student = Student::where('user_id', Auth::id())
+        $student = Student::query()
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // Ambil pembayaran milik siswa tersebut
-        $payment = Payment::where('id', $id)
+        $payment = Payment::query()
+            ->whereKey($id)
+            ->where('status', 'paid')
             ->whereHas('bill', function ($query) use ($student) {
                 $query->where('student_id', $student->id);
             })
@@ -26,11 +28,6 @@ class PaymentReceiptController extends Controller
                 'latestVerification',
             ])
             ->firstOrFail();
-
-        // Hanya pembayaran yang sudah lunas
-        if ($payment->status !== 'paid') {
-            abort(403);
-        }
 
         return view('student.payment-receipt', [
             'student' => $student,

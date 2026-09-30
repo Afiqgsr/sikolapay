@@ -108,10 +108,10 @@ class BackfillBillBatches extends Command
 
         $this->info(
             'Berhasil membuat '
-            . $groups->count()
-            . ' batch dari '
-            . $legacyBills->count()
-            . ' tagihan lama.'
+            .$groups->count()
+            .' batch dari '
+            .$legacyBills->count()
+            .' tagihan lama.'
         );
 
         return self::SUCCESS;

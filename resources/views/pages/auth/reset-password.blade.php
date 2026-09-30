@@ -1,54 +1,175 @@
-<x-layouts::auth :title="__('Reset password')">
-    <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Reset password')" :description="__('Please enter your new password below')" />
+<!DOCTYPE html>
+<html lang="id">
 
-        <!-- Session Status -->
-        <x-auth-session-status class="text-center" :status="session('status')" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <form method="POST" action="{{ route('password.update') }}" class="flex flex-col gap-6">
-            @csrf
-            <!-- Token -->
-            <input type="hidden" name="token" value="{{ request()->route('token') }}">
+    <title>SikolaPay - Reset Password</title>
 
-            <!-- Email Address -->
-            <flux:input
-                name="email"
-                value="{{ request('email') }}"
-                :label="__('Email')"
-                type="email"
-                required
-                autocomplete="email"
-            />
+    @vite([
+        'resources/css/styleguide.css',
+        'resources/css/globals.css',
+        'resources/css/pages/login.css',
+    ])
+</head>
 
-            <!-- Password -->
-            <flux:input
-                name="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Password')"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
-                viewable
-            />
+<body>
 
-            <!-- Confirm Password -->
-            <flux:input
-                name="password_confirmation"
-                :label="__('Confirm password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Confirm password')"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
-                viewable
-            />
+    <main class="login-page">
 
-            <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full" data-test="reset-password-button">
-                    {{ __('Reset password') }}
-                </flux:button>
+        <section class="login-card">
+
+            {{-- Brand --}}
+            <div class="login-brand">
+
+                <img
+                    src="{{ asset('assets/img/logo-sikolapay.svg') }}"
+                    alt="Logo SikolaPay"
+                    class="login-brand__logo"
+                >
+
+                <h1 class="login-brand__title">
+                    <span class="text-secondary">Si</span><span class="text-tertiary">kola</span><span class="text-optional">Pay</span>
+                </h1>
+
+                <p class="login-brand__subtitle">
+                    Sistem Pembayaran Sekolah
+                </p>
+
             </div>
-        </form>
-    </div>
-</x-layouts::auth>
+
+
+            {{-- Header --}}
+            <div class="login-header">
+
+                <h2>
+                    Reset Password
+                </h2>
+
+                <p>
+                    Masukkan password baru untuk akun Anda.
+                </p>
+
+            </div>
+
+
+            {{-- Reset form --}}
+            <form
+                method="POST"
+                action="{{ route('password.update') }}"
+                class="login-form"
+            >
+
+                @csrf
+
+
+                {{-- Token --}}
+                <input
+                    type="hidden"
+                    name="token"
+                    value="{{ request()->route('token') }}"
+                >
+
+
+                {{-- Email --}}
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email', request('email')) }}"
+                        placeholder="Masukkan Email"
+                        autocomplete="email"
+                        required
+                        readonly
+                    >
+
+                    @error('email')
+
+                        <span class="form-error">
+                            {{ $message }}
+                        </span>
+
+                    @enderror
+
+                </div>
+
+
+                {{-- Password --}}
+                <div class="form-group">
+
+                    <label for="password">
+                        Password Baru
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Masukkan Password Baru"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    @error('password')
+
+                        <span class="form-error">
+                            {{ $message }}
+                        </span>
+
+                    @enderror
+
+                </div>
+
+
+                {{-- Confirm password --}}
+                <div class="form-group">
+
+                    <label for="password_confirmation">
+                        Konfirmasi Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        placeholder="Konfirmasi Password Baru"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                </div>
+
+
+                {{-- Submit --}}
+                <button
+                    type="submit"
+                    class="btn-login"
+                >
+                    Reset Password
+                </button>
+
+
+                {{-- Back --}}
+                <a
+                    href="{{ route('login') }}"
+                    class="forgot-password-link forgot-password-back"
+                >
+                    Kembali ke Login
+                </a>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

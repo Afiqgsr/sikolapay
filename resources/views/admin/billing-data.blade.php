@@ -92,6 +92,13 @@
                     </option>
 
                     <option
+                        value="student"
+                        {{ request('target_type') === 'student' ? 'selected' : '' }}
+                    >
+                        Per Siswa
+                    </option>
+
+                    <option
                         value="class"
                         {{ request('target_type') === 'class' ? 'selected' : '' }}
                     >
@@ -99,10 +106,10 @@
                     </option>
 
                     <option
-                        value="cohort"
-                        {{ request('target_type') === 'cohort' ? 'selected' : '' }}
+                        value="grade"
+                        {{ request('target_type') === 'grade' ? 'selected' : '' }}
                     >
-                        Per Angkatan
+                        Per Tingkat
                     </option>
 
                     <option
@@ -112,12 +119,11 @@
                         Seluruh Sekolah
                     </option>
 
-                    <option
-                        value="student"
-                        {{ request('target_type') === 'student' ? 'selected' : '' }}
-                    >
-                        Siswa Tertentu
-                    </option>
+                    @if(request('target_type') === 'cohort')
+                        <option value="cohort" selected>
+                            Per Angkatan (Legacy)
+                        </option>
+                    @endif
 
                 </select>
 
@@ -247,6 +253,10 @@
                                 $targetLabel = $classRooms
                                     ->firstWhere('id', $batch->target_value)
                                     ?->name ?? 'Kelas';
+
+                            } elseif ($batch->target_type === 'grade') {
+
+                                $targetLabel = 'Kelas ' . $batch->target_value;
 
                             } elseif ($batch->target_type === 'cohort') {
 
@@ -552,6 +562,12 @@
             })
             ->values(),
 
+        'grades' => [
+            ['id' => 'X', 'name' => 'Kelas X'],
+            ['id' => 'XI', 'name' => 'Kelas XI'],
+            ['id' => 'XII', 'name' => 'Kelas XII'],
+        ],
+
         'cohorts' => $cohorts->values(),
     ];
 @endphp
@@ -616,6 +632,11 @@
             $target = $classRooms
                 ->firstWhere('id', $batch->target_value)
                 ?->name ?? '-';
+
+        } elseif ($batch->target_type === 'grade') {
+
+            $target =
+                'Kelas ' . $batch->target_value;
 
         } elseif ($batch->target_type === 'cohort') {
 
@@ -745,6 +766,13 @@
                             </option>
 
                             <option
+                                value="student"
+                                {{ old('target_type') === 'student' ? 'selected' : '' }}
+                            >
+                                Per Siswa
+                            </option>
+
+                            <option
                                 value="class"
                                 {{ old('target_type') === 'class' ? 'selected' : '' }}
                             >
@@ -752,10 +780,10 @@
                             </option>
 
                             <option
-                                value="cohort"
-                                {{ old('target_type') === 'cohort' ? 'selected' : '' }}
+                                value="grade"
+                                {{ old('target_type') === 'grade' ? 'selected' : '' }}
                             >
-                                Per Angkatan
+                                Per Tingkat
                             </option>
 
                             <option
@@ -763,13 +791,6 @@
                                 {{ old('target_type') === 'school' ? 'selected' : '' }}
                             >
                                 Seluruh Sekolah
-                            </option>
-
-                            <option
-                                value="student"
-                                {{ old('target_type') === 'student' ? 'selected' : '' }}
-                            >
-                                Siswa Tertentu
                             </option>
 
                         </select>
@@ -823,40 +844,14 @@
                                 -- Pilih Jenis Tagihan --
                             </option>
 
-                            <option
-                                value="SPP Bulanan"
-                                {{ old('name') === 'SPP Bulanan' ? 'selected' : '' }}
-                            >
-                                SPP Bulanan
-                            </option>
-
-                            <option
-                                value="Uang Ujian"
-                                {{ old('name') === 'Uang Ujian' ? 'selected' : '' }}
-                            >
-                                Uang Ujian
-                            </option>
-
-                            <option
-                                value="Uang Gedung"
-                                {{ old('name') === 'Uang Gedung' ? 'selected' : '' }}
-                            >
-                                Uang Gedung
-                            </option>
-
-                            <option
-                                value="Kegiatan"
-                                {{ old('name') === 'Kegiatan' ? 'selected' : '' }}
-                            >
-                                Kegiatan
-                            </option>
-
-                            <option
-                                value="Seragam"
-                                {{ old('name') === 'Seragam' ? 'selected' : '' }}
-                            >
-                                Seragam
-                            </option>
+                            @foreach($billTypes as $type)
+                                <option
+                                    value="{{ $type }}"
+                                    {{ old('name') === $type ? 'selected' : '' }}
+                                >
+                                    {{ $type }}
+                                </option>
+                            @endforeach
 
                         </select>
 
@@ -869,14 +864,26 @@
                             <span>*</span>
                         </label>
 
-                        <input
-                            type="text"
+                        <select
                             name="semester"
                             class="billing-add-input"
-                            value="{{ old('semester') }}"
-                            placeholder="Contoh: Ganjil 2026/2027"
                             required
                         >
+
+                            <option value="">
+                                -- Pilih Semester --
+                            </option>
+
+                            @foreach($academicYearSemesters as $sem)
+                                <option
+                                    value="{{ $sem }}"
+                                    {{ old('semester') === $sem ? 'selected' : '' }}
+                                >
+                                    {{ $sem }}
+                                </option>
+                            @endforeach
+
+                        </select>
 
                     </div>
 
@@ -1202,20 +1209,24 @@
                             required
                         >
 
+                            <option value="student">
+                                Per Siswa
+                            </option>
+
                             <option value="class">
                                 Per Kelas
                             </option>
 
-                            <option value="cohort">
-                                Per Angkatan
+                            <option value="grade">
+                                Per Tingkat
                             </option>
 
                             <option value="school">
                                 Seluruh Sekolah
                             </option>
 
-                            <option value="student">
-                                Siswa Tertentu
+                            <option value="cohort" style="display: none;">
+                                Per Angkatan (Legacy)
                             </option>
 
                         </select>
@@ -1260,25 +1271,11 @@
                             required
                         >
 
-                            <option value="SPP Bulanan">
-                                SPP Bulanan
-                            </option>
-
-                            <option value="Uang Ujian">
-                                Uang Ujian
-                            </option>
-
-                            <option value="Uang Gedung">
-                                Uang Gedung
-                            </option>
-
-                            <option value="Kegiatan">
-                                Kegiatan
-                            </option>
-
-                            <option value="Seragam">
-                                Seragam
-                            </option>
+                            @foreach($billTypes as $type)
+                                <option value="{{ $type }}">
+                                    {{ $type }}
+                                </option>
+                            @endforeach
 
                         </select>
 
@@ -1291,13 +1288,20 @@
                             <span>*</span>
                         </label>
 
-                        <input
-                            type="text"
+                        <select
                             name="semester"
                             id="editBillingSemester"
                             class="billing-edit-input"
                             required
                         >
+
+                            @foreach($academicYearSemesters as $sem)
+                                <option value="{{ $sem }}">
+                                    {{ $sem }}
+                                </option>
+                            @endforeach
+
+                        </select>
 
                     </div>
 

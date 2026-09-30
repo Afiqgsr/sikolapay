@@ -21,11 +21,9 @@ class DashboardController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-
         // Tagihan
 
         $bills = $student->bills;
-
 
         // Statistik
 
@@ -34,7 +32,6 @@ class DashboardController extends Controller
         $paidBills = $bills
             ->where('status', 'paid')
             ->count();
-
 
         // Benar-benar belum dibayar
         $payableBills = $bills->filter(function ($bill) {
@@ -54,18 +51,15 @@ class DashboardController extends Controller
             return ! $hasPendingOrPaidPayment;
         });
 
-
         $unpaidBills = $payableBills->count();
 
         $totalAmount = $bills->sum('amount');
-
 
         // Tahun ajaran
 
         $academicYearName =
             $student->classRoom?->academicYear?->name
             ?? 'Tahun Ajaran Aktif';
-
 
         // Tagihan aktif
         // Tetap tampilkan pending supaya bisa terlihat "Menunggu"
@@ -75,23 +69,21 @@ class DashboardController extends Controller
             ->sortBy('due_date')
             ->values();
 
-
         // Tagihan terdekat yang benar-benar belum dibayar
 
         $nearestBill = $payableBills
             ->sortBy('due_date')
             ->first();
 
-
         return view('student.dashboard', [
-            'student'          => $student,
-            'totalBills'       => $totalBills,
-            'paidBills'        => $paidBills,
-            'unpaidBills'      => $unpaidBills,
-            'totalAmount'      => $totalAmount,
+            'student' => $student,
+            'totalBills' => $totalBills,
+            'paidBills' => $paidBills,
+            'unpaidBills' => $unpaidBills,
+            'totalAmount' => $totalAmount,
             'academicYearName' => $academicYearName,
-            'activeBills'      => $activeBills,
-            'nearestBill'      => $nearestBill,
+            'activeBills' => $activeBills,
+            'nearestBill' => $nearestBill,
         ]);
     }
 }

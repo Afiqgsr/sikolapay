@@ -607,9 +607,36 @@
     display: flex;
 }
 
+/* Modal Tambah */
+
+.student-add-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    z-index: 9999;
+
+    box-sizing: border-box;
+}
+
+.student-add-overlay.active {
+    display: flex;
+}
+
 .student-add-modal {
     width: 100%;
-    max-width: 720px;
+    max-width: 900px;
 
     max-height: calc(100vh - 48px);
 
@@ -625,6 +652,20 @@
     overflow: hidden;
 }
 
+/* Form modal */
+
+#addStudentForm {
+    flex: 1;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+/* Header */
+
 .student-add-header {
     width: 100%;
     min-height: 56px;
@@ -638,6 +679,10 @@
     border-bottom: 1px solid #e8e9f6;
 
     box-sizing: border-box;
+
+    flex-shrink: 0;
+
+    background-color: var(--neutralnr-00);
 }
 
 .student-add-header h2 {
@@ -679,8 +724,13 @@
     object-fit: contain;
 }
 
+/* Content */
+
 .student-add-content {
     width: 100%;
+
+    flex: 1;
+    min-height: 0;
 
     padding: 20px;
 
@@ -690,9 +740,14 @@
     gap: 16px;
 
     overflow-y: auto;
+    overflow-x: hidden;
 
     box-sizing: border-box;
+
+    scrollbar-width: thin;
 }
+
+/* Row */
 
 .student-add-row {
     width: 100%;
@@ -702,12 +757,13 @@
 
     gap: 16px;
 
+    flex-shrink: 0;
+
     box-sizing: border-box;
 }
 
 .student-add-field {
     width: 100%;
-
     min-width: 0;
 
     display: flex;
@@ -734,6 +790,18 @@
 .student-add-field label span {
     color: var(--error);
 }
+
+.student-add-field small {
+    margin: 0;
+
+    font-family: var(--label-l12-regular-font-family);
+    font-size: 12px;
+    line-height: 18px;
+
+    color: var(--neutralnr-60);
+}
+
+/* Input */
 
 .student-add-input {
     width: 100%;
@@ -791,7 +859,7 @@
     color: var(--neutralnr-30);
 }
 
-/* Select Modal Tambah */
+/* Select */
 
 .student-add-input select {
     width: 100%;
@@ -814,6 +882,8 @@
     cursor: pointer;
 }
 
+/* Footer */
+
 .student-add-footer {
     width: 100%;
     min-height: 64px;
@@ -829,6 +899,60 @@
     border-top: 1px solid #e8e9f6;
 
     box-sizing: border-box;
+
+    flex-shrink: 0;
+
+    background-color: var(--neutralnr-00);
+}
+
+.student-add-btn {
+    all: unset;
+
+    min-width: 100px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 12px;
+
+    border-radius: 6px;
+
+    box-sizing: border-box;
+
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+    line-height: var(--label-l12-medium-line-height);
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.student-add-btn-cancel {
+    background-color: var(--neutralnr-00);
+
+    color: var(--neutralnr-70);
+
+    border: 1px solid var(--neutralnr-50);
+}
+
+.student-add-btn-cancel:hover {
+    background-color: var(--neutralnr-10);
+}
+
+.student-add-btn-save {
+    background-color: var(--primarypr-40);
+
+    color: var(--neutralnr-00);
+
+    border: 1px solid var(--primarypr-40);
+}
+
+.student-add-btn-save:hover {
+    filter: brightness(0.95);
 }
 
 .student-add-btn {
@@ -1219,8 +1343,43 @@
     visibility: visible;
 }
 
+/* Modal Edit */
+
+.student-edit-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    z-index: 10000;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.student-edit-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
 .student-edit-modal {
-    width: 678px;
+    width: 900px;
     max-width: 100%;
 
     max-height: calc(100vh - 48px);
@@ -1231,7 +1390,7 @@
     background-color: var(--neutralnr-00);
 
     border: 1px solid var(--neutralnr-30);
-    border-radius: 8px;
+    border-radius: 12px;
 
     overflow: hidden;
 
@@ -1248,21 +1407,37 @@
     transform: translateY(0);
 }
 
+/* Form edit */
+
+#editStudentForm {
+    flex: 1;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+/* Header */
+
 .student-edit-header {
     width: 100%;
-    min-height: 53px;
+    min-height: 56px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 8px 16px;
+    padding: 12px 20px;
 
     box-sizing: border-box;
 
     border-bottom: 1px solid var(--neutralnr-50);
 
     flex-shrink: 0;
+
+    background-color: var(--neutralnr-00);
 }
 
 .student-edit-header h2 {
@@ -1302,20 +1477,30 @@
     background-color: var(--neutralnr-10);
 }
 
+/* Content */
+
 .student-edit-content {
     width: 100%;
+
+    flex: 1;
+    min-height: 0;
 
     display: flex;
     flex-direction: column;
 
     gap: 16px;
 
-    padding: 20px 16px;
+    padding: 20px;
 
     box-sizing: border-box;
 
     overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
 }
+
+/* Row */
 
 .student-edit-row {
     width: 100%;
@@ -1325,8 +1510,12 @@
 
     gap: 16px;
 
+    flex-shrink: 0;
+
     box-sizing: border-box;
 }
+
+/* Field */
 
 .student-edit-field {
     min-width: 0;
@@ -1339,6 +1528,7 @@
 
 .student-edit-field.full {
     width: 100%;
+    flex-shrink: 0;
 }
 
 .student-edit-field label {
@@ -1356,17 +1546,19 @@
     color: var(--error);
 }
 
+/* Input */
+
 .student-edit-field input,
 .student-edit-select {
     width: 100%;
-    height: 36px;
+    height: 40px;
 
     padding: 8px 12px;
 
     box-sizing: border-box;
 
     border: 1px solid var(--neutralnr-30);
-    border-radius: 4px;
+    border-radius: 6px;
 
     outline: none;
 
@@ -1391,8 +1583,11 @@
     cursor: pointer;
 }
 
+/* Footer */
+
 .student-edit-footer {
     width: 100%;
+    min-height: 64px;
 
     display: flex;
     align-items: center;
@@ -1400,11 +1595,67 @@
 
     gap: 8px;
 
-    padding: 16px;
+    padding: 12px 20px;
 
     box-sizing: border-box;
 
+    border-top: 1px solid var(--neutralnr-30);
+
     flex-shrink: 0;
+
+    background-color: var(--neutralnr-00);
+}
+
+/* Button */
+
+.student-edit-btn {
+    all: unset;
+
+    box-sizing: border-box;
+
+    min-width: 110px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 12px;
+
+    border-radius: 6px;
+
+    font-family: var(--label-l12-medium-font-family);
+    font-size: var(--label-l12-medium-font-size);
+    font-weight: var(--label-l12-medium-font-weight);
+    line-height: var(--label-l12-medium-line-height);
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.student-edit-btn-cancel {
+    background-color: var(--neutralnr-00);
+
+    color: var(--primarypr-40);
+
+    border: 1px solid var(--primarypr-40);
+}
+
+.student-edit-btn-cancel:hover {
+    background-color: var(--neutralnr-10);
+}
+
+.student-edit-btn-save {
+    background-color: var(--primarypr-40);
+
+    color: var(--neutralnr-00);
+
+    border: 1px solid var(--primarypr-40);
+}
+
+.student-edit-btn-save:hover {
+    filter: brightness(0.95);
 }
 
 .student-edit-btn {

@@ -45,7 +45,9 @@
     @if($errors->any())
         <div class="student-alert student-alert-error">
 
-            <strong>Data belum dapat disimpan.</strong>
+            <strong>
+                Data belum dapat disimpan.
+            </strong>
 
             <ul>
                 @foreach($errors->all() as $error)
@@ -232,8 +234,10 @@
                                         data-email="{{ $student->user?->email ?? '' }}"
 
                                         data-guardian="{{ $student->guardian?->name ?? '' }}"
-                                        data-guardian-email="{{ $student->guardian?->user?->email ?? '' }}"
+                                        data-guardian-email="{{ $student->guardian?->email ?? $student->guardian?->user?->email ?? '' }}"
                                         data-phone="{{ $student->guardian?->phone ?? '' }}"
+                                        data-relationship="{{ $student->guardian?->relationship ?? '' }}"
+                                        data-address="{{ $student->guardian?->address ?? '' }}"
                                     >
                                         Detail
                                     </button>
@@ -258,8 +262,10 @@
                                         data-email="{{ $student->user?->email ?? '' }}"
 
                                         data-guardian="{{ $student->guardian?->name ?? '' }}"
-                                        data-guardian-email="{{ $student->guardian?->user?->email ?? '' }}"
+                                        data-guardian-email="{{ $student->guardian?->email ?? $student->guardian?->user?->email ?? '' }}"
                                         data-phone="{{ $student->guardian?->phone ?? '' }}"
+                                        data-relationship="{{ $student->guardian?->relationship ?? '' }}"
+                                        data-address="{{ $student->guardian?->address ?? '' }}"
 
                                         data-update-url="{{ route('admin.students.update', $student) }}"
                                     >
@@ -666,78 +672,262 @@
 
                 </div>
 
-                {{-- Wali dan HP --}}
+                {{-- Pilihan Wali --}}
                 <div class="student-add-row">
 
                     <div class="student-add-field">
 
-                        <label>
-                            Nama Wali
+                        <label for="guardianMode">
+                            Data Wali Murid
                             <span>*</span>
                         </label>
 
                         <div class="student-add-input">
 
-                            <input
-                                type="text"
-                                name="guardian_name"
-                                value="{{ old('guardian_name') }}"
-                                placeholder="Nama orang tua / wali"
+                            <select
+                                name="guardian_mode"
+                                id="guardianMode"
                                 required
                             >
 
-                        </div>
+                                <option
+                                    value="new"
+                                    {{ old('guardian_mode', 'new') === 'new' ? 'selected' : '' }}
+                                >
+                                    Tambah Wali Baru
+                                </option>
 
-                    </div>
+                                <option
+                                    value="existing"
+                                    {{ old('guardian_mode') === 'existing' ? 'selected' : '' }}
+                                >
+                                    Gunakan Wali Terdaftar
+                                </option>
 
-                    <div class="student-add-field">
-
-                        <label>
-                            No. HP Wali
-                            <span>*</span>
-                        </label>
-
-                        <div class="student-add-input">
-
-                            <input
-                                type="text"
-                                name="guardian_phone"
-                                value="{{ old('guardian_phone') }}"
-                                placeholder="081234567890"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {{-- Email Wali --}}
-                <div class="student-add-row">
-
-                    <div class="student-add-field">
-
-                        <label>
-                            Email Wali
-                            <span>*</span>
-                        </label>
-
-                        <div class="student-add-input">
-
-                            <input
-                                type="email"
-                                name="guardian_email"
-                                value="{{ old('guardian_email') }}"
-                                placeholder="wali@example.com"
-                                required
-                            >
+                            </select>
 
                         </div>
 
                     </div>
 
                     <div class="student-add-field empty"></div>
+
+                </div>
+
+                {{-- Wali Terdaftar --}}
+                <div
+                    id="existingGuardianSection"
+                    style="display: none;"
+                >
+
+                    <div class="student-add-row">
+
+                        <div class="student-add-field">
+
+                            <label for="existingGuardianId">
+                                Pilih Wali
+                                <span>*</span>
+                            </label>
+
+                            <div class="student-add-input">
+
+                                <select
+                                    name="guardian_id"
+                                    id="existingGuardianId"
+                                >
+
+                                    <option value="">
+                                        Pilih Wali Murid
+                                    </option>
+
+                                    @foreach($guardians as $guardian)
+
+                                        <option
+                                            value="{{ $guardian->id }}"
+                                            {{ old('guardian_id') == $guardian->id ? 'selected' : '' }}
+                                        >
+                                            {{ $guardian->name }}
+                                            -
+                                            {{ $guardian->phone }}
+
+                                            @if($guardian->relationship)
+                                                -
+                                                {{ $guardian->relationship }}
+                                            @endif
+
+                                            @if($guardian->email)
+                                                -
+                                                {{ $guardian->email }}
+                                            @endif
+                                        </option>
+
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+                            <small>
+                                Pilih wali yang sudah terdaftar jika siswa memiliki saudara di sekolah.
+                            </small>
+
+                        </div>
+
+                        <div class="student-add-field empty"></div>
+
+                    </div>
+
+                </div>
+
+                {{-- Wali Baru --}}
+                <div id="newGuardianSection">
+
+                    {{-- Nama Wali dan HP --}}
+                    <div class="student-add-row">
+
+                        <div class="student-add-field">
+
+                            <label>
+                                Nama Wali
+                                <span>*</span>
+                            </label>
+
+                            <div class="student-add-input">
+
+                                <input
+                                    type="text"
+                                    name="guardian_name"
+                                    id="newGuardianName"
+                                    value="{{ old('guardian_name') }}"
+                                    placeholder="Nama orang tua / wali"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-add-field">
+
+                            <label>
+                                No. HP Wali
+                                <span>*</span>
+                            </label>
+
+                            <div class="student-add-input">
+
+                                <input
+                                    type="text"
+                                    name="guardian_phone"
+                                    id="newGuardianPhone"
+                                    value="{{ old('guardian_phone') }}"
+                                    placeholder="081234567890"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {{-- Email dan Hubungan --}}
+                    <div class="student-add-row">
+
+                        <div class="student-add-field">
+
+                            <label>
+                                Email Wali
+                            </label>
+
+                            <div class="student-add-input">
+
+                                <input
+                                    type="email"
+                                    name="guardian_email"
+                                    id="newGuardianEmail"
+                                    value="{{ old('guardian_email') }}"
+                                    placeholder="Opsional"
+                                >
+
+                            </div>
+
+                            <small>
+                                Kosongkan jika wali tidak memiliki atau tidak menggunakan akun SikolaPay.
+                            </small>
+
+                        </div>
+
+                        <div class="student-add-field">
+
+                            <label>
+                                Hubungan dengan Siswa
+                            </label>
+
+                            <div class="student-add-input">
+
+                                <select
+                                    name="guardian_relationship"
+                                    id="newGuardianRelationship"
+                                >
+
+                                    <option value="">
+                                        Pilih Hubungan
+                                    </option>
+
+                                    <option
+                                        value="Ayah"
+                                        {{ old('guardian_relationship') === 'Ayah' ? 'selected' : '' }}
+                                    >
+                                        Ayah
+                                    </option>
+
+                                    <option
+                                        value="Ibu"
+                                        {{ old('guardian_relationship') === 'Ibu' ? 'selected' : '' }}
+                                    >
+                                        Ibu
+                                    </option>
+
+                                    <option
+                                        value="Wali"
+                                        {{ old('guardian_relationship') === 'Wali' ? 'selected' : '' }}
+                                    >
+                                        Wali
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {{-- Alamat --}}
+                    <div class="student-add-row">
+
+                        <div class="student-add-field">
+
+                            <label>
+                                Alamat Wali
+                            </label>
+
+                            <div class="student-add-input">
+
+                                <input
+                                    type="text"
+                                    name="guardian_address"
+                                    id="newGuardianAddress"
+                                    value="{{ old('guardian_address') }}"
+                                    placeholder="Masukkan alamat wali"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-add-field empty"></div>
+
+                    </div>
 
                 </div>
 
@@ -956,6 +1146,32 @@
                 <span
                     class="student-detail-value"
                     id="detailStudentPhone"
+                >
+                    -
+                </span>
+            </div>
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Hubungan
+                </span>
+
+                <span
+                    class="student-detail-value"
+                    id="detailStudentRelationship"
+                >
+                    -
+                </span>
+            </div>
+
+            <div class="student-detail-row">
+                <span class="student-detail-label">
+                    Alamat Wali
+                </span>
+
+                <span
+                    class="student-detail-value"
+                    id="detailStudentAddress"
                 >
                     -
                 </span>
@@ -1242,19 +1458,68 @@
 
                 </div>
 
-                {{-- Email Wali --}}
+                {{-- Email dan Hubungan Wali --}}
+                <div class="student-edit-row">
+
+                    <div class="student-edit-field">
+
+                        <label>
+                            Email Wali
+                        </label>
+
+                        <input
+                            type="email"
+                            name="guardian_email"
+                            id="editStudentGuardianEmail"
+                            placeholder="Opsional"
+                        >
+
+                    </div>
+
+                    <div class="student-edit-field">
+
+                        <label>
+                            Hubungan dengan Siswa
+                        </label>
+
+                        <select
+                            name="guardian_relationship"
+                            id="editStudentGuardianRelationship"
+                            class="student-edit-select"
+                        >
+                            <option value="">
+                                Pilih Hubungan
+                            </option>
+
+                            <option value="Ayah">
+                                Ayah
+                            </option>
+
+                            <option value="Ibu">
+                                Ibu
+                            </option>
+
+                            <option value="Wali">
+                                Wali
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                {{-- Alamat Wali --}}
                 <div class="student-edit-field full">
 
                     <label>
-                        Email Wali
-                        <span>*</span>
+                        Alamat Wali
                     </label>
 
                     <input
-                        type="email"
-                        name="guardian_email"
-                        id="editStudentGuardianEmail"
-                        required
+                        type="text"
+                        name="guardian_address"
+                        id="editStudentGuardianAddress"
+                        placeholder="Masukkan alamat wali"
                     >
 
                 </div>
@@ -1370,11 +1635,11 @@
 
 </div>
 
-    @push('scripts')
 
-        @vite('resources/js/pages/admin/student-data.js')
+@push('scripts')
 
-    @endpush
+    @vite('resources/js/pages/admin/student-data.js')
 
+@endpush
 
 @endsection

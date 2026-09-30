@@ -856,3 +856,119 @@
     }
 
 }
+
+/* ========================================================== */
+/* TAB NAVIGATION & RECAP STYLES                              */
+/* ========================================================== */
+
+.report-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--neutralnr-20, #e5e7eb);
+    padding-bottom: 8px;
+}
+
+.report-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    font-family: var(--label-l14-medium-font-family, inherit);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--neutralnr-70, #6b7280);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.report-tab-btn:hover {
+    color: var(--primarypr-40, #2b3a8f);
+    background-color: #f3f4f6;
+}
+
+.report-tab-btn.active {
+    color: var(--neutralnr-00, #ffffff);
+    background-color: var(--primarypr-40, #2b3a8f);
+}
+
+.report-empty-box {
+    width: 100%;
+    padding: 36px 20px;
+    background-color: var(--neutralnr-00, #ffffff);
+    border: 1px dashed var(--neutralnr-30, #d1d5db);
+    border-radius: 8px;
+    text-align: center;
+    color: var(--neutralnr-60, #6b7280);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.recap-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--neutralnr-00, #ffffff);
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--primarypr-40, #2b3a8f);
+    margin-bottom: 20px;
+}
+
+.recap-info-title h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--neutralnr-90, #111827);
+}
+
+.recap-info-title p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--neutralnr-70, #4b5563);
+}
+
+.recap-grade-card {
+    margin-bottom: 24px;
+}
+
+.recap-grade-header {
+    padding: 12px 18px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--neutralnr-20, #e5e7eb);
+}
+
+.recap-grade-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primarypr-40, #2b3a8f);
+    letter-spacing: 0.5px;
+}
+
+.recap-grade-total-row td {
+    background-color: #f8fafc !important;
+    border-top: 2px solid var(--primarypr-40, #2b3a8f) !important;
+    font-weight: 700 !important;
+}
+
+.recap-grand-total-card {
+    border: 2px solid var(--primarypr-40, #2b3a8f);
+    margin-bottom: 32px;
+}
+
+.recap-grand-header {
+    background-color: #e0e2f4;
+}
+
+.recap-grand-header h4 {
+    color: #1e2968;
+    font-size: 15px;
+}
+
+.recap-grand-total-row td {
+    background-color: #ffffff !important;
+    font-size: 14px !important;
+    padding: 14px 16px !important;
+}

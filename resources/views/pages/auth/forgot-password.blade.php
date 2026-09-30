@@ -1,31 +1,128 @@
-<x-layouts::auth :title="__('Forgot password')">
-    <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Forgot password')" :description="__('Enter your email to receive a password reset link')" />
+<!DOCTYPE html>
+<html lang="id">
 
-        <!-- Session Status -->
-        <x-auth-session-status class="text-center" :status="session('status')" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <form method="POST" action="{{ route('password.email') }}" class="flex flex-col gap-6">
-            @csrf
+    <title>SikolaPay - Lupa Password</title>
 
-            <!-- Email Address -->
-            <flux:input
-                name="email"
-                :label="__('Email address')"
-                type="email"
-                required
-                autofocus
-                placeholder="email@example.com"
-            />
+    @vite([
+        'resources/css/styleguide.css',
+        'resources/css/globals.css',
+        'resources/css/pages/login.css',
+    ])
+</head>
 
-            <flux:button variant="primary" type="submit" class="w-full" data-test="email-password-reset-link-button">
-                {{ __('Email password reset link') }}
-            </flux:button>
-        </form>
+<body>
 
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-400">
-            <span>{{ __('Or, return to') }}</span>
-            <flux:link :href="route('login')" wire:navigate>{{ __('log in') }}</flux:link>
-        </div>
-    </div>
-</x-layouts::auth>
+    <main class="login-page">
+
+        <section class="login-card">
+
+            {{-- Brand --}}
+            <div class="login-brand">
+
+                <img
+                    src="{{ asset('assets/img/logo-sikolapay.svg') }}"
+                    alt="Logo SikolaPay"
+                    class="login-brand__logo"
+                >
+
+                <h1 class="login-brand__title">
+                    <span class="text-secondary">Si</span><span class="text-tertiary">kola</span><span class="text-optional">Pay</span>
+                </h1>
+
+                <p class="login-brand__subtitle">
+                    Sistem Pembayaran Sekolah
+                </p>
+
+            </div>
+
+
+            {{-- Header --}}
+            <div class="login-header">
+
+                <h2>
+                    Lupa Password?
+                </h2>
+
+                <p>
+                    Masukkan email Anda untuk menerima link reset password.
+                </p>
+
+            </div>
+
+
+            {{-- Session status --}}
+            @if(session('status'))
+
+                <div class="login-status">
+                    Link reset password telah dikirim ke email Anda.
+                </div>
+
+            @endif
+
+
+            {{-- Form --}}
+            <form
+                method="POST"
+                action="{{ route('password.email') }}"
+                class="login-form"
+            >
+
+                @csrf
+
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="Masukkan Email"
+                        autocomplete="email"
+                        required
+                        autofocus
+                    >
+
+                    @error('email')
+
+                        <span class="form-error">
+                            {{ $message }}
+                        </span>
+
+                    @enderror
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-login"
+                >
+                    Kirim Link Reset Password
+                </button>
+
+
+                <a
+                    href="{{ route('login') }}"
+                    class="forgot-password-link forgot-password-back"
+                >
+                    Kembali ke Login
+                </a>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

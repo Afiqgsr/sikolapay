@@ -18,7 +18,6 @@ class PaymentHistoryController extends Controller
         $studentIds = $guardian->students()
             ->pluck('id');
 
-
         $query = Payment::query()
             ->whereHas(
                 'bill',
@@ -36,7 +35,6 @@ class PaymentHistoryController extends Controller
                 'latestVerification',
             ]);
 
-
         /* Search */
 
         if ($request->filled('search')) {
@@ -47,7 +45,6 @@ class PaymentHistoryController extends Controller
                     ->toString()
             );
 
-
             $query->where(
                 function ($query) use ($search) {
 
@@ -55,7 +52,7 @@ class PaymentHistoryController extends Controller
                         ->where(
                             'payment_number',
                             'like',
-                            '%' . $search . '%'
+                            '%'.$search.'%'
                         )
                         ->orWhereHas(
                             'bill',
@@ -65,7 +62,7 @@ class PaymentHistoryController extends Controller
                                     ->where(
                                         'name',
                                         'like',
-                                        '%' . $search . '%'
+                                        '%'.$search.'%'
                                     )
                                     ->orWhereHas(
                                         'student',
@@ -75,17 +72,17 @@ class PaymentHistoryController extends Controller
                                                 ->where(
                                                     'name',
                                                     'like',
-                                                    '%' . $search . '%'
+                                                    '%'.$search.'%'
                                                 )
                                                 ->orWhere(
                                                     'nis',
                                                     'like',
-                                                    '%' . $search . '%'
+                                                    '%'.$search.'%'
                                                 )
                                                 ->orWhere(
                                                     'nisn',
                                                     'like',
-                                                    '%' . $search . '%'
+                                                    '%'.$search.'%'
                                                 );
                                         }
                                     );
@@ -94,7 +91,6 @@ class PaymentHistoryController extends Controller
                 }
             );
         }
-
 
         /* Student */
 
@@ -112,7 +108,6 @@ class PaymentHistoryController extends Controller
             );
         }
 
-
         /* Status */
 
         if ($request->filled('status')) {
@@ -123,17 +118,14 @@ class PaymentHistoryController extends Controller
             );
         }
 
-
         $payments = $query
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
-
         $students = $guardian->students()
             ->with('classRoom')
             ->get();
-
 
         $totalPayments = Payment::query()
             ->whereHas(
@@ -147,7 +139,6 @@ class PaymentHistoryController extends Controller
                 }
             )
             ->count();
-
 
         $paidPayments = Payment::query()
             ->whereHas(
@@ -163,7 +154,6 @@ class PaymentHistoryController extends Controller
             ->where('status', 'paid')
             ->count();
 
-
         $pendingPayments = Payment::query()
             ->whereHas(
                 'bill',
@@ -178,7 +168,6 @@ class PaymentHistoryController extends Controller
             ->where('status', 'pending')
             ->count();
 
-
         $rejectedPayments = Payment::query()
             ->whereHas(
                 'bill',
@@ -192,7 +181,6 @@ class PaymentHistoryController extends Controller
             )
             ->where('status', 'rejected')
             ->count();
-
 
         return view(
             'guardian.payment-history',

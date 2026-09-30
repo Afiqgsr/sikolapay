@@ -9,6 +9,20 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Bill extends Model
 {
+    /**
+     * Kategori / Jenis Tagihan resmi di SikolaPay.
+     * Digunakan secara seragam untuk form tagihan, validasi, dan filter laporan rekap.
+     *
+     * @var array<int, string>
+     */
+    public const array TYPES = [
+        'SPP Bulanan',
+        'Uang Ujian',
+        'Uang Gedung',
+        'Kegiatan',
+        'Seragam',
+    ];
+
     protected $fillable = [
         'bill_batch_id',
         'student_id',

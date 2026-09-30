@@ -33,7 +33,6 @@ class BillController extends Controller
                         'latestPayment.latestVerification',
                     ]);
 
-
                 if ($request->filled('student')) {
 
                     $query->where(
@@ -41,7 +40,6 @@ class BillController extends Controller
                         $request->student
                     );
                 }
-
 
                 if ($request->filled('status')) {
 
@@ -97,7 +95,6 @@ class BillController extends Controller
                     }
                 }
 
-
                 if ($request->filled('search')) {
 
                     $search = trim(
@@ -106,7 +103,6 @@ class BillController extends Controller
                             ->toString()
                     );
 
-
                     $query->where(
                         function ($query) use ($search) {
 
@@ -114,7 +110,7 @@ class BillController extends Controller
                                 ->where(
                                     'name',
                                     'like',
-                                    '%' . $search . '%'
+                                    '%'.$search.'%'
                                 )
                                 ->orWhereHas(
                                     'student',
@@ -124,17 +120,17 @@ class BillController extends Controller
                                             ->where(
                                                 'name',
                                                 'like',
-                                                '%' . $search . '%'
+                                                '%'.$search.'%'
                                             )
                                             ->orWhere(
                                                 'nis',
                                                 'like',
-                                                '%' . $search . '%'
+                                                '%'.$search.'%'
                                             )
                                             ->orWhere(
                                                 'nisn',
                                                 'like',
-                                                '%' . $search . '%'
+                                                '%'.$search.'%'
                                             );
                                     }
                                 );
@@ -142,14 +138,12 @@ class BillController extends Controller
                     );
                 }
 
-
                 $bills = $query
                     ->latest()
                     ->paginate(10)
                     ->withQueryString();
             }
         }
-
 
         return view(
             'guardian.bills.index',

@@ -1,26 +1,26 @@
 <?php
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\Admin\BillController as AdminBillController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Guardian\DashboardController as GuardianDashboardController;
-use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
-use App\Http\Controllers\Student\ProfileController as StudentProfileController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Guardian\BillController;
+use App\Http\Controllers\Guardian\DashboardController as GuardianDashboardController;
 use App\Http\Controllers\Guardian\PaymentController;
 use App\Http\Controllers\Guardian\PaymentHistoryController as GuardianPaymentHistoryController;
 use App\Http\Controllers\Guardian\ProfileController as GuardianProfileController;
-use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
-use App\Http\Controllers\Admin\StudentController as AdminStudentController;
-use App\Http\Controllers\Admin\BillController as AdminBillController;
-use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Student\BillController as StudentBillController;
-use App\Http\Controllers\Student\PaymentHistoryController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\PaymentController as StudentPaymentController;
+use App\Http\Controllers\Student\PaymentHistoryController;
 use App\Http\Controllers\Student\PaymentReceiptController as StudentPaymentReceiptController;
-use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\SuperAdmin\AdminController as SuperAdminAdminController;
-
+use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
@@ -57,6 +57,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/payments', [AdminPaymentController::class, 'index'])
         ->name('admin.payments.index');
 
+    Route::get('/admin/payments/create', [AdminPaymentController::class, 'create'])
+        ->name('admin.payments.create');
+
+    Route::post('/admin/payments/manual', [AdminPaymentController::class, 'storeManual'])
+        ->name('admin.payments.store-manual');
+
     Route::get('/admin/payments/{id}', [AdminPaymentController::class, 'show'])
         ->name('admin.payments.show');
 
@@ -66,11 +72,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/admin/payments/{id}/reject', [AdminPaymentController::class, 'reject'])
         ->name('admin.payments.reject');
 
-    Route::get('/admin/students',[AdminStudentController::class, 'index'])
+    Route::get('/admin/students', [AdminStudentController::class, 'index'])
         ->name('admin.students.index');
 
     Route::post('/admin/students', [AdminStudentController::class, 'store'])
-    ->name('admin.students.store');
+        ->name('admin.students.store');
 
     Route::put('/admin/students/{student}', [AdminStudentController::class, 'update'])
         ->name('admin.students.update');
@@ -79,7 +85,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('admin.students.destroy');
 
     Route::get('/admin/bills', [AdminBillController::class, 'index'])
-    ->name('admin.bills.index');
+        ->name('admin.bills.index');
 
     Route::post('/admin/bills', [AdminBillController::class, 'store'])
         ->name('admin.bills.store');
@@ -93,8 +99,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/reports', [ReportController::class, 'index'])
         ->name('admin.reports.index');
 
-});
+    Route::get('/admin/reports/preview', [ReportController::class, 'preview'])
+        ->name('admin.reports.preview');
 
+    Route::get('/admin/reports/export/excel', [ReportController::class, 'exportExcel'])
+        ->name('admin.reports.export-excel');
+
+});
 
 Route::middleware(['auth', 'verified', 'role:super_admin'])->group(function () {
 
@@ -114,7 +125,6 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])->group(function () {
         ->name('superadmin.admins.destroy');
 
 });
-
 
 Route::middleware(['auth', 'role:guardian'])->group(function () {
 
@@ -172,7 +182,7 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
     Route::get('/student/profile/edit', [StudentProfileController::class, 'edit'])
         ->name('student.profile.edit');
-    
+
     Route::put('/student/profile', [StudentProfileController::class, 'update'])
         ->name('student.profile.update');
 
@@ -181,7 +191,7 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
     Route::get('/student/payment/all', [StudentPaymentController::class, 'all'])
         ->name('student.payment.all');
-    
+
     Route::get('/student/payment/all/confirm', [StudentPaymentController::class, 'allConfirm'])
         ->name('student.payment.all.confirm');
 
@@ -193,7 +203,7 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
     Route::get('/student/payment/{id}', [StudentPaymentController::class, 'create'])
         ->name('student.payment');
-    
+
     Route::post('/student/payment/{id}/confirm', [StudentPaymentController::class, 'confirm'])
         ->name('student.payment.confirm');
 
@@ -204,6 +214,5 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         ->name('student.bills.show');
 
 });
-
 
 require __DIR__.'/settings.php';

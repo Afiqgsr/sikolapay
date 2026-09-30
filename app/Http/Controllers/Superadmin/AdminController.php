@@ -154,8 +154,7 @@ class AdminController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'admin' =>
-                        'Akun Super Admin yang sedang digunakan tidak dapat dinonaktifkan atau diubah menjadi Admin.',
+                    'admin' => 'Akun Super Admin yang sedang digunakan tidak dapat dinonaktifkan atau diubah menjadi Admin.',
                 ]);
         }
 
@@ -167,8 +166,7 @@ class AdminController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'admin' =>
-                        'Super Admin terakhir tidak dapat diubah menjadi Admin.',
+                    'admin' => 'Super Admin terakhir tidak dapat diubah menjadi Admin.',
                 ]);
         }
 
@@ -180,8 +178,7 @@ class AdminController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'admin' =>
-                        'Super Admin aktif terakhir tidak dapat dinonaktifkan.',
+                    'admin' => 'Super Admin aktif terakhir tidak dapat dinonaktifkan.',
                 ]);
         }
 
@@ -192,7 +189,7 @@ class AdminController extends Controller
             'status' => $validated['status'],
         ];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $data['password'] = $validated['password'];
         }
 
@@ -213,8 +210,7 @@ class AdminController extends Controller
         if (Auth::id() === $admin->id) {
             return back()
                 ->withErrors([
-                    'admin' =>
-                        'Anda tidak dapat menghapus akun yang sedang digunakan.',
+                    'admin' => 'Anda tidak dapat menghapus akun yang sedang digunakan.',
                 ]);
         }
 
@@ -224,8 +220,7 @@ class AdminController extends Controller
         ) {
             return back()
                 ->withErrors([
-                    'admin' =>
-                        'Super Admin terakhir tidak dapat dihapus.',
+                    'admin' => 'Super Admin terakhir tidak dapat dihapus.',
                 ]);
         }
 

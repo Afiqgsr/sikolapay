@@ -17,21 +17,17 @@ class DashboardController extends Controller
             ->where('role', 'admin')
             ->count();
 
-
         // Total siswa
         $totalStudents = Student::query()
             ->count();
-
 
         // Total tagihan
         $totalBills = Bill::query()
             ->count();
 
-
         // Total pembayaran
         $totalPayments = Payment::query()
             ->count();
-
 
         // Daftar admin terbaru
         $admins = User::query()
@@ -40,24 +36,18 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-
         return view(
             'super_admin.dashboard',
             [
-                'totalAdmins' =>
-                    $totalAdmins,
+                'totalAdmins' => $totalAdmins,
 
-                'totalStudents' =>
-                    $totalStudents,
+                'totalStudents' => $totalStudents,
 
-                'totalBills' =>
-                    $totalBills,
+                'totalBills' => $totalBills,
 
-                'totalPayments' =>
-                    $totalPayments,
+                'totalPayments' => $totalPayments,
 
-                'admins' =>
-                    $admins,
+                'admins' => $admins,
             ]
         );
     }

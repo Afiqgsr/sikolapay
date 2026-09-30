@@ -22,7 +22,6 @@ class DashboardController extends Controller
 
         $latestBills = collect();
 
-
         if ($guardian) {
 
             $students = $guardian->students()
@@ -37,15 +36,12 @@ class DashboardController extends Controller
                 ])
                 ->get();
 
-
             $allBills = $students
                 ->flatMap(function ($student) {
                     return $student->bills;
                 });
 
-
             $totalBills = $allBills->count();
-
 
             /* LUNAS */
 
@@ -56,7 +52,6 @@ class DashboardController extends Controller
 
                 })
                 ->count();
-
 
             /* MENUNGGU VERIFIKASI */
 
@@ -71,7 +66,6 @@ class DashboardController extends Controller
 
                 })
                 ->count();
-
 
             /* BELUM BAYAR */
 
@@ -91,7 +85,6 @@ class DashboardController extends Controller
                 })
                 ->count();
 
-
             /* TAGIHAN TERBARU */
 
             $latestBills = $allBills
@@ -99,7 +92,6 @@ class DashboardController extends Controller
                 ->take(5)
                 ->values();
         }
-
 
         return view('guardian.dashboard', [
             'guardian' => $guardian,

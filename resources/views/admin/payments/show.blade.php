@@ -359,8 +359,9 @@
                             </span>
 
                             <small>
-                                Diverifikasi oleh Admin
-                                #{{ $verification->admin_id }}
+                                Diverifikasi oleh
+                                {{ $verification->admin?->name
+                                    ?? 'Admin #' . $verification->admin_id }}
                             </small>
 
                         </div>

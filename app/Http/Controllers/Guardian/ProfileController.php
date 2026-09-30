@@ -7,6 +7,7 @@ use App\Models\Guardian;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -32,7 +33,6 @@ class ProfileController extends Controller
         ]);
     }
 
-
     public function edit()
     {
         /** @var User|null $user */
@@ -51,7 +51,6 @@ class ProfileController extends Controller
         ]);
     }
 
-
     public function update(Request $request)
     {
         /** @var User|null $user */
@@ -63,7 +62,6 @@ class ProfileController extends Controller
         $guardian = $user->guardian;
 
         abort_unless($guardian, 404);
-
 
         $validated = $request->validate([
             'name' => [
@@ -85,18 +83,15 @@ class ProfileController extends Controller
             ],
         ]);
 
-
         $user->update([
             'name' => $validated['name'],
         ]);
-
 
         $guardian->update([
             'name' => $validated['name'],
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
         ]);
-
 
         return redirect()
             ->route('guardian.profile')
@@ -108,7 +103,7 @@ class ProfileController extends Controller
 
     public function editPassword()
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Auth::user();
 
         abort_unless($user, 401);
@@ -118,14 +113,12 @@ class ProfileController extends Controller
         ]);
     }
 
-
     public function updatePassword(Request $request)
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Auth::user();
 
         abort_unless($user, 401);
-
 
         $validated = $request->validate([
             'current_password' => [
@@ -141,8 +134,7 @@ class ProfileController extends Controller
             ],
         ]);
 
-
-        if (!\Illuminate\Support\Facades\Hash::check(
+        if (! Hash::check(
             $validated['current_password'],
             $user->password
         )) {
@@ -154,11 +146,9 @@ class ProfileController extends Controller
                 ->onlyInput();
         }
 
-
         $user->update([
             'password' => $validated['password'],
         ]);
-
 
         return redirect()
             ->route('guardian.profile')

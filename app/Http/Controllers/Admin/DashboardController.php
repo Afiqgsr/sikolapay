@@ -25,7 +25,6 @@ class DashboardController extends Controller
             ->whereYear('paid_at', now()->year)
             ->sum('amount');
 
-
         // Tagihan yang benar-benar belum dibayar
 
         $unpaidBills = Bill::query()
@@ -38,7 +37,7 @@ class DashboardController extends Controller
 
                 $payment = $bill->latestPayment;
 
-                if (!$payment) {
+                if (! $payment) {
                     return true;
                 }
 
@@ -50,7 +49,7 @@ class DashboardController extends Controller
                     return true;
                 }
 
-                if (!$payment->proof_of_payment) {
+                if (! $payment->proof_of_payment) {
                     return true;
                 }
 
@@ -69,13 +68,12 @@ class DashboardController extends Controller
                     );
 
                 $isWaitingVerification =
-                    !$hasRejectedVerification
+                    ! $hasRejectedVerification
                     || $isResubmitted;
 
-                return !$isWaitingVerification;
+                return ! $isWaitingVerification;
             })
             ->count();
-
 
         // Pembayaran menunggu verifikasi
 
@@ -89,7 +87,7 @@ class DashboardController extends Controller
                 $latestVerification =
                     $payment->latestVerification;
 
-                if (!$latestVerification) {
+                if (! $latestVerification) {
                     return true;
                 }
 
@@ -98,8 +96,8 @@ class DashboardController extends Controller
                 }
 
                 if (
-                    !$payment->proof_uploaded_at
-                    || !$latestVerification->processed_at
+                    ! $payment->proof_uploaded_at
+                    || ! $latestVerification->processed_at
                 ) {
                     return false;
                 }
@@ -109,7 +107,6 @@ class DashboardController extends Controller
                 );
             })
             ->count();
-
 
         // Pembayaran terbaru
 
@@ -122,7 +119,6 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get();
-
 
         // Progress semua tagihan
 
@@ -138,11 +134,9 @@ class DashboardController extends Controller
         $pendingBills = 0;
         $unpaidProgressBills = 0;
 
-
         foreach ($bills as $bill) {
 
             $payment = $bill->latestPayment;
-
 
             // Lunas
 
@@ -155,15 +149,13 @@ class DashboardController extends Controller
                 continue;
             }
 
-
             // Belum punya pembayaran
 
-            if (!$payment) {
+            if (! $payment) {
                 $unpaidProgressBills++;
 
                 continue;
             }
-
 
             // Payment bukan pending
 
@@ -173,15 +165,13 @@ class DashboardController extends Controller
                 continue;
             }
 
-
             // Pending tapi belum upload bukti
 
-            if (!$payment->proof_of_payment) {
+            if (! $payment->proof_of_payment) {
                 $unpaidProgressBills++;
 
                 continue;
             }
-
 
             $latestVerification =
                 $payment->latestVerification;
@@ -189,15 +179,13 @@ class DashboardController extends Controller
             $hasRejectedVerification =
                 $latestVerification?->status === 'rejected';
 
-
             // Belum pernah ditolak
 
-            if (!$hasRejectedVerification) {
+            if (! $hasRejectedVerification) {
                 $pendingBills++;
 
                 continue;
             }
-
 
             // Sudah ditolak, cek apakah upload ulang
 
@@ -207,7 +195,6 @@ class DashboardController extends Controller
                 && $payment->proof_uploaded_at->gt(
                     $latestVerification->processed_at
                 );
-
 
             if ($isResubmitted) {
 
@@ -220,12 +207,10 @@ class DashboardController extends Controller
             }
         }
 
-
         // Total yang sudah selesai
 
         $processedBills =
             $paidBills;
-
 
         // Persentase
 
@@ -257,53 +242,37 @@ class DashboardController extends Controller
                 )
                 : 0;
 
-
         return view('admin.dashboard', [
 
-            'totalStudents' =>
-                $totalStudents,
+            'totalStudents' => $totalStudents,
 
-            'totalActiveBills' =>
-                $totalActiveBills,
+            'totalActiveBills' => $totalActiveBills,
 
-            'successfulPaymentsAmount' =>
-                $successfulPaymentsAmount,
+            'successfulPaymentsAmount' => $successfulPaymentsAmount,
 
-            'unpaidBills' =>
-                $unpaidBills,
+            'unpaidBills' => $unpaidBills,
 
-            'pendingPayments' =>
-                $pendingPayments,
+            'pendingPayments' => $pendingPayments,
 
-            'latestPayments' =>
-                $latestPayments,
+            'latestPayments' => $latestPayments,
 
-            'totalBills' =>
-                $totalBills,
+            'totalBills' => $totalBills,
 
-            'paidBills' =>
-                $paidBills,
+            'paidBills' => $paidBills,
 
-            'pendingBills' =>
-                $pendingBills,
+            'pendingBills' => $pendingBills,
 
-            'unpaidProgressBills' =>
-                $unpaidProgressBills,
+            'unpaidProgressBills' => $unpaidProgressBills,
 
-            'processedBills' =>
-                $processedBills,
+            'processedBills' => $processedBills,
 
-            'paidPercentage' =>
-                $paidPercentage,
+            'paidPercentage' => $paidPercentage,
 
-            'pendingPercentage' =>
-                $pendingPercentage,
+            'pendingPercentage' => $pendingPercentage,
 
-            'unpaidPercentage' =>
-                $unpaidPercentage,
+            'unpaidPercentage' => $unpaidPercentage,
 
-            'progressPercentage' =>
-                $progressPercentage,
+            'progressPercentage' => $progressPercentage,
         ]);
     }
 }

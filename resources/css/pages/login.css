@@ -1,6 +1,4 @@
-/* =========================================================
-   LOGIN PAGE
-   ========================================================= */
+/* Login page */
 
 * {
     margin: 0;
@@ -19,9 +17,7 @@ body {
 }
 
 
-/* =========================================================
-   LOGIN CONTAINER
-   ========================================================= */
+/* Login container */
 
 .login-page {
     width: 100%;
@@ -41,9 +37,7 @@ body {
 }
 
 
-/* =========================================================
-   LOGIN CARD
-   ========================================================= */
+/* Login card */
 
 .login-card {
     width: 100%;
@@ -53,6 +47,7 @@ body {
 
     display: flex;
     flex-direction: column;
+
     gap: 24px;
 
     background-color: var(--primarypr-40);
@@ -61,9 +56,7 @@ body {
 }
 
 
-/* =========================================================
-   BRAND
-   ========================================================= */
+/* Brand */
 
 .login-brand {
     text-align: center;
@@ -110,9 +103,7 @@ body {
 }
 
 
-/* =========================================================
-   LOGIN HEADER
-   ========================================================= */
+/* Login header */
 
 .login-header h2 {
     margin-bottom: 4px;
@@ -134,24 +125,22 @@ body {
 }
 
 
-/* =========================================================
-   LOGIN FORM
-   ========================================================= */
+/* Login form */
 
 .login-form {
     display: flex;
     flex-direction: column;
+
     gap: 16px;
 }
 
 
-/* =========================================================
-   FORM GROUP
-   ========================================================= */
+/* Form group */
 
 .form-group {
     display: flex;
     flex-direction: column;
+
     gap: 4px;
 }
 
@@ -194,9 +183,8 @@ body {
     border-color: var(--secondarysc-40);
 }
 
-/* =========================================================
-   VALIDATION ERROR
-   ========================================================= */
+
+/* Validation error */
 
 .form-error {
     margin-top: 2px;
@@ -209,9 +197,37 @@ body {
 }
 
 
-/* =========================================================
-   SESSION STATUS
-   ========================================================= */
+/* Forgot password */
+
+.forgot-password-link {
+    align-self: flex-end;
+
+    margin-top: 2px;
+
+    font-family: var(--paragraph-p12-medium-font-family);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 16px;
+
+    color: var(--optionalop-40);
+
+    text-decoration: none;
+
+    transition:
+        opacity 0.2s ease,
+        color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+    color: var(--neutralnr-00);
+
+    text-decoration: underline;
+
+    opacity: 0.9;
+}
+
+
+/* Session status */
 
 .login-status {
     padding: 8px 10px;
@@ -228,9 +244,7 @@ body {
 }
 
 
-/* =========================================================
-   LOGIN BUTTON
-   ========================================================= */
+/* Login button */
 
 .btn-login {
     width: 100%;
@@ -265,13 +279,12 @@ body {
 
 .btn-login:disabled {
     opacity: 0.6;
+
     cursor: not-allowed;
 }
 
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* Responsive */
 
 @media (max-width: 480px) {
 
@@ -281,7 +294,16 @@ body {
 
     .login-card {
         max-width: 350px;
+
         padding: 24px;
     }
 
+}
+
+/* Forgot password back */
+
+.forgot-password-back {
+    align-self: center;
+
+    margin-top: 0;
 }

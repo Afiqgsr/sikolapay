@@ -20,7 +20,7 @@
 
         <section class="login-card">
 
-            {{-- BRAND --}}
+            {{-- Brand --}}
             <div class="login-brand">
 
                 <img
@@ -40,7 +40,7 @@
             </div>
 
 
-            {{-- HEADER --}}
+            {{-- Header --}}
             <div class="login-header">
 
                 <h2>
@@ -54,15 +54,17 @@
             </div>
 
 
-            {{-- ERROR / SESSION STATUS --}}
-            @if (session('status'))
+            {{-- Session status --}}
+            @if(session('status'))
+
                 <div class="login-status">
                     {{ session('status') }}
                 </div>
+
             @endif
 
 
-            {{-- LOGIN FORM --}}
+            {{-- Login form --}}
             <form
                 method="POST"
                 action="{{ route('login.store') }}"
@@ -72,7 +74,7 @@
                 @csrf
 
 
-                {{-- EMAIL / NIS --}}
+                {{-- Email / NIS --}}
                 <div class="form-group">
 
                     <label for="email">
@@ -91,15 +93,17 @@
                     >
 
                     @error('email')
+
                         <span class="form-error">
                             {{ $message }}
                         </span>
+
                     @enderror
 
                 </div>
 
 
-                {{-- PASSWORD --}}
+                {{-- Password --}}
                 <div class="form-group">
 
                     <label for="password">
@@ -116,14 +120,25 @@
                     >
 
                     @error('password')
+
                         <span class="form-error">
                             {{ $message }}
                         </span>
+
                     @enderror
+
+
+                    <a
+                        href="{{ route('password.request') }}"
+                        class="forgot-password-link"
+                    >
+                        Lupa Password?
+                    </a>
 
                 </div>
 
-                {{-- LOGIN BUTTON --}}
+
+                {{-- Login button --}}
                 <button
                     type="submit"
                     class="btn-login"

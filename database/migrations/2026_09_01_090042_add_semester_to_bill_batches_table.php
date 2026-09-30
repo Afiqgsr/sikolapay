@@ -1,23 +1,16 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('bill_batches', function (Blueprint $table) {
-            $table->string('semester')
-                ->nullable();
-        });
+        // No-op: The 'semester' column is already included in the initial 'create_bill_batches_table' migration.
     }
 
     public function down(): void
     {
-        Schema::table('bill_batches', function (Blueprint $table) {
-            $table->dropColumn('semester');
-        });
+        // No-op: Do not drop column as it is managed by 'create_bill_batches_table'.
     }
 };

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Student;
 use App\Models\Bill;
+use App\Models\Student;
+use Illuminate\Database\Seeder;
 
 class BillSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class BillSeeder extends Seeder
 
         Bill::create([
             'student_id' => $student->id,
-            'name' => 'SPP Juli 2026',
+            'name' => 'SPP Bulanan',
             'description' => 'Tagihan SPP bulan Juli tahun ajaran 2026/2027',
             'amount' => 500000,
             'due_date' => '2026-07-10',

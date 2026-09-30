@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicYear;
 use App\Models\Bill;
 use App\Models\BillBatch;
 use App\Models\ClassRoom;
@@ -79,6 +80,22 @@ class BillController extends Controller
             ->orderByDesc('entry_year')
             ->pluck('entry_year');
 
+        // Mengambil daftar opsi Semester resmi berdasarkan Tahun Ajaran (AcademicYear)
+        // Prioritaskan AcademicYear yang aktif jika ada, dengan fallback data AcademicYear yang ada
+        $activeAcademicYear = AcademicYear::where('is_active', true)->first();
+        if (! $activeAcademicYear) {
+            $activeAcademicYear = AcademicYear::latest()->first();
+        }
+
+        $academicYearSemesters = collect();
+        if ($activeAcademicYear) {
+            $academicYearSemesters = collect([
+                'Ganjil '.$activeAcademicYear->name,
+                'Genap '.$activeAcademicYear->name,
+            ]);
+        }
+
+        // Daftar semester untuk filter tabel (menggabungkan semester dari Tahun Ajaran dan data batch existing)
         $semesters = BillBatch::query()
             ->whereNotNull('semester')
             ->where('semester', '!=', '')
@@ -86,43 +103,49 @@ class BillController extends Controller
             ->orderByDesc('semester')
             ->pluck('semester');
 
+        $semesters = $academicYearSemesters->merge($semesters)->unique()->values();
+
         return view('admin.billing-data', [
             'batches' => $batches,
             'students' => $students,
             'classRooms' => $classRooms,
             'cohorts' => $cohorts,
             'semesters' => $semesters,
+            'academicYearSemesters' => $academicYearSemesters,
+            'billTypes' => Bill::TYPES,
         ]);
     }
 
     public function store(Request $request)
     {
+        $validSemesters = $this->getValidSemesters();
+
         $validated = $request->validate([
             'target_type' => [
                 'required',
                 Rule::in([
                     'student',
                     'class',
-                    'cohort',
+                    'grade',
                     'school',
                 ]),
             ],
 
             'target_value' => [
                 'nullable',
-                'integer',
+                'max:255',
             ],
 
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                Rule::in(Bill::TYPES),
             ],
 
             'semester' => [
                 'required',
                 'string',
-                'max:100',
+                Rule::in($validSemesters->all()),
             ],
 
             'amount' => [
@@ -140,7 +163,12 @@ class BillController extends Controller
                 'nullable',
                 'string',
             ],
+        ], [
+            'name.in' => 'Pilihan jenis tagihan tidak valid.',
+            'semester.in' => 'Pilihan semester tidak valid.',
         ]);
+
+        $this->validateTargetValue($request, $validated['target_type'], $validated['target_value'] ?? null);
 
         if (
             $validated['target_type'] !== 'school'
@@ -162,8 +190,7 @@ class BillController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'target_value' =>
-                        'Tidak ada siswa aktif pada target tersebut.',
+                    'target_value' => 'Tidak ada siswa aktif pada target tersebut.',
                 ]);
         }
 
@@ -174,23 +201,17 @@ class BillController extends Controller
             $batch = BillBatch::create([
                 'name' => $validated['name'],
 
-                'description' =>
-                    $validated['description'] ?? null,
+                'description' => $validated['description'] ?? null,
 
-                'semester' =>
-                    $validated['semester'],
+                'semester' => $validated['semester'],
 
-                'amount' =>
-                    $validated['amount'],
+                'amount' => $validated['amount'],
 
-                'due_date' =>
-                    $validated['due_date'] ?? null,
+                'due_date' => $validated['due_date'] ?? null,
 
-                'target_type' =>
-                    $validated['target_type'],
+                'target_type' => $validated['target_type'],
 
-                'target_value' =>
-                    $validated['target_type'] === 'school'
+                'target_value' => $validated['target_type'] === 'school'
                         ? null
                         : $validated['target_value'],
             ]);
@@ -199,26 +220,19 @@ class BillController extends Controller
                 Bill::create([
                     'bill_batch_id' => $batch->id,
 
-                    'student_id' =>
-                        $student->id,
+                    'student_id' => $student->id,
 
-                    'name' =>
-                        $validated['name'],
+                    'name' => $validated['name'],
 
-                    'description' =>
-                        $validated['description'] ?? null,
+                    'description' => $validated['description'] ?? null,
 
-                    'semester' =>
-                        $validated['semester'],
+                    'semester' => $validated['semester'],
 
-                    'amount' =>
-                        $validated['amount'],
+                    'amount' => $validated['amount'],
 
-                    'due_date' =>
-                        $validated['due_date'] ?? null,
+                    'due_date' => $validated['due_date'] ?? null,
 
-                    'status' =>
-                        'unpaid',
+                    'status' => 'unpaid',
                 ]);
             }
         });
@@ -228,8 +242,8 @@ class BillController extends Controller
             ->with(
                 'success',
                 'Tagihan berhasil dibuat untuk '
-                    . $students->count()
-                    . ' siswa.'
+                    .$students->count()
+                    .' siswa.'
             );
     }
 
@@ -237,32 +251,35 @@ class BillController extends Controller
         Request $request,
         BillBatch $bill
     ) {
+        $validSemesters = $this->getValidSemesters();
+
         $validated = $request->validate([
             'target_type' => [
                 'required',
                 Rule::in([
                     'student',
                     'class',
-                    'cohort',
+                    'grade',
                     'school',
+                    'cohort', // Dipertahankan untuk data historis lama jika ada batch bertipe cohort yang diedit
                 ]),
             ],
 
             'target_value' => [
                 'nullable',
-                'integer',
+                'max:255',
             ],
 
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                Rule::in(Bill::TYPES),
             ],
 
             'semester' => [
                 'required',
                 'string',
-                'max:100',
+                Rule::in($validSemesters->all()),
             ],
 
             'amount' => [
@@ -280,15 +297,19 @@ class BillController extends Controller
                 'nullable',
                 'string',
             ],
+        ], [
+            'name.in' => 'Pilihan jenis tagihan tidak valid.',
+            'semester.in' => 'Pilihan semester tidak valid.',
         ]);
+
+        $this->validateTargetValue($request, $validated['target_type'], $validated['target_value'] ?? null);
 
         if (
             $validated['target_type'] !== 'school'
             && empty($validated['target_value'])
         ) {
             return back()->withErrors([
-                'target_value' =>
-                    'Target tagihan harus dipilih.',
+                'target_value' => 'Target tagihan harus dipilih.',
             ]);
         }
 
@@ -315,8 +336,7 @@ class BillController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'target_value' =>
-                        'Tidak ada siswa aktif pada target tersebut.',
+                    'target_value' => 'Tidak ada siswa aktif pada target tersebut.',
                 ]);
         }
 
@@ -326,26 +346,19 @@ class BillController extends Controller
             $students
         ) {
             $bill->update([
-                'name' =>
-                    $validated['name'],
+                'name' => $validated['name'],
 
-                'description' =>
-                    $validated['description'] ?? null,
+                'description' => $validated['description'] ?? null,
 
-                'semester' =>
-                    $validated['semester'],
+                'semester' => $validated['semester'],
 
-                'amount' =>
-                    $validated['amount'],
+                'amount' => $validated['amount'],
 
-                'due_date' =>
-                    $validated['due_date'] ?? null,
+                'due_date' => $validated['due_date'] ?? null,
 
-                'target_type' =>
-                    $validated['target_type'],
+                'target_type' => $validated['target_type'],
 
-                'target_value' =>
-                    $validated['target_type'] === 'school'
+                'target_value' => $validated['target_type'] === 'school'
                         ? null
                         : $validated['target_value'],
             ]);
@@ -354,29 +367,21 @@ class BillController extends Controller
 
             foreach ($students as $student) {
                 Bill::create([
-                    'bill_batch_id' =>
-                        $bill->id,
+                    'bill_batch_id' => $bill->id,
 
-                    'student_id' =>
-                        $student->id,
+                    'student_id' => $student->id,
 
-                    'name' =>
-                        $validated['name'],
+                    'name' => $validated['name'],
 
-                    'description' =>
-                        $validated['description'] ?? null,
+                    'description' => $validated['description'] ?? null,
 
-                    'semester' =>
-                        $validated['semester'],
+                    'semester' => $validated['semester'],
 
-                    'amount' =>
-                        $validated['amount'],
+                    'amount' => $validated['amount'],
 
-                    'due_date' =>
-                        $validated['due_date'] ?? null,
+                    'due_date' => $validated['due_date'] ?? null,
 
-                    'status' =>
-                        'unpaid',
+                    'status' => 'unpaid',
                 ]);
             }
         });
@@ -418,9 +423,79 @@ class BillController extends Controller
             );
     }
 
+    /**
+     * Memvalidasi target_value secara dinamis sesuai target_type.
+     */
+    private function validateTargetValue(Request $request, string $targetType, ?string $targetValue): void
+    {
+        match ($targetType) {
+            'student' => $request->validate([
+                'target_value' => ['required', 'integer', 'exists:students,id'],
+            ], [
+                'target_value.required' => 'Siswa target tagihan wajib dipilih.',
+                'target_value.exists' => 'Data siswa yang dipilih tidak ditemukan.',
+            ]),
+
+            'class' => $request->validate([
+                'target_value' => ['required', 'integer', 'exists:class_rooms,id'],
+            ], [
+                'target_value.required' => 'Kelas target tagihan wajib dipilih.',
+                'target_value.exists' => 'Data kelas yang dipilih tidak ditemukan.',
+            ]),
+
+            'grade' => $request->validate([
+                'target_value' => ['required', 'string', Rule::in(['X', 'XI', 'XII'])],
+            ], [
+                'target_value.required' => 'Tingkat kelas target tagihan wajib dipilih.',
+                'target_value.in' => 'Pilihan tingkat kelas tidak valid. Pilih Kelas X, Kelas XI, atau Kelas XII.',
+            ]),
+
+            'cohort' => $request->validate([
+                'target_value' => ['required', 'integer'],
+            ]),
+
+            'school' => null,
+
+            default => null,
+        };
+    }
+
+    /**
+     * Mengambil daftar semester yang sah berdasarkan Tahun Ajaran (AcademicYear) aktif atau data yang ada.
+     *
+     * @return Collection<int, string>
+     */
+    private function getValidSemesters(): Collection
+    {
+        $activeAcademicYear = AcademicYear::where('is_active', true)->first();
+        if (! $activeAcademicYear) {
+            $activeAcademicYear = AcademicYear::latest()->first();
+        }
+
+        if ($activeAcademicYear) {
+            return collect([
+                'Ganjil '.$activeAcademicYear->name,
+                'Genap '.$activeAcademicYear->name,
+            ]);
+        }
+
+        // Fallback jika belum ada data AcademicYear sama sekali di DB
+        return BillBatch::query()
+            ->whereNotNull('semester')
+            ->where('semester', '!=', '')
+            ->distinct()
+            ->pluck('semester');
+    }
+
+    /**
+     * Mengambil kumpulan siswa aktif berdasarkan target_type dan target_value.
+     * Mendukung target: student, class, grade (X/XI/XII), school, dan cohort (legacy).
+     *
+     * @return Collection<int, Student>
+     */
     private function resolveTargetStudents(
         string $targetType,
-        ?int $targetValue
+        string|int|null $targetValue
     ): Collection {
         $query = Student::query()
             ->where('status', 'active');
@@ -438,6 +513,20 @@ class BillController extends Controller
                     'class_room_id',
                     $targetValue
                 );
+                break;
+
+            case 'grade':
+                // Normalisasi dan cari varian nilai grade (contoh: ['X', '10', 'x'])
+                $gradeVariants = match (strtoupper(trim((string) $targetValue))) {
+                    'X', '10' => ['X', '10', 'x'],
+                    'XI', '11' => ['XI', '11', 'xi'],
+                    'XII', '12' => ['XII', '12', 'xii'],
+                    default => [(string) $targetValue],
+                };
+
+                $query->whereHas('classRoom', function (Builder $q) use ($gradeVariants) {
+                    $q->whereIn('grade', $gradeVariants);
+                });
                 break;
 
             case 'cohort':

@@ -11,6 +11,7 @@
 @import './pages/admin/student-data.css';
 @import './pages/admin/billing-data.css';
 @import './pages/admin/payment-report.css';
+@import "./pages/admin/manual-payment.css";
 
 @import './pages/superadmin/dashboard.css';
 @import './pages/superadmin/manage-admin.css';

@@ -1,79 +1,17 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('bill_batches', function (Blueprint $table) {
-
-            if (!Schema::hasColumn('bill_batches', 'description')) {
-                $table->text('description')->nullable();
-            }
-
-            if (!Schema::hasColumn('bill_batches', 'semester')) {
-                $table->string('semester')->nullable();
-            }
-
-            if (!Schema::hasColumn('bill_batches', 'amount')) {
-                $table->decimal('amount', 15, 2)->default(0);
-            }
-
-            if (!Schema::hasColumn('bill_batches', 'due_date')) {
-                $table->date('due_date')->nullable();
-            }
-
-            if (!Schema::hasColumn('bill_batches', 'target_type')) {
-                $table->enum('target_type', [
-                    'student',
-                    'class',
-                    'cohort',
-                    'school',
-                ])->nullable();
-            }
-
-            if (!Schema::hasColumn('bill_batches', 'target_value')) {
-                $table->unsignedBigInteger('target_value')->nullable();
-            }
-        });
+        // No-op: The fields 'description', 'semester', 'amount', 'due_date', 'target_type', and 'target_value'
+        // are already included in the initial 'create_bill_batches_table' migration.
     }
 
     public function down(): void
     {
-        Schema::table('bill_batches', function (Blueprint $table) {
-
-            $columns = [];
-
-            if (Schema::hasColumn('bill_batches', 'description')) {
-                $columns[] = 'description';
-            }
-
-            if (Schema::hasColumn('bill_batches', 'semester')) {
-                $columns[] = 'semester';
-            }
-
-            if (Schema::hasColumn('bill_batches', 'amount')) {
-                $columns[] = 'amount';
-            }
-
-            if (Schema::hasColumn('bill_batches', 'due_date')) {
-                $columns[] = 'due_date';
-            }
-
-            if (Schema::hasColumn('bill_batches', 'target_type')) {
-                $columns[] = 'target_type';
-            }
-
-            if (Schema::hasColumn('bill_batches', 'target_value')) {
-                $columns[] = 'target_value';
-            }
-
-            if (!empty($columns)) {
-                $table->dropColumn($columns);
-            }
-        });
+        // No-op: Do not drop columns as they are managed by 'create_bill_batches_table'.
     }
 };

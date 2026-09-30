@@ -1,29 +1,112 @@
-<x-layouts::auth :title="__('Email verification')">
-    <div class="mt-4 flex flex-col gap-6">
-        <flux:text class="text-center">
-            {{ __('Please verify your email address by clicking on the link we just emailed to you.') }}
-        </flux:text>
+<!DOCTYPE html>
+<html lang="id">
 
-        @if (session('status') == 'verification-link-sent')
-            <flux:text class="text-center font-medium !dark:text-green-400 !text-green-600">
-                {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-            </flux:text>
-        @endif
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <div class="flex flex-col items-center justify-between space-y-3">
-            <form method="POST" action="{{ route('verification.send') }}">
+    <title>SikolaPay - Verifikasi Email</title>
+
+    @vite([
+        'resources/css/styleguide.css',
+        'resources/css/globals.css',
+        'resources/css/pages/login.css',
+    ])
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <section class="login-card">
+
+            {{-- Brand --}}
+            <div class="login-brand">
+
+                <img
+                    src="{{ asset('assets/img/logo-sikolapay.svg') }}"
+                    alt="Logo SikolaPay"
+                    class="login-brand__logo"
+                >
+
+                <h1 class="login-brand__title">
+                    <span class="text-secondary">Si</span><span class="text-tertiary">kola</span><span class="text-optional">Pay</span>
+                </h1>
+
+                <p class="login-brand__subtitle">
+                    Sistem Pembayaran Sekolah
+                </p>
+
+            </div>
+
+
+            {{-- Header --}}
+            <div class="login-header">
+
+                <h2>
+                    Verifikasi Email
+                </h2>
+
+                <p>
+                    Kami telah mengirimkan link verifikasi ke email Anda.
+                    Silakan buka email tersebut untuk memverifikasi akun.
+                </p>
+
+            </div>
+
+
+            {{-- Status --}}
+            @if(session('status') === 'verification-link-sent')
+
+                <div class="login-status">
+                    Link verifikasi baru telah dikirim ke email Anda.
+                </div>
+
+            @endif
+
+
+            {{-- Resend --}}
+            <form
+                method="POST"
+                action="{{ route('verification.send') }}"
+                class="login-form"
+            >
+
                 @csrf
-                <flux:button type="submit" variant="primary" class="w-full">
-                    {{ __('Resend verification email') }}
-                </flux:button>
+
+                <button
+                    type="submit"
+                    class="btn-login"
+                >
+                    Kirim Ulang Email Verifikasi
+                </button>
+
             </form>
 
-            <form method="POST" action="{{ route('logout') }}">
+
+            {{-- Logout --}}
+            <form
+                method="POST"
+                action="{{ route('logout') }}"
+                class="login-form"
+            >
+
                 @csrf
-                <flux:button variant="ghost" type="submit" class="text-sm cursor-pointer" data-test="logout-button">
-                    {{ __('Log out') }}
-                </flux:button>
+
+                <button
+                    type="submit"
+                    class="forgot-password-link forgot-password-back"
+                    style="background: transparent; border: 0; cursor: pointer;"
+                >
+                    Logout
+                </button>
+
             </form>
-        </div>
-    </div>
-</x-layouts::auth>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

@@ -2,378 +2,220 @@
 
 namespace App\Http\Controllers\Guardian;
 
+use App\Actions\Payments\CreateGuardianPaymentAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Guardian\Payments\StoreGuardianPaymentRequest;
+use App\Http\Requests\Guardian\Payments\UploadGuardianPaymentProofRequest;
 use App\Models\Bill;
+use App\Models\Guardian;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
-    public function create($id)
+    /**
+     * Menampilkan formulir pembayaran untuk satu tagihan anak dari Wali Murid.
+     */
+    public function create(int|string $id): RedirectResponse|View
     {
-        $guardian = Auth::user()?->guardian;
+        // Ambil profil Guardian dari user yang sedang login
+        $guardian = $this->currentGuardian();
 
-        abort_unless($guardian, 404);
+        // Cari tagihan dan pastikan tagihan milik siswa yang berada di bawah asuhan Guardian ini
+        $bill = $this->findGuardianBill($guardian, $id);
 
-
-        $bill = Bill::query()
-            ->where('id', $id)
-            ->whereHas('student', function ($query) use ($guardian) {
-                $query->where(
-                    'guardian_id',
-                    $guardian->id
-                );
-            })
-            ->with([
-                'student.classRoom',
-            ])
-            ->firstOrFail();
-
-
-        /* CEK SUDAH LUNAS */
-
+        // Jika tagihan sudah berstatus lunas (paid), langsung alihkan ke halaman detail pembayaran
         $paidPayment = $bill->payments()
             ->where('status', 'paid')
             ->latest()
             ->first();
 
         if ($paidPayment) {
-
-            return redirect()
-                ->route(
-                    'guardian.payments.show',
-                    $paidPayment->id
-                );
+            return redirect()->route('guardian.payments.show', $paidPayment->id);
         }
 
-
-        /* CEK MASIH PENDING */
-
+        // Jika tagihan sudah memiliki pembayaran pending (menunggu verifikasi), alihkan ke detail
         $pendingPayment = $bill->payments()
             ->where('status', 'pending')
             ->latest()
             ->first();
 
         if ($pendingPayment) {
-
-            return redirect()
-                ->route(
-                    'guardian.payments.show',
-                    $pendingPayment->id
-                );
+            return redirect()->route('guardian.payments.show', $pendingPayment->id);
         }
 
-
-        /* METODE PEMBAYARAN */
-
+        // Ambil daftar metode pembayaran yang aktif
         $paymentMethods = PaymentMethod::query()
             ->where('is_active', true)
             ->get();
 
-
-        return view(
-            'guardian.payments.create',
-            [
-                'bill' => $bill,
-                'paymentMethods' => $paymentMethods,
-            ]
-        );
+        return view('guardian.payments.create', [
+            'bill' => $bill,
+            'paymentMethods' => $paymentMethods,
+        ]);
     }
 
+    /**
+     * Memproses pengiriman formulir pembayaran satu tagihan oleh Wali Murid.
+     */
+    public function store(
+        StoreGuardianPaymentRequest $request,
+        CreateGuardianPaymentAction $action
+    ): RedirectResponse {
+        // Ambil profil Guardian dari user yang sedang login
+        $guardian = $this->currentGuardian();
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'bill_id' => [
-                'required',
-                'exists:bills,id',
-            ],
+        // Ambil data request yang telah divalidasi oleh Form Request
+        $validated = $request->validated();
 
-            'payment_method_id' => [
-                'required',
-                'exists:payment_methods,id',
-            ],
+        // Cari tagihan dan pastikan kepemilikannya sesuai
+        $bill = $this->findGuardianBill($guardian, $validated['bill_id']);
 
-            'proof_of_payment' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png',
-                'max:2048',
-            ],
-        ]);
-
-
-        $guardian = Auth::user()?->guardian;
-
-        abort_unless($guardian, 404);
-
-
-        /* CARI TAGIHAN */
-
-        $bill = Bill::query()
-            ->where('id', $validated['bill_id'])
-            ->whereHas('student', function ($query) use ($guardian) {
-                $query->where(
-                    'guardian_id',
-                    $guardian->id
-                );
-            })
-            ->firstOrFail();
-
-
-        /* CEK SUDAH LUNAS */
-
+        // Cegah pembayaran ulang jika tagihan sudah berstatus lunas
         $paidPayment = $bill->payments()
             ->where('status', 'paid')
             ->latest()
             ->first();
 
         if ($paidPayment) {
-
             return redirect()
-                ->route(
-                    'guardian.payments.show',
-                    $paidPayment->id
-                )
-                ->with(
-                    'error',
-                    'Tagihan ini sudah dibayar.'
-                );
+                ->route('guardian.payments.show', $paidPayment->id)
+                ->with('error', 'Tagihan ini sudah dibayar.');
         }
 
-
-        /* CEK PEMBAYARAN PENDING */
-
+        // Cegah pembayaran ganda jika pembayaran sebelumnya masih menunggu verifikasi admin
         $pendingPayment = $bill->payments()
             ->where('status', 'pending')
             ->latest()
             ->first();
 
         if ($pendingPayment) {
-
             return redirect()
-                ->route(
-                    'guardian.payments.show',
-                    $pendingPayment->id
-                )
-                ->with(
-                    'error',
-                    'Pembayaran tagihan ini sedang menunggu verifikasi.'
-                );
+                ->route('guardian.payments.show', $pendingPayment->id)
+                ->with('error', 'Pembayaran tagihan ini sedang menunggu verifikasi.');
         }
 
-
-        /* PAYMENT METHOD */
-
+        // Pastikan metode pembayaran yang dipilih valid dan berstatus aktif
         $paymentMethod = PaymentMethod::query()
-            ->where(
-                'id',
-                $validated['payment_method_id']
-            )
-            ->where(
-                'is_active',
-                true
-            )
+            ->where('id', $validated['payment_method_id'])
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        /* UPLOAD BUKTI */
-
-        $proofPath = $request
-            ->file('proof_of_payment')
-            ->store(
-                'payments/proofs',
-                'public'
-            );
-
+        // Simpan file bukti transfer ke storage publik di folder 'payments/proofs'
+        $proofPath = $request->file('proof_of_payment')->store('payments/proofs', 'public');
 
         try {
-
-            /* BUAT PAYMENT */
-
-            $payment = Payment::create([
-                'bill_id' => $bill->id,
-
-                'payer_id' => Auth::id(),
-
-                'payment_method_id' =>
-                    $paymentMethod->id,
-
-                'payment_number' =>
-                    'PAY-'
-                    . now()->format('YmdHis')
-                    . '-'
-                    . Str::upper(
-                        Str::random(4)
-                    ),
-
-                'amount' => $bill->amount,
-
-                'proof_of_payment' =>
-                    $proofPath,
-
-                'proof_uploaded_at' =>
-                    now(),
-
-                'status' =>
-                    'pending',
-            ]);
-
+            // Jalankan action untuk membuat record Payment dalam database transaction
+            $payment = $action->execute(
+                $bill,
+                $paymentMethod,
+                (int) Auth::id(),
+                $proofPath
+            );
         } catch (\Throwable $exception) {
+            // Jika proses database gagal, hapus file bukti yang baru saja diunggah agar tidak jadi file sampah
+            Storage::disk('public')->delete($proofPath);
+            throw $exception;
+        }
 
-            Storage::disk('public')
-                ->delete($proofPath);
+        return redirect()
+            ->route('guardian.payments.show', $payment->id)
+            ->with('success', 'Pembayaran berhasil dikirim dan menunggu verifikasi admin.');
+    }
+
+    /**
+     * Menampilkan detail pembayaran, bukti transfer, dan status verifikasi.
+     */
+    public function show(int|string $id): View
+    {
+        // Ambil profil Guardian dari user yang sedang login
+        $guardian = $this->currentGuardian();
+
+        // Cari data pembayaran dan pastikan siswa terkait terdaftar di bawah Guardian ini
+        $payment = Payment::query()
+            ->where('id', $id)
+            ->whereHas('bill.student', function ($query) use ($guardian) {
+                $query->where('guardian_id', $guardian->id);
+            })
+            ->with([
+                'bill.student.classRoom',
+                'paymentMethod',
+                'latestVerification',
+            ])
+            ->firstOrFail();
+
+        return view('guardian.payments.show', [
+            'payment' => $payment,
+        ]);
+    }
+
+    /**
+     * Mengunggah ulang bukti pembayaran jika pembayaran masih berstatus 'pending'.
+     */
+    public function uploadProof(
+        UploadGuardianPaymentProofRequest $request,
+        int|string $id
+    ): RedirectResponse {
+        // Ambil profil Guardian dari user yang sedang login
+        $guardian = $this->currentGuardian();
+
+        // Cari data pembayaran yang berstatus pending milik siswa asuhan Guardian ini
+        $payment = Payment::query()
+            ->where('id', $id)
+            ->whereHas('bill.student', function ($query) use ($guardian) {
+                $query->where('guardian_id', $guardian->id);
+            })
+            ->where('status', 'pending')
+            ->firstOrFail();
+
+        // Simpan path bukti lama untuk dihapus setelah update database berhasil
+        $oldProof = $payment->proof_of_payment;
+
+        // Simpan file bukti baru ke storage publik
+        $newProofPath = $request->file('proof_of_payment')->store('payments/proofs', 'public');
+
+        try {
+            // Perbarui record payment dengan path bukti pembayaran yang baru
+            $payment->update([
+                'proof_of_payment' => $newProofPath,
+                'proof_uploaded_at' => now(),
+            ]);
+        } catch (\Throwable $exception) {
+            // Jika update database gagal, hapus file baru yang baru saja tersimpan
+            Storage::disk('public')->delete($newProofPath);
 
             throw $exception;
         }
 
-
-        return redirect()
-            ->route(
-                'guardian.payments.show',
-                $payment->id
-            )
-            ->with(
-                'success',
-                'Pembayaran berhasil dikirim dan menunggu verifikasi admin.'
-            );
-    }
-
-
-    public function show($id)
-    {
-        $guardian = Auth::user()?->guardian;
-
-        abort_unless($guardian, 404);
-
-
-        $payment = Payment::query()
-            ->where('id', $id)
-            ->whereHas(
-                'bill.student',
-                function ($query) use ($guardian) {
-
-                    $query->where(
-                        'guardian_id',
-                        $guardian->id
-                    );
-                }
-            )
-            ->with([
-                'bill.student.classRoom',
-                'paymentMethod',
-                'latestVerification',
-            ])
-            ->firstOrFail();
-
-
-        return view(
-            'guardian.payments.show',
-            [
-                'payment' => $payment,
-            ]
-        );
-    }
-
-
-    public function uploadProof(
-        Request $request,
-        $id
-    ) {
-        $request->validate([
-            'proof_of_payment' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png',
-                'max:2048',
-            ],
-        ]);
-
-
-        $guardian = Auth::user()?->guardian;
-
-        abort_unless($guardian, 404);
-
-
-        $payment = Payment::query()
-            ->where('id', $id)
-            ->whereHas(
-                'bill.student',
-                function ($query) use ($guardian) {
-
-                    $query->where(
-                        'guardian_id',
-                        $guardian->id
-                    );
-                }
-            )
-            ->where('status', 'pending')
-            ->firstOrFail();
-
-
-        /* HAPUS BUKTI LAMA */
-
-        if ($payment->proof_of_payment) {
-
-            Storage::disk('public')
-                ->delete(
-                    $payment->proof_of_payment
-                );
+        // Jika update database sukses dan file lama ada, hapus file lama dari storage
+        if ($oldProof && $oldProof !== $newProofPath) {
+            Storage::disk('public')->delete($oldProof);
         }
 
-
-        /* SIMPAN BUKTI BARU */
-
-        $path = $request
-            ->file('proof_of_payment')
-            ->store(
-                'payments/proofs',
-                'public'
-            );
-
-
-        $payment->update([
-            'proof_of_payment' => $path,
-
-            'proof_uploaded_at' => now(),
-        ]);
-
-
         return redirect()
-            ->route(
-                'guardian.payments.show',
-                $payment->id
-            )
-            ->with(
-                'success',
-                'Bukti pembayaran berhasil diperbarui dan menunggu verifikasi admin.'
-            );
+            ->route('guardian.payments.show', $payment->id)
+            ->with('success', 'Bukti pembayaran berhasil diperbarui dan menunggu verifikasi admin.');
     }
 
-    public function receipt($id)
+    /**
+     * Menampilkan nota / kuitansi resmi untuk pembayaran yang sudah berstatus lunas ('paid').
+     */
+    public function receipt(int|string $id): View
     {
-        $guardian = Auth::user()?->guardian;
+        // Ambil profil Guardian dari user yang sedang login
+        $guardian = $this->currentGuardian();
 
-        abort_unless($guardian, 404);
-
-
+        // Cari pembayaran lunas (paid) yang terhubung dengan anak asuhan Guardian ini
         $payment = Payment::query()
             ->where('id', $id)
             ->where('status', 'paid')
-            ->whereHas(
-                'bill.student',
-                function ($query) use ($guardian) {
-
-                    $query->where(
-                        'guardian_id',
-                        $guardian->id
-                    );
-                }
-            )
+            ->whereHas('bill.student', function ($query) use ($guardian) {
+                $query->where('guardian_id', $guardian->id);
+            })
             ->with([
                 'bill.student.classRoom',
                 'paymentMethod',
@@ -381,12 +223,36 @@ class PaymentController extends Controller
             ])
             ->firstOrFail();
 
+        return view('guardian.payments.receipt', [
+            'payment' => $payment,
+        ]);
+    }
 
-        return view(
-            'guardian.payments.receipt',
-            [
-                'payment' => $payment,
-            ]
-        );
+    /**
+     * Helper untuk mengambil profil Guardian dari user login.
+     * Jika user tidak memiliki profil Guardian, hentikan request dengan HTTP 404.
+     */
+    private function currentGuardian(): Guardian
+    {
+        /** @var ?Guardian $guardian */
+        $guardian = Auth::user()?->guardian;
+
+        abort_unless($guardian, 404);
+
+        return $guardian;
+    }
+
+    /**
+     * Helper untuk mencari Bill berdasarkan ID dan memastikan tagihan tersebut milik siswa di bawah Guardian ini.
+     */
+    private function findGuardianBill(Guardian $guardian, int|string $billId): Bill
+    {
+        return Bill::query()
+            ->where('id', $billId)
+            ->whereHas('student', function ($query) use ($guardian) {
+                $query->where('guardian_id', $guardian->id);
+            })
+            ->with('student.classRoom')
+            ->firstOrFail();
     }
 }

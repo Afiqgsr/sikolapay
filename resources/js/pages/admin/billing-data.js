@@ -117,14 +117,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
             });
 
-        } else if (type === 'cohort') {
+        } else if (type === 'grade') {
 
-            targetData.cohorts.forEach(year => {
+            (targetData.grades || [
+                { id: 'X', name: 'Kelas X' },
+                { id: 'XI', name: 'Kelas XI' },
+                { id: 'XII', name: 'Kelas XII' }
+            ]).forEach(item => {
 
                 createOption(
                     select,
-                    year,
-                    'Angkatan ' + year
+                    item.id,
+                    item.name
                 );
 
             });
@@ -139,6 +143,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     item.name +
                     ' - ' +
                     (item.class || '-')
+                );
+
+            });
+
+        } else if (type === 'cohort') {
+
+            targetData.cohorts.forEach(year => {
+
+                createOption(
+                    select,
+                    year,
+                    'Angkatan ' + year
                 );
 
             });

@@ -54,7 +54,7 @@ class ProfileController extends Controller
                 'required',
                 'email',
                 'max:255',
-                'unique:users,email,' . $student->user_id,
+                'unique:users,email,'.$student->user_id,
             ],
 
             'address' => [
