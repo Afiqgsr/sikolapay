@@ -219,6 +219,10 @@
                         </th>
 
                         <th>
+                            Periode Tagihan
+                        </th>
+
+                        <th>
                             Nominal
                         </th>
 
@@ -244,31 +248,30 @@
                     @forelse($bills as $bill)
 
                         @php
-
                             $latestPayment = $bill->latestPayment;
+                            $latestVerification = $latestPayment?->latestVerification;
 
-                            if ($bill->status === 'paid') {
+                            $isPaid = $bill->status === 'paid' || $latestPayment?->status === 'paid';
+                            $isRejected = ! $isPaid && ($latestVerification?->status === 'rejected' || $latestPayment?->status === 'rejected');
+                            $isPending = ! $isPaid && ! $isRejected && $latestPayment?->status === 'pending';
+                            $isFutureUnpaid = ! $isPaid && ! $isRejected && ! $isPending && $bill->status === 'unpaid' && ! $bill->hasBillingPeriodStarted();
 
+                            if ($isPaid) {
                                 $displayStatus = 'paid';
                                 $displayStatusLabel = 'Lunas';
-
-                            } elseif ($latestPayment?->status === 'pending') {
-
-                                $displayStatus = 'pending';
-                                $displayStatusLabel = 'Menunggu Verifikasi';
-
-                            } elseif ($latestPayment?->status === 'rejected') {
-
+                            } elseif ($isRejected) {
                                 $displayStatus = 'rejected';
                                 $displayStatusLabel = 'Ditolak';
-
+                            } elseif ($isPending) {
+                                $displayStatus = 'pending';
+                                $displayStatusLabel = 'Menunggu Verifikasi';
+                            } elseif ($isFutureUnpaid) {
+                                $displayStatus = 'future';
+                                $displayStatusLabel = 'Belum dapat dibayar';
                             } else {
-
                                 $displayStatus = 'unpaid';
                                 $displayStatusLabel = 'Belum Bayar';
-
                             }
-
                         @endphp
 
 
@@ -319,6 +322,19 @@
                             </td>
 
 
+                            {{-- PERIODE TAGIHAN --}}
+                            <td>
+
+                                {{ $bill->billing_period
+                                    ? \Illuminate\Support\Carbon::parse(
+                                        $bill->billing_period
+                                    )->translatedFormat('F Y')
+                                    : '-'
+                                }}
+
+                            </td>
+
+
                             {{-- NOMINAL --}}
                             <td>
 
@@ -352,11 +368,27 @@
                             {{-- STATUS --}}
                             <td>
 
-                                <span
-                                    class="guardian-bill-status {{ $displayStatus }}"
-                                >
-                                    {{ $displayStatusLabel }}
-                                </span>
+                                @if($isFutureUnpaid)
+
+                                    <div>
+                                        <span class="guardian-bill-status future" style="background: #E5E7EB; color: #4B5563;">
+                                            Belum dapat dibayar
+                                        </span>
+
+                                        <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">
+                                            Tersedia mulai {{ $bill->billing_period ? \Illuminate\Support\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}
+                                        </div>
+                                    </div>
+
+                                @else
+
+                                    <span
+                                        class="guardian-bill-status {{ $displayStatus }}"
+                                    >
+                                        {{ $displayStatusLabel }}
+                                    </span>
+
+                                @endif
 
                             </td>
 
@@ -398,7 +430,7 @@
                                         </a>
 
 
-                                    {{-- DITOLAK --}}
+                                    {{-- DITOLAK: TETAP DAPAT RESUBMISSION / BAYAR LAGI --}}
                                     @elseif($displayStatus === 'rejected')
 
                                         <a
@@ -412,7 +444,21 @@
                                         </a>
 
 
-                                    {{-- BELUM BAYAR --}}
+                                    {{-- FUTURE UNPAID: DETAIL ONLY, TIDAK MENAWARKAN PAYMENT BARU --}}
+                                    @elseif($isFutureUnpaid)
+
+                                        <a
+                                            href="{{ route(
+                                                'guardian.bills.show',
+                                                $bill->id
+                                            ) }}"
+                                            class="guardian-bill-action"
+                                        >
+                                            Detail
+                                        </a>
+
+
+                                    {{-- BELUM BAYAR (CURRENT/PAST ELIGIBLE) --}}
                                     @else
 
                                         <a
@@ -438,7 +484,7 @@
                         <tr>
 
                             <td
-                                colspan="6"
+                                colspan="7"
                                 class="guardian-bills-empty"
                             >
 

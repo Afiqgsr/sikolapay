@@ -187,45 +187,19 @@
                     Semua Jenis
                 </option>
 
-                <option
-                    value="spp"
-                    {{ request('type') == 'spp'
-                        ? 'selected'
-                        : ''
-                    }}
-                >
-                    SPP
-                </option>
+                @foreach($billTypes ?? \App\Models\Bill::TYPES as $typeOption)
 
-                <option
-                    value="ujian"
-                    {{ request('type') == 'ujian'
-                        ? 'selected'
-                        : ''
-                    }}
-                >
-                    Ujian
-                </option>
+                    <option
+                        value="{{ $typeOption }}"
+                        {{ request('type') === $typeOption
+                            ? 'selected'
+                            : ''
+                        }}
+                    >
+                        {{ $typeOption }}
+                    </option>
 
-                <option
-                    value="gedung"
-                    {{ request('type') == 'gedung'
-                        ? 'selected'
-                        : ''
-                    }}
-                >
-                    Gedung
-                </option>
-
-                <option
-                    value="kegiatan"
-                    {{ request('type') == 'kegiatan'
-                        ? 'selected'
-                        : ''
-                    }}
-                >
-                    Kegiatan
-                </option>
+                @endforeach
 
             </select>
 

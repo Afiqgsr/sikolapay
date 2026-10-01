@@ -12,12 +12,12 @@
 
 @php
     $latestPayment = $bill->latestPayment;
+    $latestVerification = $latestPayment?->latestVerification;
 
-    $latestVerification =
-        $latestPayment?->latestVerification;
-
-    $isRejected =
-        $latestVerification?->status === 'rejected';
+    $isPaid = $bill->status === 'paid' || $latestPayment?->status === 'paid';
+    $isRejected = ! $isPaid && ($latestVerification?->status === 'rejected' || $latestPayment?->status === 'rejected');
+    $isPending = ! $isPaid && ! $isRejected && $latestPayment?->status === 'pending';
+    $isFutureUnpaid = ! $isPaid && ! $isRejected && ! $isPending && $bill->status === 'unpaid' && ! $bill->hasBillingPeriodStarted();
 @endphp
 
 <section class="bill-detail-page">
@@ -42,7 +42,7 @@
 
         </div>
 
-        @if($bill->status === 'paid')
+        @if($isPaid)
 
             <span class="bill-status paid">
                 Tagihan Sudah Lunas
@@ -54,11 +54,22 @@
                 Bukti Pembayaran Ditolak
             </span>
 
-        @elseif($latestPayment?->status === 'pending')
+        @elseif($isPending)
 
             <span class="bill-status pending">
                 Menunggu Verifikasi
             </span>
+
+        @elseif($isFutureUnpaid)
+
+            <div style="text-align: right;">
+                <span class="bill-status unpaid" style="background: #E5E7EB; color: #4B5563;">
+                    Belum dapat dibayar
+                </span>
+                <div style="font-size: 12px; color: #6B7280; margin-top: 4px;">
+                    Tersedia mulai {{ $bill->billing_period ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}
+                </div>
+            </div>
 
         @else
 
@@ -149,12 +160,25 @@
                     </div>
 
                     <div class="bill-info-item">
-                        <span>Periode</span>
+                        <span>Periode Tagihan</span>
 
                         <strong>
-                            {{ $bill->description ?? '-' }}
+                            {{ $bill->billing_period
+                                ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                                : '-'
+                            }}
                         </strong>
                     </div>
+
+                    @if($bill->description)
+                        <div class="bill-info-item">
+                            <span>Keterangan</span>
+
+                            <strong>
+                                {{ $bill->description }}
+                            </strong>
+                        </div>
+                    @endif
 
                     <div class="bill-info-item">
                         <span>Jatuh Tempo</span>
@@ -180,7 +204,7 @@
 
                         <strong>
 
-                            @if($bill->status === 'paid')
+                            @if($isPaid)
 
                                 <span class="status-text paid">
                                     Lunas
@@ -192,10 +216,16 @@
                                     Ditolak
                                 </span>
 
-                            @elseif($latestPayment?->status === 'pending')
+                            @elseif($isPending)
 
                                 <span class="status-text pending">
                                     Menunggu
+                                </span>
+
+                            @elseif($isFutureUnpaid)
+
+                                <span class="status-text unpaid" style="color: #4B5563;">
+                                    Belum dapat dibayar
                                 </span>
 
                             @else
@@ -347,7 +377,15 @@
 
                 </div>
 
-                <div class="summary-due">
+                <div class="summary-due" style="display: flex; flex-direction: column; gap: 4px;">
+
+                    <span>
+                        Periode Tagihan:
+                        {{ $bill->billing_period
+                            ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                            : '-'
+                        }}
+                    </span>
 
                     <span>
                         Jatuh tempo:
@@ -359,7 +397,7 @@
 
                 </div>
 
-                @if($bill->status === 'paid')
+                @if($isPaid)
 
                     <span class="paid-button">
                         Tagihan Sudah Lunas
@@ -374,11 +412,22 @@
                         Upload Ulang Bukti
                     </a>
 
-                @elseif($latestPayment?->status === 'pending')
+                @elseif($isPending)
 
                     <span class="pending-button">
                         Menunggu Verifikasi
                     </span>
+
+                @elseif($isFutureUnpaid)
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                        <span class="paid-button" style="background: #E5E7EB; color: #6B7280; cursor: not-allowed;">
+                            Belum dapat dibayar
+                        </span>
+                        <div style="font-size: 12px; color: #6B7280; text-align: center;">
+                            Tersedia mulai {{ $bill->billing_period ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}
+                        </div>
+                    </div>
 
                 @else
 

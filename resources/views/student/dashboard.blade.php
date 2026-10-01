@@ -297,6 +297,16 @@
 
                                 </span>
 
+                            @elseif($bill->status === 'unpaid' && ! $bill->hasBillingPeriodStarted())
+
+                                <span class="badge warning" style="background: #E5E7EB; color: #4B5563;">
+                                    Belum dapat dibayar
+                                </span>
+
+                                <span class="invoice-pay-button" style="background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; text-decoration: none;">
+                                    Belum Tersedia
+                                </span>
+
                             @else
 
                                 <span class="badge warning">

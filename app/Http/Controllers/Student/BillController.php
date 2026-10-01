@@ -60,16 +60,18 @@ class BillController extends Controller
             ->orderByDesc('due_date')
             ->get();
 
-        /* Total tagihan belum dibayar */
+        /* Tagihan belum dibayar yang eligible untuk dibayar sekarang (tidak termasuk future period dan pending/paid) */
 
-        $unpaidBills = Bill::where('student_id', $student->id)
+        $payableBills = Bill::where('student_id', $student->id)
             ->where('status', 'unpaid')
+            ->billingPeriodStarted()
             ->whereDoesntHave('payments', function ($paymentQuery) {
                 $paymentQuery->whereIn('status', ['pending', 'paid']);
             })
             ->get();
 
-        $unpaidTotal = $unpaidBills->sum('amount');
+        $unpaidBills = $payableBills;
+        $unpaidTotal = $payableBills->sum('amount');
 
         return view('student.bills.index', [
             'bills' => $bills,

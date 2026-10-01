@@ -6,6 +6,16 @@
 
 @section('content')
 
+@php
+    $latestPayment = $bill->latestPayment;
+    $latestVerification = $latestPayment?->latestVerification;
+
+    $isPaid = $bill->status === 'paid' || $latestPayment?->status === 'paid';
+    $isRejected = ! $isPaid && ($latestVerification?->status === 'rejected' || $latestPayment?->status === 'rejected');
+    $isPending = ! $isPaid && ! $isRejected && $latestPayment?->status === 'pending';
+    $isFutureUnpaid = ! $isPaid && ! $isRejected && ! $isPending && $bill->status === 'unpaid' && ! $bill->hasBillingPeriodStarted();
+@endphp
+
 <section class="guardian-bill-detail-page">
 
     <div class="guardian-detail-header">
@@ -46,17 +56,34 @@
                 </div>
 
 
-                @if($bill->status === 'paid')
+                @if($isPaid)
 
                     <span class="guardian-detail-status paid">
                         Lunas
                     </span>
 
-                @elseif($bill->status === 'pending')
+                @elseif($isRejected)
+
+                    <span class="guardian-detail-status rejected" style="background-color: #ffd6d6; color: #b91c1c;">
+                        Ditolak
+                    </span>
+
+                @elseif($isPending)
 
                     <span class="guardian-detail-status pending">
                         Menunggu Verifikasi
                     </span>
+
+                @elseif($isFutureUnpaid)
+
+                    <div style="text-align: right;">
+                        <span class="guardian-detail-status unpaid" style="background-color: #E5E7EB; color: #4B5563;">
+                            Belum dapat dibayar
+                        </span>
+                        <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">
+                            Tersedia mulai {{ $bill->billing_period ? \Illuminate\Support\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}
+                        </div>
+                    </div>
 
                 @else
 
@@ -125,6 +152,33 @@
 
                 <div class="guardian-detail-row">
 
+                    <span>Periode Tagihan</span>
+
+                    <strong>
+                        {{ $bill->billing_period
+                            ? \Illuminate\Support\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                            : '-'
+                        }}
+                    </strong>
+
+                </div>
+
+                @if(!empty($bill->description))
+
+                    <div class="guardian-detail-row">
+
+                        <span>Keterangan</span>
+
+                        <strong>
+                            {{ $bill->description }}
+                        </strong>
+
+                    </div>
+
+                @endif
+
+                <div class="guardian-detail-row">
+
                     <span>Nominal</span>
 
                     <strong>
@@ -140,7 +194,7 @@
 
                     <strong>
                         {{ $bill->due_date
-                            ? \Illuminate\Support\Carbon::parse($bill->due_date)->format('d M Y')
+                            ? \Illuminate\Support\Carbon::parse($bill->due_date)->translatedFormat('d M Y')
                             : '-'
                         }}
                     </strong>
@@ -153,10 +207,14 @@
                     <span>Status</span>
 
                     <strong>
-                        @if($bill->status === 'paid')
+                        @if($isPaid)
                             Lunas
-                        @elseif($bill->status === 'pending')
+                        @elseif($isRejected)
+                            Ditolak
+                        @elseif($isPending)
                             Menunggu Verifikasi
+                        @elseif($isFutureUnpaid)
+                            Belum dapat dibayar
                         @else
                             Belum Bayar
                         @endif
@@ -184,7 +242,51 @@
             </div>
 
 
-            @if($bill->status === 'unpaid')
+            @if($isPaid)
+
+                <div class="guardian-paid-box">
+                    Tagihan ini sudah lunas.
+                </div>
+
+            @elseif($isRejected)
+
+                <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                    <div class="guardian-waiting-box" style="background-color: #fee2e2; color: #b91c1c;">
+                        Pembayaran sebelumnya ditolak. Silakan ajukan ulang pembayaran.
+                    </div>
+
+                    <a
+                        href="{{ route('guardian.payments.create', $bill->id) }}"
+                        class="guardian-pay-button"
+                    >
+                        Bayar Lagi
+                    </a>
+                </div>
+
+            @elseif($isPending)
+
+                <div class="guardian-waiting-box">
+                    Pembayaran sedang menunggu verifikasi admin.
+                </div>
+
+            @elseif($isFutureUnpaid)
+
+                <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                    <div class="guardian-waiting-box" style="background-color: #F3F4F6; color: #4B5563;">
+                        Tagihan periode ini belum dapat dibayar. Tersedia mulai {{ $bill->billing_period ? \Illuminate\Support\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}.
+                    </div>
+
+                    <button
+                        type="button"
+                        class="guardian-pay-button"
+                        disabled
+                        style="background-color: #E5E7EB; color: #9CA3AF; cursor: not-allowed; border: none;"
+                    >
+                        Belum Dapat Dibayar
+                    </button>
+                </div>
+
+            @else
 
                 <a
                     href="{{ route('guardian.payments.create', $bill->id) }}"
@@ -192,18 +294,6 @@
                 >
                     Bayar Sekarang
                 </a>
-
-            @elseif($bill->status === 'pending')
-
-                <div class="guardian-waiting-box">
-                    Pembayaran sedang menunggu verifikasi admin.
-                </div>
-
-            @else
-
-                <div class="guardian-paid-box">
-                    Tagihan ini sudah lunas.
-                </div>
 
             @endif
 

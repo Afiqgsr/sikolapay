@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -49,9 +50,15 @@ class PaymentHistoryController extends Controller
         }
 
         if ($request->filled('type')) {
-            $query->whereHas('bill', function ($billQuery) use ($request) {
-                $billQuery->where('type', $request->type);
-            });
+            $type = (string) $request->input('type');
+
+            if (in_array($type, Bill::TYPES, true)) {
+                $query->whereHas('bill', function ($billQuery) use ($type) {
+                    $billQuery->where('name', $type);
+                });
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($request->filled('status')) {
@@ -106,6 +113,7 @@ class PaymentHistoryController extends Controller
             'totalTransactions' => $totalTransactions,
             'totalPaid' => $totalPaid,
             'lastPayment' => $lastPayment,
+            'billTypes' => Bill::TYPES,
         ]);
     }
 }

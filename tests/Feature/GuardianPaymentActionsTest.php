@@ -7,6 +7,7 @@ use App\Models\ClassRoom;
 use App\Models\Guardian;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\PaymentVerification;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
@@ -157,6 +158,75 @@ test('create payment redirects to show if bill has pending payment', function ()
         'payment_number' => 'PAY-TEST-PEND-01',
         'amount' => $this->bill->amount,
         'status' => 'pending',
+    ]);
+
+    $response = $this->actingAs($this->guardianUser)
+        ->get(route('guardian.payments.create', $this->bill->id));
+
+    $response->assertRedirect(route('guardian.payments.show', $pendingPayment->id));
+});
+
+test('create payment does not redirect to show if bill has rejected pending payment verification', function () {
+    $pendingPayment = Payment::create([
+        'bill_id' => $this->bill->id,
+        'payer_id' => $this->guardianUser->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'payment_number' => 'PAY-TEST-REJ-01',
+        'amount' => $this->bill->amount,
+        'status' => 'pending',
+    ]);
+
+    $adminUser = User::factory()->create([
+        'role' => 'admin',
+        'status' => 'active',
+    ]);
+
+    PaymentVerification::create([
+        'payment_id' => $pendingPayment->id,
+        'admin_id' => $adminUser->id,
+        'status' => 'rejected',
+        'note' => 'Bukti buram',
+        'processed_at' => now(),
+    ]);
+
+    $response = $this->actingAs($this->guardianUser)
+        ->get(route('guardian.payments.create', $this->bill->id));
+
+    $response->assertOk()
+        ->assertViewIs('guardian.payments.create');
+});
+
+test('create payment redirects to show if latest verification is not rejected even if older verification was rejected', function () {
+    $pendingPayment = Payment::create([
+        'bill_id' => $this->bill->id,
+        'payer_id' => $this->guardianUser->id,
+        'payment_method_id' => $this->paymentMethod->id,
+        'payment_number' => 'PAY-TEST-REJ-02',
+        'amount' => $this->bill->amount,
+        'status' => 'pending',
+    ]);
+
+    $adminUser = User::factory()->create([
+        'role' => 'admin',
+        'status' => 'active',
+    ]);
+
+    // Older verification was rejected
+    PaymentVerification::create([
+        'payment_id' => $pendingPayment->id,
+        'admin_id' => $adminUser->id,
+        'status' => 'rejected',
+        'note' => 'Bukti buram lama',
+        'processed_at' => now()->subDay(),
+    ]);
+
+    // Latest verification is verified
+    PaymentVerification::create([
+        'payment_id' => $pendingPayment->id,
+        'admin_id' => $adminUser->id,
+        'status' => 'verified',
+        'note' => 'Sudah diverifikasi',
+        'processed_at' => now(),
     ]);
 
     $response = $this->actingAs($this->guardianUser)

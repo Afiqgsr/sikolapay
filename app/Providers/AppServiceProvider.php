@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
         date_default_timezone_set(
             config('app.timezone', 'Asia/Jakarta')
         );
+
+        Carbon::setLocale(config('app.locale', 'id'));
 
         $this->configureDefaults();
     }

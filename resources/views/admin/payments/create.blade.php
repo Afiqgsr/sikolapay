@@ -147,7 +147,7 @@
                 </select>
 
                 <small>
-                    Hanya tagihan yang belum lunas dan tidak sedang menunggu verifikasi yang ditampilkan.
+                    Hanya tagihan periode berjalan/lampau yang belum lunas dan tidak sedang menunggu verifikasi yang ditampilkan.
                 </small>
 
                 @error('bill_id')

@@ -10,6 +10,7 @@ use App\Models\Bill;
 use App\Models\Guardian;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\PaymentVerification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -41,12 +42,22 @@ class PaymentController extends Controller
         }
 
         // Jika tagihan sudah memiliki pembayaran pending (menunggu verifikasi), alihkan ke detail
+        // KECUALI jika verifikasi terakhir pembayaran tersebut sudah berstatus 'rejected'
         $pendingPayment = $bill->payments()
             ->where('status', 'pending')
             ->latest()
             ->first();
 
-        if ($pendingPayment) {
+        $latestVerification = $pendingPayment !== null
+            ? PaymentVerification::query()
+                ->where('payment_id', $pendingPayment->getKey())
+                ->latest('processed_at')
+                ->first()
+            : null;
+
+        $isPendingRejected = $latestVerification?->status === 'rejected';
+
+        if ($pendingPayment && ! $isPendingRejected) {
             return redirect()->route('guardian.payments.show', $pendingPayment->id);
         }
 

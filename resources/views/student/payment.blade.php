@@ -88,6 +88,19 @@ if ($bankTransferMethods->count()) {
 
 </div>
 
+@php
+    $latestPayment = $bill->latestPayment;
+    $latestVerification = $latestPayment?->latestVerification;
+    $isRejected = ($latestVerification?->status === 'rejected' || $latestPayment?->status === 'rejected')
+        || ($latestPayment?->status === 'pending' && $latestVerification?->status === 'rejected');
+    $isFutureUnpaid = ! $isRejected && $bill->status === 'unpaid' && ! $bill->hasBillingPeriodStarted();
+@endphp
+
+@if($isFutureUnpaid)
+    <div style="background: #FEF3C7; border: 1px solid #F59E0B; color: #92400E; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+        <strong>Perhatian:</strong> Tagihan ini adalah tagihan periode mendatang dan belum dapat dibayar. Tersedia mulai {{ $bill->billing_period ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}.
+    </div>
+@endif
 
 {{-- MAIN GRID --}}
 <div class="payment-main-grid">
@@ -741,19 +754,28 @@ if ($bankTransferMethods->count()) {
                     </div>
 
 
-                    {{-- PERIODE --}}
+                    {{-- PERIODE TAGIHAN --}}
                     <div class="summary-row">
 
                         <span>
-                            Periode
+                            Periode Tagihan
                         </span>
 
                         <span>
-                            {{ $bill->description ?? '-' }}
+                            {{ $bill->billing_period
+                                ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                                : '-'
+                            }}
                         </span>
 
                     </div>
 
+                    @if($bill->description)
+                        <div class="summary-row">
+                            <span>Keterangan</span>
+                            <span>{{ $bill->description }}</span>
+                        </div>
+                    @endif
 
                     {{-- METODE --}}
                     <div class="summary-row">
@@ -794,21 +816,40 @@ if ($bankTransferMethods->count()) {
                 {{-- CONFIRMATION --}}
                 <div class="confirmation">
 
-                    <button
-                        type="button"
-                        class="payment-confirm-button"
-                        id="openConfirmModal"
-                    >
-                        Konfirmasi Pembayaran
-                    </button>
+                    @if($isFutureUnpaid)
+
+                        <button
+                            type="button"
+                            class="payment-confirm-button"
+                            disabled
+                            style="background: #9CA3AF; cursor: not-allowed;"
+                        >
+                            Belum Dapat Dibayar
+                        </button>
+
+                        <p>
+                            Tagihan periode ini tersedia mulai {{ $bill->billing_period ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}.
+                        </p>
+
+                    @else
+
+                        <button
+                            type="button"
+                            class="payment-confirm-button"
+                            id="openConfirmModal"
+                        >
+                            Konfirmasi Pembayaran
+                        </button>
 
 
-                    <p>
+                        <p>
 
-                        Dengan mengklik tombol di atas,
-                        Anda menyatakan telah melakukan pembayaran.
+                            Dengan mengklik tombol di atas,
+                            Anda menyatakan telah melakukan pembayaran.
 
-                    </p>
+                        </p>
+
+                    @endif
 
                 </div>
 

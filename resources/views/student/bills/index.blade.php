@@ -113,6 +113,7 @@
 
                     <tr>
                         <th>Jenis Tagihan</th>
+                        <th>Periode Tagihan</th>
                         <th>Keterangan</th>
                         <th>Nominal</th>
                         <th>Jatuh Tempo</th>
@@ -128,12 +129,12 @@
 
                         @php
                             $latestPayment = $bill->latestPayment;
+                            $latestVerification = $latestPayment?->latestVerification;
 
-                            $latestVerification =
-                                $latestPayment?->latestVerification;
-
-                            $isRejected =
-                                $latestVerification?->status === 'rejected';
+                            $isPaid = $bill->status === 'paid' || $latestPayment?->status === 'paid';
+                            $isRejected = ! $isPaid && ($latestVerification?->status === 'rejected' || $latestPayment?->status === 'rejected');
+                            $isPending = ! $isPaid && ! $isRejected && $latestPayment?->status === 'pending';
+                            $isFutureUnpaid = ! $isPaid && ! $isRejected && ! $isPending && $bill->status === 'unpaid' && ! $bill->hasBillingPeriodStarted();
                         @endphp
 
                         <tr>
@@ -141,6 +142,14 @@
                             {{-- Jenis tagihan --}}
                             <td>
                                 {{ $bill->name }}
+                            </td>
+
+                            {{-- Periode Tagihan --}}
+                            <td>
+                                {{ $bill->billing_period
+                                    ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                                    : '-'
+                                }}
                             </td>
 
                             {{-- Keterangan --}}
@@ -178,7 +187,7 @@
                             {{-- Status --}}
                             <td>
 
-                                @if($bill->status === 'paid')
+                                @if($isPaid)
 
                                     <span class="badge success">
                                         Lunas
@@ -190,11 +199,22 @@
                                         Ditolak
                                     </span>
 
-                                @elseif($latestPayment?->status === 'pending')
+                                @elseif($isPending)
 
                                     <span class="badge pending">
                                         Menunggu
                                     </span>
+
+                                @elseif($isFutureUnpaid)
+
+                                    <div>
+                                        <span class="badge secondary">
+                                            Belum dapat dibayar
+                                        </span>
+                                        <div class="availability-notice" style="font-size: 11px; color: #6B7280; margin-top: 4px;">
+                                            Tersedia mulai {{ $bill->billing_period ? \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('j F Y') : '-' }}
+                                        </div>
+                                    </div>
 
                                 @else
 
@@ -221,10 +241,7 @@
                                         Detail
                                     </a>
 
-                                    @if(
-                                        $bill->status === 'paid'
-                                        && $latestPayment
-                                    )
+                                    @if($isPaid && $latestPayment)
 
                                         <a
                                             href="{{ route(
@@ -248,10 +265,16 @@
                                             Upload Ulang Bukti
                                         </a>
 
-                                    @elseif($latestPayment?->status === 'pending')
+                                    @elseif($isPending)
 
                                         <span class="btn-pending">
                                             Menunggu
+                                        </span>
+
+                                    @elseif($isFutureUnpaid)
+
+                                        <span class="btn-disabled" style="display: inline-flex; align-items: center; justify-content: center; min-height: 30px; padding: 6px 11px; border-radius: 6px; font-size: 10px; font-weight: 500; background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; box-sizing: border-box;">
+                                            Belum Tersedia
                                         </span>
 
                                     @else
@@ -279,7 +302,7 @@
                         <tr>
 
                             <td
-                                colspan="6"
+                                colspan="7"
                                 class="empty-state"
                             >
                                 Tidak ada tagihan.

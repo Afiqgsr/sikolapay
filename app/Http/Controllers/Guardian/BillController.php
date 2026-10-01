@@ -58,22 +58,36 @@ class BillController extends Controller
                                 $paymentQuery->where(
                                     'status',
                                     'pending'
-                                );
+                                )->where(function ($pendingQuery) {
+                                    $pendingQuery->whereDoesntHave('latestVerification')
+                                        ->orWhereHas('latestVerification', function ($verification) {
+                                            $verification->where('status', '!=', 'rejected');
+                                        });
+                                });
                             }
                         );
 
                     } elseif ($status === 'rejected') {
 
-                        $query->whereHas(
-                            'latestPayment',
-                            function ($paymentQuery) {
-
-                                $paymentQuery->where(
-                                    'status',
-                                    'rejected'
-                                );
-                            }
-                        );
+                        $query->where(function ($q) {
+                            $q->whereHas(
+                                'latestPayment',
+                                function ($paymentQuery) {
+                                    $paymentQuery->where(
+                                        'status',
+                                        'rejected'
+                                    );
+                                }
+                            )->orWhereHas(
+                                'latestPayment.latestVerification',
+                                function ($verification) {
+                                    $verification->where(
+                                        'status',
+                                        'rejected'
+                                    );
+                                }
+                            );
+                        });
 
                     } elseif ($status === 'unpaid') {
 
@@ -168,6 +182,7 @@ class BillController extends Controller
             ->whereIn('student_id', $studentIds)
             ->with([
                 'student.classRoom',
+                'latestPayment.latestVerification',
             ])
             ->findOrFail($id);
 
