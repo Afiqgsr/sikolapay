@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\Bills\CreateBillBatchAction;
+use App\Actions\Admin\Bills\UpdateBillBatchAction;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\Bill;
@@ -16,6 +18,11 @@ use Illuminate\Validation\Rule;
 
 class BillController extends Controller
 {
+    public function __construct(
+        private CreateBillBatchAction $createBillBatchAction,
+        private UpdateBillBatchAction $updateBillBatchAction,
+    ) {}
+
     public function index(Request $request)
     {
         $query = BillBatch::query()
@@ -199,55 +206,10 @@ class BillController extends Controller
                 ]);
         }
 
-        $billingPeriod = $validated['billing_period'].'-01';
-
-        DB::transaction(function () use (
-            $billingPeriod,
+        $this->createBillBatchAction->execute(
             $validated,
             $students
-        ) {
-            $batch = BillBatch::create([
-                'name' => $validated['name'],
-
-                'description' => $validated['description'] ?? null,
-
-                'semester' => $validated['semester'],
-
-                'amount' => $validated['amount'],
-
-                'billing_period' => $billingPeriod,
-
-                'due_date' => $validated['due_date'] ?? null,
-
-                'target_type' => $validated['target_type'],
-
-                'target_value' => $validated['target_type'] === 'school'
-                        ? null
-                        : $validated['target_value'],
-            ]);
-
-            foreach ($students as $student) {
-                Bill::create([
-                    'bill_batch_id' => $batch->id,
-
-                    'student_id' => $student->id,
-
-                    'name' => $validated['name'],
-
-                    'description' => $validated['description'] ?? null,
-
-                    'semester' => $validated['semester'],
-
-                    'amount' => $validated['amount'],
-
-                    'billing_period' => $billingPeriod,
-
-                    'due_date' => $validated['due_date'] ?? null,
-
-                    'status' => 'unpaid',
-                ]);
-            }
-        });
+        );
 
         return redirect()
             ->route('admin.bills.index')
@@ -357,58 +319,11 @@ class BillController extends Controller
                 ]);
         }
 
-        $billingPeriod = $validated['billing_period'].'-01';
-
-        DB::transaction(function () use (
+        $this->updateBillBatchAction->execute(
             $bill,
-            $billingPeriod,
             $validated,
             $students
-        ) {
-            $bill->update([
-                'name' => $validated['name'],
-
-                'description' => $validated['description'] ?? null,
-
-                'semester' => $validated['semester'],
-
-                'amount' => $validated['amount'],
-
-                'billing_period' => $billingPeriod,
-
-                'due_date' => $validated['due_date'] ?? null,
-
-                'target_type' => $validated['target_type'],
-
-                'target_value' => $validated['target_type'] === 'school'
-                        ? null
-                        : $validated['target_value'],
-            ]);
-
-            $bill->bills()->delete();
-
-            foreach ($students as $student) {
-                Bill::create([
-                    'bill_batch_id' => $bill->id,
-
-                    'student_id' => $student->id,
-
-                    'name' => $validated['name'],
-
-                    'description' => $validated['description'] ?? null,
-
-                    'semester' => $validated['semester'],
-
-                    'amount' => $validated['amount'],
-
-                    'billing_period' => $billingPeriod,
-
-                    'due_date' => $validated['due_date'] ?? null,
-
-                    'status' => 'unpaid',
-                ]);
-            }
-        });
+        );
 
         return redirect()
             ->route('admin.bills.index')
