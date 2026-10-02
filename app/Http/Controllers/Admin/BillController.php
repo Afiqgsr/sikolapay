@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Actions\Admin\Bills\CreateBillBatchAction;
 use App\Actions\Admin\Bills\UpdateBillBatchAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Bills\StoreBillRequest;
+use App\Http\Requests\Admin\Bills\UpdateBillRequest;
 use App\Models\AcademicYear;
 use App\Models\Bill;
 use App\Models\BillBatch;
@@ -14,7 +16,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class BillController extends Controller
 {
@@ -123,64 +124,9 @@ class BillController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreBillRequest $request)
     {
-        $validSemesters = $this->getValidSemesters();
-
-        $validated = $request->validate([
-            'target_type' => [
-                'required',
-                Rule::in([
-                    'student',
-                    'class',
-                    'grade',
-                    'school',
-                ]),
-            ],
-
-            'target_value' => [
-                'nullable',
-                'max:255',
-            ],
-
-            'name' => [
-                'required',
-                'string',
-                Rule::in(Bill::TYPES),
-            ],
-
-            'semester' => [
-                'required',
-                'string',
-                Rule::in($validSemesters->all()),
-            ],
-
-            'amount' => [
-                'required',
-                'numeric',
-                'min:1',
-            ],
-
-            'billing_period' => [
-                'required',
-                'date_format:Y-m',
-            ],
-
-            'due_date' => [
-                'nullable',
-                'date',
-            ],
-
-            'description' => [
-                'nullable',
-                'string',
-            ],
-        ], [
-            'name.in' => 'Pilihan jenis tagihan tidak valid.',
-            'semester.in' => 'Pilihan semester tidak valid.',
-        ]);
-
-        $this->validateTargetValue($request, $validated['target_type'], $validated['target_value'] ?? null);
+        $validated = $request->validated();
 
         if (
             $validated['target_type'] !== 'school'
@@ -222,66 +168,10 @@ class BillController extends Controller
     }
 
     public function update(
-        Request $request,
+        UpdateBillRequest $request,
         BillBatch $bill
     ) {
-        $validSemesters = $this->getValidSemesters();
-
-        $validated = $request->validate([
-            'target_type' => [
-                'required',
-                Rule::in([
-                    'student',
-                    'class',
-                    'grade',
-                    'school',
-                    'cohort', // Dipertahankan untuk data historis lama jika ada batch bertipe cohort yang diedit
-                ]),
-            ],
-
-            'target_value' => [
-                'nullable',
-                'max:255',
-            ],
-
-            'name' => [
-                'required',
-                'string',
-                Rule::in(Bill::TYPES),
-            ],
-
-            'semester' => [
-                'required',
-                'string',
-                Rule::in($validSemesters->all()),
-            ],
-
-            'amount' => [
-                'required',
-                'numeric',
-                'min:1',
-            ],
-
-            'billing_period' => [
-                'required',
-                'date_format:Y-m',
-            ],
-
-            'due_date' => [
-                'nullable',
-                'date',
-            ],
-
-            'description' => [
-                'nullable',
-                'string',
-            ],
-        ], [
-            'name.in' => 'Pilihan jenis tagihan tidak valid.',
-            'semester.in' => 'Pilihan semester tidak valid.',
-        ]);
-
-        $this->validateTargetValue($request, $validated['target_type'], $validated['target_value'] ?? null);
+        $validated = $request->validated();
 
         if (
             $validated['target_type'] !== 'school'
@@ -360,70 +250,6 @@ class BillController extends Controller
                 'success',
                 'Tagihan berhasil dihapus.'
             );
-    }
-
-    /**
-     * Memvalidasi target_value secara dinamis sesuai target_type.
-     */
-    private function validateTargetValue(Request $request, string $targetType, ?string $targetValue): void
-    {
-        match ($targetType) {
-            'student' => $request->validate([
-                'target_value' => ['required', 'integer', 'exists:students,id'],
-            ], [
-                'target_value.required' => 'Siswa target tagihan wajib dipilih.',
-                'target_value.exists' => 'Data siswa yang dipilih tidak ditemukan.',
-            ]),
-
-            'class' => $request->validate([
-                'target_value' => ['required', 'integer', 'exists:class_rooms,id'],
-            ], [
-                'target_value.required' => 'Kelas target tagihan wajib dipilih.',
-                'target_value.exists' => 'Data kelas yang dipilih tidak ditemukan.',
-            ]),
-
-            'grade' => $request->validate([
-                'target_value' => ['required', 'string', Rule::in(['X', 'XI', 'XII'])],
-            ], [
-                'target_value.required' => 'Tingkat kelas target tagihan wajib dipilih.',
-                'target_value.in' => 'Pilihan tingkat kelas tidak valid. Pilih Kelas X, Kelas XI, atau Kelas XII.',
-            ]),
-
-            'cohort' => $request->validate([
-                'target_value' => ['required', 'integer'],
-            ]),
-
-            'school' => null,
-
-            default => null,
-        };
-    }
-
-    /**
-     * Mengambil daftar semester yang sah berdasarkan Tahun Ajaran (AcademicYear) aktif atau data yang ada.
-     *
-     * @return Collection<int, string>
-     */
-    private function getValidSemesters(): Collection
-    {
-        $activeAcademicYear = AcademicYear::where('is_active', true)->first();
-        if (! $activeAcademicYear) {
-            $activeAcademicYear = AcademicYear::latest()->first();
-        }
-
-        if ($activeAcademicYear) {
-            return collect([
-                'Ganjil '.$activeAcademicYear->name,
-                'Genap '.$activeAcademicYear->name,
-            ]);
-        }
-
-        // Fallback jika belum ada data AcademicYear sama sekali di DB
-        return BillBatch::query()
-            ->whereNotNull('semester')
-            ->where('semester', '!=', '')
-            ->distinct()
-            ->pluck('semester');
     }
 
     /**
