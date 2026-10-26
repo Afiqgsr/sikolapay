@@ -22,7 +22,7 @@
     <div class="report-tabs">
         <a
             href="{{ route('admin.reports.index', ['tab' => 'detail']) }}"
-            class="report-tab-btn {{ $activeTab !== 'recap' ? 'active' : '' }}"
+            class="report-tab-btn {{ $activeTab === 'detail' || ($activeTab !== 'recap' && $activeTab !== 'student_recap') ? 'active' : '' }}"
         >
             Rincian Transaksi
         </a>
@@ -32,327 +32,17 @@
         >
             Rekap per Kelas
         </a>
+        <a
+            href="{{ route('admin.reports.index', ['tab' => 'student_recap']) }}"
+            class="report-tab-btn {{ $activeTab === 'student_recap' ? 'active' : '' }}"
+        >
+            Rekap per Siswa
+        </a>
     </div>
 
-    @if($activeTab !== 'recap')
+    @if($activeTab === 'recap')
         {{-- ========================================================== --}}
-        {{-- TAB 1: RINCIAN TRANSAKSI (FITUR EXISTING UTUH)              --}}
-        {{-- ========================================================== --}}
-
-        {{-- Filter --}}
-        <div class="report-filter-card">
-            <form
-                action="{{ route('admin.reports.index') }}"
-                method="GET"
-                class="report-filter"
-            >
-                <input type="hidden" name="tab" value="detail">
-
-                {{-- Periode Tagihan Awal --}}
-                <div class="report-filter-item">
-                    <label for="startDate">
-                        Periode Tagihan Awal
-                    </label>
-                    <div class="report-input">
-                        <input
-                            type="date"
-                            id="startDate"
-                            name="start_date"
-                            value="{{ request('start_date') }}"
-                            autocomplete="off"
-                        >
-                        <img
-                            src="{{ asset('assets/img/date-black-admin.svg') }}"
-                            alt=""
-                        >
-                    </div>
-                </div>
-
-                {{-- Periode Tagihan Akhir --}}
-                <div class="report-filter-item">
-                    <label for="endDate">
-                        Periode Tagihan Akhir
-                    </label>
-                    <div class="report-input">
-                        <input
-                            type="date"
-                            id="endDate"
-                            name="end_date"
-                            value="{{ request('end_date') }}"
-                            autocomplete="off"
-                        >
-                        <img
-                            src="{{ asset('assets/img/date-black-admin.svg') }}"
-                            alt=""
-                        >
-                    </div>
-                </div>
-
-                {{-- Kelas (Rombel) --}}
-                <div class="report-filter-item">
-                    <label for="classFilter">
-                        Kelas
-                    </label>
-                    <div class="report-select">
-                        <select
-                            id="classFilter"
-                            name="class_room_id"
-                        >
-                            <option value="">
-                                Semua Kelas
-                            </option>
-                            @foreach($classRooms as $classRoom)
-                                <option
-                                    value="{{ $classRoom->id }}"
-                                    @selected((string) request('class_room_id') === (string) $classRoom->id)
-                                >
-                                    {{ $classRoom->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <img
-                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
-                            alt=""
-                        >
-                    </div>
-                </div>
-
-                {{-- Status --}}
-                <div class="report-filter-item">
-                    <label for="statusFilter">
-                        Status
-                    </label>
-                    <div class="report-select">
-                        <select
-                            id="statusFilter"
-                            name="status"
-                        >
-                            <option value="">
-                                Semua Status
-                            </option>
-                            <option
-                                value="paid"
-                                @selected(request('status') === 'paid')
-                            >
-                                Lunas
-                            </option>
-                            <option
-                                value="pending"
-                                @selected(request('status') === 'pending')
-                            >
-                                Menunggu Verifikasi
-                            </option>
-                            <option
-                                value="unpaid"
-                                @selected(request('status') === 'unpaid')
-                            >
-                                Belum Lunas
-                            </option>
-                        </select>
-                        <img
-                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
-                            alt=""
-                        >
-                    </div>
-                </div>
-
-                {{-- Tombol Filter --}}
-                <button
-                    type="submit"
-                    class="btn-report-filter"
-                >
-                    <img
-                        src="{{ asset('assets/img/filter-admin.svg') }}"
-                        alt=""
-                    >
-                    <span>Filter</span>
-                </button>
-
-                {{-- Reset --}}
-                @if(
-                    request('start_date')
-                    || request('end_date')
-                    || request('class_room_id')
-                    || request('status')
-                )
-                    <a
-                        href="{{ route('admin.reports.index', ['tab' => 'detail']) }}"
-                        class="btn-report-reset"
-                    >
-                        Reset
-                    </a>
-                @endif
-            </form>
-        </div>
-
-        {{-- Summary --}}
-        <div class="report-summary">
-            {{-- Total Pemasukan --}}
-            <div class="report-summary-card">
-                <div class="report-summary-icon">
-                    <img
-                        src="{{ asset('assets/img/money.svg') }}"
-                        alt=""
-                    >
-                </div>
-                <div class="report-summary-info">
-                    <strong>
-                        Rp {{ number_format($totalIncome, 0, ',', '.') }}
-                    </strong>
-                    <span>
-                        Total Pemasukan
-                    </span>
-                </div>
-            </div>
-
-            {{-- Total Transaksi --}}
-            <div class="report-summary-card">
-                <div class="report-summary-icon">
-                    <img
-                        src="{{ asset('assets/img/Done_all_alt_round-green-admin.svg') }}"
-                        alt=""
-                    >
-                </div>
-                <div class="report-summary-info">
-                    <strong>
-                        {{ $totalSuccessfulTransactions }}
-                    </strong>
-                    <span>
-                        Total Transaksi Berhasil
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        {{-- Tabel Laporan Rincian Transaksi --}}
-        <div class="report-table-card">
-            <div class="report-table-header">
-                <div>
-                    <h3>
-                        Rincian Laporan
-                    </h3>
-                    <p>
-                        {{ $reports->total() }} data ditemukan
-                    </p>
-                </div>
-
-                {{-- Export Dummy Existing --}}
-                <div class="report-export-actions">
-                    <a
-                        href="#"
-                        class="btn-export btn-export-pdf"
-                    >
-                        <img
-                            src="{{ asset('assets/img/export-red-admin.svg') }}"
-                            alt=""
-                        >
-                        <span>Export PDF</span>
-                    </a>
-                    <a
-                        href="#"
-                        class="btn-export btn-export-excel"
-                    >
-                        <img
-                            src="{{ asset('assets/img/export-green-admin.svg') }}"
-                            alt=""
-                        >
-                        <span>Export Excel</span>
-                    </a>
-                </div>
-            </div>
-
-            {{-- Table --}}
-            <div class="report-table-wrapper">
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th class="col-no">No</th>
-                            <th class="col-date">Tanggal</th>
-                            <th class="col-student">Nama Siswa</th>
-                            <th class="col-class">Kelas</th>
-                            <th class="col-bill">Jenis Tagihan</th>
-                            <th class="col-nominal">Nominal</th>
-                            <th class="col-status">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($reports as $bill)
-                            @php
-                                $payment = $bill->latestPayment;
-                                $latestVerification = $payment?->latestVerification;
-                                $hasRejectedVerification = $latestVerification?->status === 'rejected';
-                                $isResubmitted = $hasRejectedVerification
-                                    && $payment?->proof_uploaded_at
-                                    && $latestVerification?->processed_at
-                                    && $payment->proof_uploaded_at->gt($latestVerification->processed_at);
-
-                                if ($bill->status === 'paid' || $payment?->status === 'paid') {
-                                    $displayStatus = 'paid';
-                                } elseif (
-                                    $payment?->status === 'pending'
-                                    && $payment?->proof_of_payment
-                                    && (!$hasRejectedVerification || $isResubmitted)
-                                ) {
-                                    $displayStatus = 'pending';
-                                } else {
-                                    $displayStatus = 'unpaid';
-                                }
-
-                                $reportDate = $payment?->paid_at ?? $payment?->created_at ?? $bill->created_at;
-                            @endphp
-                            <tr>
-                                <td class="col-no">
-                                    {{ $reports->firstItem() + $loop->index }}
-                                </td>
-                                <td class="col-date">
-                                    {{ $reportDate ? $reportDate->translatedFormat('d M Y') : '-' }}
-                                </td>
-                                <td class="col-student">
-                                    <div class="report-student-name">
-                                        {{ $bill->student?->name ?? '-' }}
-                                    </div>
-                                </td>
-                                <td class="col-class">
-                                    {{ $bill->student?->classRoom?->name ?? '-' }}
-                                </td>
-                                <td class="col-bill">
-                                    {{ $bill->name }}
-                                </td>
-                                <td class="col-nominal">
-                                    Rp {{ number_format($bill->amount, 0, ',', '.') }}
-                                </td>
-                                <td class="col-status">
-                                    @if($displayStatus === 'paid')
-                                        <span class="status-badge status-paid">Lunas</span>
-                                    @elseif($displayStatus === 'pending')
-                                        <span class="status-badge status-pending">Menunggu</span>
-                                    @else
-                                        <span class="status-badge status-unpaid">Belum Lunas</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="report-empty">
-                                    Tidak ada data laporan yang ditemukan.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- Pagination --}}
-            @if($reports->hasPages())
-                <div class="report-pagination">
-                    {{ $reports->links() }}
-                </div>
-            @endif
-        </div>
-
-    @else
-        {{-- ========================================================== --}}
-        {{-- TAB 2: REKAP PER KELAS (FITUR REKAPITULASI BARU)            --}}
+        {{-- TAB 2: REKAP PER KELAS (FITUR REKAPITULASI KELAS)           --}}
         {{-- ========================================================== --}}
 
         {{-- Filter Card Rekap --}}
@@ -657,6 +347,575 @@
                 <p>Silakan pilih Bulan, Tahun, Jenis Tagihan, dan Tingkat Kelas lalu klik <strong>Tampilkan</strong> untuk melihat rekapitulasi per kelas.</p>
             </div>
         @endif
+
+    @elseif($activeTab === 'student_recap')
+        {{-- ========================================================== --}}
+        {{-- TAB 3: REKAP PER SISWA (FITUR REKAPITULASI SISWA BARU)      --}}
+        {{-- ========================================================== --}}
+
+        {{-- Filter Card Rekap Siswa --}}
+        <div class="report-filter-card">
+            <form
+                action="{{ route('admin.reports.index') }}"
+                method="GET"
+                class="report-filter"
+            >
+                <input type="hidden" name="tab" value="student_recap">
+
+                {{-- Bulan --}}
+                <div class="report-filter-item">
+                    <label for="studentRecapMonth">
+                        Bulan
+                    </label>
+                    <div class="report-select">
+                        <select
+                            id="studentRecapMonth"
+                            name="month"
+                            required
+                        >
+                            @php
+                                $months = [
+                                    1 => 'Januari',
+                                    2 => 'Februari',
+                                    3 => 'Maret',
+                                    4 => 'April',
+                                    5 => 'Mei',
+                                    6 => 'Juni',
+                                    7 => 'Juli',
+                                    8 => 'Agustus',
+                                    9 => 'September',
+                                    10 => 'Oktober',
+                                    11 => 'November',
+                                    12 => 'Desember',
+                                ];
+                            @endphp
+                            @foreach($months as $mNum => $mName)
+                                <option
+                                    value="{{ $mNum }}"
+                                    @selected($selectedStudentMonth === $mNum)
+                                >
+                                    {{ $mName }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <img
+                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Tahun --}}
+                <div class="report-filter-item">
+                    <label for="studentRecapYear">
+                        Tahun
+                    </label>
+                    <div class="report-select">
+                        <select
+                            id="studentRecapYear"
+                            name="year"
+                            required
+                        >
+                            @foreach($availableYears as $yr)
+                                <option
+                                    value="{{ $yr }}"
+                                    @selected($selectedStudentYear === $yr)
+                                >
+                                    {{ $yr }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <img
+                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Jenis Tagihan --}}
+                <div class="report-filter-item" style="flex: 1.2 1 180px;">
+                    <label for="studentRecapBillName">
+                        Jenis Tagihan
+                    </label>
+                    <div class="report-select">
+                        <select
+                            id="studentRecapBillName"
+                            name="bill_name"
+                        >
+                            <option value="all" @selected($selectedStudentBillName === 'all' || empty($selectedStudentBillName))>
+                                Semua Jenis Tagihan
+                            </option>
+                            @foreach($availableBillTypes as $bType)
+                                <option
+                                    value="{{ $bType }}"
+                                    @selected($selectedStudentBillName === $bType)
+                                >
+                                    {{ $bType }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <img
+                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Cari Siswa / NIS --}}
+                <div class="report-filter-item" style="flex: 1.5 1 200px;">
+                    <label for="studentRecapSearch">
+                        Cari Siswa / NIS
+                    </label>
+                    <div class="report-input">
+                        <input
+                            type="text"
+                            id="studentRecapSearch"
+                            name="search"
+                            value="{{ $selectedStudentSearch }}"
+                            placeholder="Nama Siswa atau NIS..."
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                {{-- Tombol Filter --}}
+                <button
+                    type="submit"
+                    class="btn-report-filter"
+                >
+                    <img
+                        src="{{ asset('assets/img/filter-admin.svg') }}"
+                        alt=""
+                    >
+                    <span>Tampilkan</span>
+                </button>
+
+                {{-- Reset --}}
+                @if($studentRecapFiltered)
+                    <a
+                        href="{{ route('admin.reports.index', ['tab' => 'student_recap']) }}"
+                        class="btn-report-reset"
+                    >
+                        Reset
+                    </a>
+                @endif
+            </form>
+        </div>
+
+        @if($studentRecapFiltered && $studentRecapStudents)
+            {{-- Tabel Daftar Siswa Unik --}}
+            <div class="report-table-card">
+                <div class="report-table-header">
+                    <div>
+                        <h3>
+                            Daftar Siswa
+                        </h3>
+                        <p>
+                            {{ $studentRecapStudents->total() }} siswa ditemukan
+                        </p>
+                    </div>
+                </div>
+
+                <div class="report-table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th class="col-no" style="width: 8%;">No</th>
+                                <th style="width: 22%;">NIS</th>
+                                <th style="width: 32%;">Nama Siswa</th>
+                                <th style="width: 20%;">Kelas</th>
+                                <th style="width: 18%; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($studentRecapStudents as $student)
+                                <tr>
+                                    <td class="col-no">
+                                        {{ $studentRecapStudents->firstItem() + $loop->index }}
+                                    </td>
+                                    <td>
+                                        <strong>{{ $student->nis ?? '-' }}</strong>
+                                    </td>
+                                    <td>
+                                        <div class="report-student-name">
+                                            {{ $student->name }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{ $student->classRoom?->name ?? 'Tanpa Kelas' }}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div style="display: inline-flex; gap: 8px; justify-content: center; align-items: center;">
+                                            <a
+                                                href="{{ route('admin.reports.student.preview', array_merge(['student' => $student->id, 'month' => $selectedStudentMonth, 'year' => $selectedStudentYear], (!empty($selectedStudentBillName) && $selectedStudentBillName !== 'all') ? ['bill_name' => $selectedStudentBillName] : [])) }}"
+                                                target="_blank"
+                                                class="btn-export btn-export-pdf"
+                                                style="height: 28px; padding: 2px 10px; font-size: 12px;"
+                                                title="Preview Laporan Siswa"
+                                            >
+                                                <img
+                                                    src="{{ asset('assets/img/export-red-admin.svg') }}"
+                                                    alt=""
+                                                    style="width: 14px; height: 14px;"
+                                                >
+                                                <span>Preview</span>
+                                            </a>
+                                            <a
+                                                href="{{ route('admin.reports.student.export-excel', array_merge(['student' => $student->id, 'month' => $selectedStudentMonth, 'year' => $selectedStudentYear], (!empty($selectedStudentBillName) && $selectedStudentBillName !== 'all') ? ['bill_name' => $selectedStudentBillName] : [])) }}"
+                                                class="btn-export btn-export-excel"
+                                                style="height: 28px; padding: 2px 10px; font-size: 12px;"
+                                                title="Export Excel Siswa"
+                                            >
+                                                <img
+                                                    src="{{ asset('assets/img/export-green-admin.svg') }}"
+                                                    alt=""
+                                                    style="width: 14px; height: 14px;"
+                                                >
+                                                <span>Excel</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="report-empty">
+                                        Tidak ada data siswa dengan tagihan pada periode dan kriteria yang dipilih.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Pagination --}}
+                @if($studentRecapStudents->hasPages())
+                    <div class="report-pagination">
+                        {{ $studentRecapStudents->links() }}
+                    </div>
+                @endif
+            </div>
+        @else
+            <div class="report-empty-box">
+                <p>Silakan pilih Bulan, Tahun, Jenis Tagihan, dan masukkan kata kunci pencarian (opsional) lalu klik <strong>Tampilkan</strong> untuk melihat daftar siswa.</p>
+            </div>
+        @endif
+
+    @else
+        {{-- ========================================================== --}}
+        {{-- TAB 1: RINCIAN TRANSAKSI (FITUR EXISTING UTUH)              --}}
+        {{-- ========================================================== --}}
+
+        {{-- Filter --}}
+        <div class="report-filter-card">
+            <form
+                action="{{ route('admin.reports.index') }}"
+                method="GET"
+                class="report-filter"
+            >
+                <input type="hidden" name="tab" value="detail">
+
+                {{-- Periode Tagihan Awal --}}
+                <div class="report-filter-item">
+                    <label for="startDate">
+                        Periode Tagihan Awal
+                    </label>
+                    <div class="report-input">
+                        <input
+                            type="date"
+                            id="startDate"
+                            name="start_date"
+                            value="{{ request('start_date') }}"
+                            autocomplete="off"
+                        >
+                        <img
+                            src="{{ asset('assets/img/date-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Periode Tagihan Akhir --}}
+                <div class="report-filter-item">
+                    <label for="endDate">
+                        Periode Tagihan Akhir
+                    </label>
+                    <div class="report-input">
+                        <input
+                            type="date"
+                            id="endDate"
+                            name="end_date"
+                            value="{{ request('end_date') }}"
+                            autocomplete="off"
+                        >
+                        <img
+                            src="{{ asset('assets/img/date-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Kelas (Rombel) --}}
+                <div class="report-filter-item">
+                    <label for="classFilter">
+                        Kelas
+                    </label>
+                    <div class="report-select">
+                        <select
+                            id="classFilter"
+                            name="class_room_id"
+                        >
+                            <option value="">
+                                Semua Kelas
+                            </option>
+                            @foreach($classRooms as $classRoom)
+                                <option
+                                    value="{{ $classRoom->id }}"
+                                    @selected((string) request('class_room_id') === (string) $classRoom->id)
+                                >
+                                    {{ $classRoom->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <img
+                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Status --}}
+                <div class="report-filter-item">
+                    <label for="statusFilter">
+                        Status
+                    </label>
+                    <div class="report-select">
+                        <select
+                            id="statusFilter"
+                            name="status"
+                        >
+                            <option value="">
+                                Semua Status
+                            </option>
+                            <option
+                                value="paid"
+                                @selected(request('status') === 'paid')
+                            >
+                                Lunas
+                            </option>
+                            <option
+                                value="pending"
+                                @selected(request('status') === 'pending')
+                            >
+                                Menunggu Verifikasi
+                            </option>
+                            <option
+                                value="unpaid"
+                                @selected(request('status') === 'unpaid')
+                            >
+                                Belum Lunas
+                            </option>
+                        </select>
+                        <img
+                            src="{{ asset('assets/img/Expand_down_light-black-admin.svg') }}"
+                            alt=""
+                        >
+                    </div>
+                </div>
+
+                {{-- Tombol Filter --}}
+                <button
+                    type="submit"
+                    class="btn-report-filter"
+                >
+                    <img
+                        src="{{ asset('assets/img/filter-admin.svg') }}"
+                        alt=""
+                    >
+                    <span>Filter</span>
+                </button>
+
+                {{-- Reset --}}
+                @if(
+                    request('start_date')
+                    || request('end_date')
+                    || request('class_room_id')
+                    || request('status')
+                )
+                    <a
+                        href="{{ route('admin.reports.index', ['tab' => 'detail']) }}"
+                        class="btn-report-reset"
+                    >
+                        Reset
+                    </a>
+                @endif
+            </form>
+        </div>
+
+        {{-- Summary --}}
+        <div class="report-summary">
+            {{-- Total Pemasukan --}}
+            <div class="report-summary-card">
+                <div class="report-summary-icon">
+                    <img
+                        src="{{ asset('assets/img/money.svg') }}"
+                        alt=""
+                    >
+                </div>
+                <div class="report-summary-info">
+                    <strong>
+                        Rp {{ number_format($totalIncome, 0, ',', '.') }}
+                    </strong>
+                    <span>
+                        Total Pemasukan
+                    </span>
+                </div>
+            </div>
+
+            {{-- Total Transaksi --}}
+            <div class="report-summary-card">
+                <div class="report-summary-icon">
+                    <img
+                        src="{{ asset('assets/img/Done_all_alt_round-green-admin.svg') }}"
+                        alt=""
+                    >
+                </div>
+                <div class="report-summary-info">
+                    <strong>
+                        {{ $totalSuccessfulTransactions }}
+                    </strong>
+                    <span>
+                        Total Transaksi Berhasil
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Tabel Laporan Rincian Transaksi --}}
+        <div class="report-table-card">
+            <div class="report-table-header">
+                <div>
+                    <h3>
+                        Rincian Laporan
+                    </h3>
+                    <p>
+                        {{ $reports->total() }} data ditemukan
+                    </p>
+                </div>
+
+                {{-- Export Dummy Existing --}}
+                <div class="report-export-actions">
+                    <a
+                        href="{{ route('admin.reports.transaction.preview', array_filter(['start_date' => request('start_date'), 'end_date' => request('end_date'), 'class_room_id' => request('class_room_id'), 'status' => request('status')])) }}"
+                        target="_blank"
+                        class="btn-export btn-export-pdf"
+                    >
+                        <img
+                            src="{{ asset('assets/img/export-red-admin.svg') }}"
+                            alt=""
+                        >
+                        <span>Export PDF</span>
+                    </a>
+                    <a
+                        href="#"
+                        class="btn-export btn-export-excel"
+                    >
+                        <img
+                            src="{{ asset('assets/img/export-green-admin.svg') }}"
+                            alt=""
+                        >
+                        <span>Export Excel</span>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Table --}}
+            <div class="report-table-wrapper">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th class="col-no">No</th>
+                            <th class="col-date">Tanggal</th>
+                            <th class="col-student">Nama Siswa</th>
+                            <th class="col-class">Kelas</th>
+                            <th class="col-bill">Jenis Tagihan</th>
+                            <th class="col-nominal">Nominal</th>
+                            <th class="col-status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($reports as $bill)
+                            @php
+                                $payment = $bill->latestPayment;
+                                $latestVerification = $payment?->latestVerification;
+                                $hasRejectedVerification = $latestVerification?->status === 'rejected';
+                                $isResubmitted = $hasRejectedVerification
+                                    && $payment?->proof_uploaded_at
+                                    && $latestVerification?->processed_at
+                                    && $payment->proof_uploaded_at->gt($latestVerification->processed_at);
+
+                                if ($bill->status === 'paid' || $payment?->status === 'paid') {
+                                    $displayStatus = 'paid';
+                                } elseif (
+                                    $payment?->status === 'pending'
+                                    && $payment?->proof_of_payment
+                                    && (!$hasRejectedVerification || $isResubmitted)
+                                ) {
+                                    $displayStatus = 'pending';
+                                } else {
+                                    $displayStatus = 'unpaid';
+                                }
+
+                                $reportDate = $payment?->paid_at ?? $payment?->created_at ?? $bill->created_at;
+                            @endphp
+                            <tr>
+                                <td class="col-no">
+                                    {{ $reports->firstItem() + $loop->index }}
+                                </td>
+                                <td class="col-date">
+                                    {{ $reportDate ? $reportDate->translatedFormat('d M Y') : '-' }}
+                                </td>
+                                <td class="col-student">
+                                    <div class="report-student-name">
+                                        {{ $bill->student?->name ?? '-' }}
+                                    </div>
+                                </td>
+                                <td class="col-class">
+                                    {{ $bill->student?->classRoom?->name ?? '-' }}
+                                </td>
+                                <td class="col-bill">
+                                    {{ $bill->name }}
+                                </td>
+                                <td class="col-nominal">
+                                    Rp {{ number_format($bill->amount, 0, ',', '.') }}
+                                </td>
+                                <td class="col-status">
+                                    @if($displayStatus === 'paid')
+                                        <span class="status-badge status-paid">Lunas</span>
+                                    @elseif($displayStatus === 'pending')
+                                        <span class="status-badge status-pending">Menunggu</span>
+                                    @else
+                                        <span class="status-badge status-unpaid">Belum Lunas</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="report-empty">
+                                    Tidak ada data laporan yang ditemukan.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination --}}
+            @if($reports->hasPages())
+                <div class="report-pagination">
+                    {{ $reports->links() }}
+                </div>
+            @endif
+        </div>
 
     @endif
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Payments\RecordManualPaymentAction;
-use App\Actions\Payments\RejectPaymentAction;
-use App\Actions\Payments\VerifyPaymentAction;
+use App\Actions\Admin\Payments\RecordManualPaymentAction;
+use App\Actions\Admin\Payments\RejectPaymentAction;
+use App\Actions\Admin\Payments\VerifyPaymentAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payments\RejectPaymentRequest;
 use App\Http\Requests\Admin\Payments\StoreManualPaymentRequest;

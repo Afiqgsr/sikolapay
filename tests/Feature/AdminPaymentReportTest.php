@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Reports\BuildClassPaymentRecapAction;
+use App\Actions\Admin\Reports\BuildClassPaymentRecapAction;
 use App\Models\AcademicYear;
 use App\Models\Bill;
 use App\Models\BillBatch;
@@ -1002,4 +1002,46 @@ test('recap bill type dropdown only contains official Bill::TYPES and excludes l
 
     // Pastikan nama legacy seperti SPP September 2026 tidak menjadi opsi baru di dropdown
     $response->assertDontSee('value="SPP September 2026"', false);
+});
+
+// Test R17: Preview Laporan Rincian Transaksi (Export PDF Tab 1)
+test('transaction preview page returns ok with complete filtered transactions', function () {
+    $classRoomA = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'XII RPL 1', 'grade' => 'XII']);
+    $classRoomB = ClassRoom::create(['academic_year_id' => $this->academicYear->id, 'name' => 'XII RPL 2', 'grade' => 'XII']);
+
+    $userA = User::factory()->create(['role' => 'student', 'status' => 'active']);
+    $studentA = Student::create(['user_id' => $userA->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classRoomA->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-A', 'name' => 'Siswa Kelas A', 'gender' => 'L']);
+
+    $userB = User::factory()->create(['role' => 'student', 'status' => 'active']);
+    $studentB = Student::create(['user_id' => $userB->id, 'guardian_id' => $this->guardian->id, 'class_room_id' => $classRoomB->id, 'entry_year' => 2026, 'status' => 'active', 'nis' => 'NIS-B', 'name' => 'Siswa Kelas B', 'gender' => 'P']);
+
+    createPaymentReportBill(['student_id' => $studentA->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'billing_period' => '2026-10-01', 'due_date' => '2026-10-10', 'status' => 'paid']);
+    createPaymentReportBill(['student_id' => $studentB->id, 'name' => 'SPP Bulanan', 'amount' => 500000, 'billing_period' => '2026-10-01', 'due_date' => '2026-10-10', 'status' => 'paid']);
+
+    // Akses tanpa filter
+    $response = $this->actingAs($this->adminUser)->get(route('admin.reports.transaction.preview'));
+    $response->assertOk()
+        ->assertViewIs('admin.reports.transaction-preview')
+        ->assertSee('Laporan Rincian Transaksi Pembayaran')
+        ->assertSee('Siswa Kelas A')
+        ->assertSee('Siswa Kelas B')
+        ->assertSee('Cetak / Simpan PDF');
+
+    // Akses dengan filter kelas
+    $responseFiltered = $this->actingAs($this->adminUser)->get(route('admin.reports.transaction.preview', [
+        'class_room_id' => $classRoomA->id,
+        'status' => 'paid',
+        'start_date' => '2026-10-01',
+        'end_date' => '2026-10-31',
+    ]));
+    $responseFiltered->assertOk()
+        ->assertSee('Siswa Kelas A')
+        ->assertDontSee('Siswa Kelas B')
+        ->assertSee('XII RPL 1');
+});
+
+test('transaction preview page is protected by authentication and admin role', function () {
+    $this->get(route('admin.reports.transaction.preview'))->assertRedirect(route('login'));
+    $this->actingAs($this->studentUser)->get(route('admin.reports.transaction.preview'))->assertForbidden();
+    $this->actingAs($this->guardianUser)->get(route('admin.reports.transaction.preview'))->assertForbidden();
 });

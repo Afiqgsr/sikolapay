@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Reports;
+namespace App\Actions\Admin\Reports;
 
 use App\Models\Bill;
 use App\Models\School;

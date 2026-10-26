@@ -86,6 +86,9 @@
 
                         <option
                             value="{{ $student->id }}"
+                            data-name="{{ $student->name }}"
+                            data-class="{{ $student->classRoom?->name ?? '-' }}"
+                            data-nis="{{ $student->nis }}"
                             @selected(old('student_id') == $student->id)
                         >
                             {{ $student->name }}

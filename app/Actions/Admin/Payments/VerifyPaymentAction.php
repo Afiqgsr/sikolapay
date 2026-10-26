@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Payments;
+namespace App\Actions\Admin\Payments;
 
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;

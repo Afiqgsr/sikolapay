@@ -102,8 +102,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/reports/preview', [ReportController::class, 'preview'])
         ->name('admin.reports.preview');
 
+    Route::get('/admin/reports/transaction/preview', [ReportController::class, 'previewTransaction'])
+        ->name('admin.reports.transaction.preview');
+
     Route::get('/admin/reports/export/excel', [ReportController::class, 'exportExcel'])
         ->name('admin.reports.export-excel');
+
+    Route::get('/admin/reports/student/{student}/preview', [ReportController::class, 'previewStudent'])
+        ->name('admin.reports.student.preview');
+
+    Route::get('/admin/reports/student/{student}/export/excel', [ReportController::class, 'exportStudentExcel'])
+        ->name('admin.reports.student.export-excel');
 
 });
 

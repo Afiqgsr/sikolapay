@@ -1,8 +1,8 @@
 <?php
 
-use App\Actions\Payments\RecordManualPaymentAction;
-use App\Actions\Payments\RejectPaymentAction;
-use App\Actions\Payments\VerifyPaymentAction;
+use App\Actions\Admin\Payments\RecordManualPaymentAction;
+use App\Actions\Admin\Payments\RejectPaymentAction;
+use App\Actions\Admin\Payments\VerifyPaymentAction;
 use App\Models\AcademicYear;
 use App\Models\Bill;
 use App\Models\ClassRoom;

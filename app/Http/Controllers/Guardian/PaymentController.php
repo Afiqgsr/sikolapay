@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Guardian;
 
-use App\Actions\Payments\CreateGuardianPaymentAction;
+use App\Actions\Guardian\Payments\CreateGuardianPaymentAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Guardian\Payments\StoreGuardianPaymentRequest;
 use App\Http\Requests\Guardian\Payments\UploadGuardianPaymentProofRequest;

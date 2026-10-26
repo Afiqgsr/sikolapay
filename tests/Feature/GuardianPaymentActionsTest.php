@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Payments\CreateGuardianPaymentAction;
+use App\Actions\Guardian\Payments\CreateGuardianPaymentAction;
 use App\Models\AcademicYear;
 use App\Models\Bill;
 use App\Models\ClassRoom;

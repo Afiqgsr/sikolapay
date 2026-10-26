@@ -197,6 +197,192 @@
     color: var(--neutralnr-50);
 }
 
+/* Custom Searchable Select (Progressive Enhancement) */
+
+.sikola-searchable-select {
+    position: relative;
+    width: 100%;
+}
+
+.sikola-searchable-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-family: var(--paragraph-p12-regular-font-family);
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--neutralnr-90);
+    text-align: left;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+}
+
+.sikola-searchable-trigger:focus-visible,
+.sikola-searchable-select.is-open .sikola-searchable-trigger {
+    border-color: var(--primarypr-40);
+    box-shadow: 0 0 0 2px rgba(61, 69, 170, 0.08);
+    outline: none;
+}
+
+.sikola-searchable-trigger.has-error {
+    border-color: var(--secondarysc-40);
+}
+
+.sikola-searchable-trigger-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sikola-searchable-trigger-text.placeholder {
+    color: var(--neutralnr-50);
+}
+
+.sikola-searchable-arrow {
+    flex-shrink: 0;
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+    color: var(--neutralnr-60);
+    transition: transform 0.2s ease;
+}
+
+.sikola-searchable-select.is-open .sikola-searchable-arrow {
+    transform: rotate(180deg);
+}
+
+.sikola-searchable-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background-color: #ffffff;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: none;
+    overflow: hidden;
+}
+
+.sikola-searchable-select.is-open .sikola-searchable-dropdown {
+    display: block;
+}
+
+.sikola-searchable-search-wrapper {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid #f2f4f7;
+    background-color: #fafbfc;
+}
+
+.admin-manual-group .sikola-searchable-search-input,
+.sikola-searchable-search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 36px !important;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    font-family: var(--paragraph-p12-regular-font-family);
+    font-size: 12px;
+    color: var(--neutralnr-90);
+    outline: none;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2398a2b3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-4.35-4.35M16.65 11a5.65 5.65 0 11-11.3 0 5.65 5.65 0 0111.3 0z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 16px 16px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.sikola-searchable-search-input::placeholder {
+    color: var(--neutralnr-50);
+}
+
+.admin-manual-group .sikola-searchable-search-input:focus,
+.sikola-searchable-search-input:focus {
+    border-color: var(--primarypr-40);
+    box-shadow: 0 0 0 2px rgba(61, 69, 170, 0.08);
+}
+
+.sikola-searchable-options {
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 4px 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sikola-searchable-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: var(--paragraph-p12-regular-font-family);
+    font-size: 12px;
+    color: var(--neutralnr-90);
+    transition: background-color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sikola-searchable-option-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sikola-searchable-option-name {
+    font-weight: 600;
+    color: var(--neutralnr-90);
+}
+
+.sikola-searchable-option-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    background-color: #f2f4f7;
+    border-radius: 4px;
+    color: var(--neutralnr-70);
+    font-weight: 500;
+}
+
+.sikola-searchable-option-sub {
+    font-size: 11px;
+    color: var(--neutralnr-60);
+}
+
+.sikola-searchable-option:hover,
+.sikola-searchable-option.is-highlighted {
+    background-color: #f4f5f8;
+}
+
+.sikola-searchable-option.is-selected {
+    background-color: rgba(61, 69, 170, 0.08);
+    color: var(--primarypr-40);
+}
+
+.sikola-searchable-option.is-selected .sikola-searchable-option-name {
+    color: var(--primarypr-40);
+}
+
+.sikola-searchable-empty {
+    padding: 14px 12px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--neutralnr-50);
+}
+
 
 /* Error */
 

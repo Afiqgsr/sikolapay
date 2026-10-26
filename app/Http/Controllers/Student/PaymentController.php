@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Student;
 
-use App\Actions\Payments\CreateStudentBatchPaymentsAction;
-use App\Actions\Payments\CreateStudentPaymentAction;
+use App\Actions\Student\Payments\CreateStudentBatchPaymentsAction;
+use App\Actions\Student\Payments\CreateStudentPaymentAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\Payments\StoreStudentBatchPaymentRequest;
 use App\Http\Requests\Student\Payments\StoreStudentPaymentRequest;

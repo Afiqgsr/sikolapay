@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Payments;
+namespace App\Actions\Student\Payments;
 
 use App\Models\Bill;
 use App\Models\Payment;
