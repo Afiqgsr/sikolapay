@@ -22,7 +22,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+
+Route::redirect('/', '/login')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -104,6 +105,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/admin/reports/transaction/preview', [ReportController::class, 'previewTransaction'])
         ->name('admin.reports.transaction.preview');
+    
+    Route::get('/admin/reports/transaction/export/excel', [ReportController::class, 'exportTransactionExcel'])
+        ->name('admin.reports.transaction.export-excel');
 
     Route::get('/admin/reports/export/excel', [ReportController::class, 'exportExcel'])
         ->name('admin.reports.export-excel');

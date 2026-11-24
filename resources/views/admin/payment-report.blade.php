@@ -816,7 +816,12 @@
                         <span>Export PDF</span>
                     </a>
                     <a
-                        href="#"
+                        href="{{ route('admin.reports.transaction.export-excel', array_filter([
+                        'start_date' => request('start_date'),
+                        'end_date' => request('end_date'),
+                        'class_room_id' => request('class_room_id'),
+                        'status' => request('status'),
+                        ])) }}"
                         class="btn-export btn-export-excel"
                     >
                         <img

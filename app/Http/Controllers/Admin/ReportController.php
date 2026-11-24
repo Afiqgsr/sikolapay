@@ -32,9 +32,7 @@ class ReportController extends Controller
         // Tentukan tab aktif, default adalah 'detail' agar behavior existing 100% terjaga
         $activeTab = $request->query('tab', 'detail');
 
-        // ==========================================
         // 1. DATA UNTUK TAB 1: RINCIAN TRANSAKSI (EXISTING)
-        // ==========================================
         $request->validate([
             'start_date' => [
                 'nullable',
@@ -61,6 +59,7 @@ class ReportController extends Controller
                 'student.classRoom',
                 'latestPayment.latestVerification',
             ]);
+            
         $startBillingPeriod = $request->filled('start_date')
             ? Carbon::parse((string) $request->input('start_date'))->startOfMonth()->toDateString()
             : null;
@@ -189,9 +188,7 @@ class ReportController extends Controller
             ->orderBy('name')
             ->get();
 
-        // ==========================================
         // 2. DATA UNTUK TAB 2: REKAP PER KELAS (EXISTING)
-        // ==========================================
         // Ambil daftar Jenis Tagihan dari satu sumber resmi (Bill::TYPES)
         // agar data legacy seperti "SPP Juli 2026" tidak lagi muncul di dropdown
         $availableBillTypes = collect(Bill::TYPES);
@@ -217,9 +214,7 @@ class ReportController extends Controller
             $recapData = $recapAction->execute($month, $year, $billName, $grade);
         }
 
-        // ==========================================
         // 3. DATA UNTUK TAB 3: REKAP PER SISWA (BARU)
-        // ==========================================
         $studentRecapStudents = null;
         $studentRecapFiltered = false;
 
@@ -454,6 +449,232 @@ class ReportController extends Controller
             'totalCount' => $totalCount,
         ]);
     }
+
+    /**
+     * Mengekspor laporan rincian transaksi ke format CSV (Excel).
+     */
+    public function exportTransactionExcel(Request $request): StreamedResponse
+    {
+        // Validasi filter laporan
+        $request->validate([
+            'start_date' => [
+                'nullable',
+                'date',
+            ],
+            'end_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:start_date',
+            ],
+            'class_room_id' => [
+                'nullable',
+                'integer',
+                'exists:class_rooms,id',
+            ],
+            'status' => [
+                'nullable',
+                'in:paid,pending,unpaid',
+            ],
+        ]);
+
+        // Ambil data tagihan beserta relasi siswa, kelas, dan pembayaran terakhir
+        $query = Bill::query()
+            ->with([
+                'student.classRoom',
+                'latestPayment.latestVerification',
+            ]);
+
+        // Sesuaikan periode awal dan akhir dengan filter pada halaman laporan
+        $startBillingPeriod = $request->filled('start_date')
+            ? Carbon::parse((string) $request->input('start_date'))
+                ->startOfMonth()->toDateString()
+            : null;
+
+        $endBillingPeriod = $request->filled('end_date')
+            ? Carbon::parse((string) $request->input('end_date'))
+                ->startOfMonth()->toDateString()
+            : null;
+
+        // Filter berdasarkan kelas
+        if ($request->filled('class_room_id')) {
+            $query->whereHas('student', function (Builder $studentQuery) use ($request) {
+                $studentQuery->where(
+                    'class_room_id',
+                    $request->class_room_id
+                );
+            });
+        }
+
+        // Filter periode awal
+        if ($startBillingPeriod !== null) {
+            $query->whereDate(
+                'billing_period',
+                '>=',
+                $startBillingPeriod
+            );
+        }
+
+        // Filter periode akhir
+        if ($endBillingPeriod !== null) {
+            $query->whereDate(
+                'billing_period',
+                '<=',
+                $endBillingPeriod
+            );
+        }
+
+        // Filter berdasarkan status pembayaran
+        if ($request->filled('status')) {
+            if ($request->status === 'paid') {
+                $query->where(function (Builder $statusQuery) {
+                    $statusQuery
+                        ->where('status', 'paid')
+                        ->orWhereHas('latestPayment', function (Builder $paymentQuery) {
+                            $paymentQuery->where('status', 'paid');
+                        });
+                });
+            }
+
+            if ($request->status === 'pending') {
+                $query->whereHas('latestPayment', function (Builder $paymentQuery) {
+                    $paymentQuery
+                        ->where('status', 'pending')
+                        ->whereNotNull('proof_of_payment');
+                });
+            }
+
+            if ($request->status === 'unpaid') {
+                $query
+                    ->where('status', 'unpaid')
+                    ->whereDoesntHave('latestPayment', function (Builder $paymentQuery) {
+                        $paymentQuery->whereIn('status', ['paid', 'pending']);
+                    });
+            }
+        }
+
+        // Ambil seluruh data tanpa pagination
+        $reports = $query->latest()->get();
+
+        $selectedClass = $request->filled('class_room_id')
+            ? ClassRoom::find($request->class_room_id)
+            : null;
+
+        $school = School::first();
+
+        $totalNominal = $reports->sum('amount');
+        $totalCount = $reports->count();
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $status = $request->input('status');
+
+        $fileName = 'rincian-transaksi-' . now()->format('YmdHis') . '.csv';
+
+        return response()->streamDownload(function () use (
+            $reports,
+            $school,
+            $selectedClass,
+            $startDate,
+            $endDate,
+            $status,
+            $totalNominal,
+            $totalCount
+        ) {
+            $handle = fopen('php://output', 'w');
+
+            if ($handle === false) {
+                throw new \RuntimeException('Unable to open CSV output stream.');
+            }
+
+            // BOM agar karakter Bahasa Indonesia terbaca dengan baik di Excel
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Informasi laporan
+            fputcsv($handle, [$school?->name ?? 'SEKOLAH SIKOLAPAY']);
+            fputcsv($handle, ['LAPORAN RINCIAN TRANSAKSI PEMBAYARAN']);
+            fputcsv($handle, ['Periode Awal', $startDate ?: 'Semua']);
+            fputcsv($handle, ['Periode Akhir', $endDate ?: 'Semua']);
+            fputcsv($handle, ['Kelas', $selectedClass?->name ?? 'Semua Kelas']);
+            fputcsv($handle, [
+                'Status',
+                match ($status) {
+                    'paid' => 'Lunas',
+                    'pending' => 'Menunggu Verifikasi',
+                    'unpaid' => 'Belum Lunas',
+                    default => 'Semua Status',
+                },
+            ]);
+
+            fputcsv($handle, []);
+
+            // Header tabel
+            fputcsv($handle, [
+                'No',
+                'Tanggal',
+                'Nama Siswa',
+                'Kelas',
+                'Jenis Tagihan',
+                'Nominal (Rp)',
+                'Status',
+            ]);
+
+            $number = 1;
+
+            foreach ($reports as $bill) {
+                $payment = $bill->latestPayment;
+                $latestVerification = $payment?->latestVerification;
+
+                $hasRejectedVerification = $latestVerification?->status === 'rejected';
+
+                $isResubmitted = $hasRejectedVerification
+                    && $payment?->proof_uploaded_at
+                    && $latestVerification?->processed_at
+                    && $payment->proof_uploaded_at->gt(
+                        $latestVerification->processed_at
+                    );
+
+                // Tentukan status yang ditampilkan pada laporan
+                if ($bill->status === 'paid' || $payment?->status === 'paid') {
+                    $displayStatus = 'Lunas';
+                } elseif (
+                    $payment?->status === 'pending'
+                    && $payment?->proof_of_payment
+                    && (!$hasRejectedVerification || $isResubmitted)
+                ) {
+                    $displayStatus = 'Menunggu Verifikasi';
+                } else {
+                    $displayStatus = 'Belum Lunas';
+                }
+
+                $reportDate = $payment?->paid_at
+                    ?? $payment?->created_at
+                    ?? $bill->created_at;
+
+                fputcsv($handle, [
+                    $number++,
+                    $reportDate?->translatedFormat('d M Y') ?? '-',
+                    $bill->student?->name ?? '-',
+                    $bill->student?->classRoom?->name ?? '-',
+                    $bill->name,
+                    $bill->amount,
+                    $displayStatus,
+                ]);
+            }
+
+            // Ringkasan laporan
+            fputcsv($handle, []);
+            fputcsv($handle, ['Jumlah Data', $totalCount]);
+            fputcsv($handle, ['Total Nominal Tagihan (Rp)', $totalNominal]);
+
+            fclose($handle);
+
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+        ]);
+    }
+
+
 
     /**
      * Menampilkan halaman Pratinjau (Preview) Cetak Laporan Rekapitulasi Tagihan per Siswa.
